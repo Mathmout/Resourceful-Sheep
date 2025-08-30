@@ -14,16 +14,15 @@ public class ModTranslationProvider  extends LanguageProvider {
     @Override
     protected void addTranslations() {
 
-        // Traductions static des items de base
+        // Traductions static.
 
         add("item.resourceful_sheep.lasso", "Lasso");
         add("item.resourceful_sheep.sheep_scanner", "Sheep Scanner");
         add("creativetab.resourceful_sheep", "Resourceful Sheep");
 
-        // Traductions dynamiques des spawn eggs.
+        // Traductions dynamiques des moutons.
 
         for (SheepVariantData variant : ConfigManager.getSheepVariant().values()) {
-            //add("item." + ResourcefulSheepMod.MOD_ID + "." + variant.Id + "_spawn_egg", "§lResourceful Sheep Spawn Egg");
             add("entity." + ResourcefulSheepMod.MOD_ID + "." + variant.Id, "§lResourceful Sheep");
 
         }

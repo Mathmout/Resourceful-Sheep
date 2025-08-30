@@ -52,13 +52,19 @@ public class ConfigManager {
     }
 
     private static void createDefaultIfEmpty() {
-        if (SHEEP_TYPES.isEmpty()) {
-            for (SheepTypeData defaultType : DefaultSheepTypes.getDefaults()) {
-                saveSheepType(defaultType.Resource + "_sheep.json", defaultType);
+        try (Stream<Path> stream = Files.list(CONFIG_DIR)) {
+            if (stream.findAny().isEmpty()) {
+                LOGGER.info("No config files found in {}. Creating default configurations...", CONFIG_DIR);
+                for (SheepTypeData defaultType : DefaultSheepTypes.getDefaults()) {
+                    String fileName = defaultType.Resource + "_sheep.json";
+                    saveSheepType(fileName, defaultType);
+                    LOGGER.info("Created default config file: {}", fileName);
+                }
             }
+        } catch (IOException e) {
+            LOGGER.error("Failed to check if config directory is empty: {}", CONFIG_DIR, e);
         }
     }
-
     public static void saveSheepType(String fileName, SheepTypeData data) {
         Path filePath = CONFIG_DIR.resolve(fileName);
         try (Writer writer = Files.newBufferedWriter(filePath)) {
@@ -88,12 +94,7 @@ public class ConfigManager {
         LOGGER.info("Loaded {} sheep variants from {} sheep types.", SHEEP_VARIANTS.size(), SHEEP_TYPES.size());
     }
 
-    public static Map<String, SheepTypeData> getSheepTypes() {
-        return SHEEP_TYPES;
-    }
-
     public static Map<String, SheepVariantData> getSheepVariant() {
         return SHEEP_VARIANTS;
     }
 }
-
