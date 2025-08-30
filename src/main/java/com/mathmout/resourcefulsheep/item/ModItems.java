@@ -39,7 +39,8 @@ public class ModItems {
             Integer.parseInt(variant.EggColorSpots.substring(1), 16), properties));
             SHEEP_SPAWN_EGGS.add(spawnEgg);
         }
-        SHEEP_SPAWN_EGGS.sort(Comparator.comparing(DeferredHolder::getId)); }
+        SHEEP_SPAWN_EGGS.sort(Comparator.comparing(DeferredHolder::getId));
+    }
 
 
     public static void register(IEventBus eventBus) {

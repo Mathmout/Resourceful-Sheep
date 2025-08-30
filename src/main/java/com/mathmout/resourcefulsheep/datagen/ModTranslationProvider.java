@@ -23,8 +23,9 @@ public class ModTranslationProvider  extends LanguageProvider {
         // Traductions dynamiques des spawn eggs.
 
         for (SheepVariantData variant : ConfigManager.getSheepVariant().values()) {
-            add("item." + ResourcefulSheepMod.MOD_ID + "." + variant.Id + "_spawn_egg", "§lResourceful Sheep Spawn Egg");
+            //add("item." + ResourcefulSheepMod.MOD_ID + "." + variant.Id + "_spawn_egg", "§lResourceful Sheep Spawn Egg");
             add("entity." + ResourcefulSheepMod.MOD_ID + "." + variant.Id, "§lResourceful Sheep");
+
         }
     }
 }

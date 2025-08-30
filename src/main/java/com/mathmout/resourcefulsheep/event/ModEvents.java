@@ -1,19 +1,28 @@
 package com.mathmout.resourcefulsheep.event;
 
+import com.mathmout.resourcefulsheep.ResourcefulSheepMod;
 import com.mathmout.resourcefulsheep.config.ConfigManager;
 import com.mathmout.resourcefulsheep.entity.custom.ResourcefulSheepEntity;
 import com.mathmout.resourcefulsheep.entity.custom.SheepVariantData;
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.SpawnEggItem;
 import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 
-import java.util.Random;
+
+import java.util.concurrent.ThreadLocalRandom;
 
 public class ModEvents {
 
@@ -28,8 +37,7 @@ public class ModEvents {
                     if (variantData != null) {
                         Item droppedItem = BuiltInRegistries.ITEM.get(ResourceLocation.tryParse(variantData.DroppedItem));
                         if (droppedItem != Items.AIR) {
-                            Random random = new Random();
-                            int count = variantData.MinDrops + random.nextInt(variantData.MaxDrops - variantData.MinDrops + 1);
+                            int count = ThreadLocalRandom.current().nextInt(variantData.MinDrops, variantData.MaxDrops) + 1;
                             sheep.spawnAtLocation(new ItemStack(droppedItem, count));
                         }
                     }
@@ -38,5 +46,72 @@ public class ModEvents {
                 }
             }
         }
+    }
+
+    @SubscribeEvent
+    public static void onItemTooltip(ItemTooltipEvent event) {
+        Item item = event.getItemStack().getItem();
+        boolean isShiftKeyDown = Screen.hasShiftDown();
+        if (item instanceof SpawnEggItem) {
+            String itemId = BuiltInRegistries.ITEM.getKey(item).toString();
+            if (itemId.startsWith(ResourcefulSheepMod.MOD_ID + ":")) {
+                String variantId = itemId
+                        .replace(ResourcefulSheepMod.MOD_ID + ":", "")
+                        .replace("_spawn_egg", "");
+                SheepVariantData variant = ConfigManager.getSheepVariant().get(variantId);
+                if (variant != null && variant.EggColorSpots != null) {
+                    int nameColor = Integer.parseInt(variant.EggColorSpots.substring(1), 16);
+                    String displayName = "§lResourceful Sheep Spawn Egg";
+                    if (!event.getToolTip().isEmpty()) {
+                        event.getToolTip().set(0, Component.literal(displayName).withStyle(Style.EMPTY.withColor(nameColor)));
+                        if (!isShiftKeyDown) {
+                            event.getToolTip().add(Component.literal("Hold SHIFT for more info")
+                                    .withStyle(ChatFormatting.ITALIC)
+                                    .withStyle(ChatFormatting.GRAY));
+                        } else {
+                            MutableComponent line = Component.literal("Dropped Item : ").withStyle(ChatFormatting.BLUE)
+                                    .append(Component.literal(itemIdToText(variant.DroppedItem)).withStyle(ChatFormatting.YELLOW));
+                            event.getToolTip().add(line);
+
+                            // Tier.
+                            line = Component.literal("Tier : ").withStyle(ChatFormatting.RED)
+                                    .append(Component.literal(String.valueOf(variant.Tier)).withStyle(ChatFormatting.LIGHT_PURPLE));
+                            event.getToolTip().add(line);
+
+                            // Nombre.
+                            if (variant.MinDrops != variant.MaxDrops) {
+                                line = Component.literal("Amount : ").withStyle(ChatFormatting.DARK_GREEN)
+                                        .append(Component.literal("From " + variant.MinDrops + " to " + variant.MaxDrops).withStyle(ChatFormatting.DARK_AQUA));
+                                event.getToolTip().add(line);
+                            } else if (variant.MinDrops == 0) {
+                                line = Component.literal("Amount : ").withStyle(ChatFormatting.DARK_GREEN)
+                                        .append(Component.literal("Nothing").withStyle(ChatFormatting.DARK_AQUA));
+                                event.getToolTip().add(line);
+                            } else {
+                                line = Component.literal("Amount : ").withStyle(ChatFormatting.DARK_GREEN)
+                                        .append(Component.literal(String.valueOf(variant.MinDrops)).withStyle(ChatFormatting.DARK_AQUA));
+                                event.getToolTip().add(line);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private static String itemIdToText(String itemId) {
+        String IdWithoutPrefixAndUnderscore = itemId.replace("minecraft:", "").replace('_', ' ');
+        String[] words = IdWithoutPrefixAndUnderscore.split(" ");
+        StringBuilder result = new StringBuilder();
+        for (String word : words) {
+            if (!word.isEmpty()) {
+                result.append(Character.toUpperCase(word.charAt(0)));
+                if (word.length() > 1) {
+                    result.append(word.substring(1).toLowerCase());
+                }
+                result.append(" ");
+            }
+        }
+        return result.toString().trim();
     }
 }
