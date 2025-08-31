@@ -8,11 +8,14 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Style;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.animal.Sheep;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -23,26 +26,31 @@ import java.util.UUID;
 
 public class SheepScanner extends Item {
     private static final Map<UUID, Long> lastScanTime = new HashMap<>();
-    private static final long SCAN_COOLDOWN = 1000; // 1 second
+    private static final long SCAN_COOLDOWN_MS = 1000; // 1 second
 
     public SheepScanner(Properties properties) {
         super(properties);
     }
 
     @Override
-    public @NotNull InteractionResult interactLivingEntity(@NotNull ItemStack pStack, @NotNull Player pPlayer, @NotNull LivingEntity pInteractionTarget, @NotNull InteractionHand pHand) {
-        if (pInteractionTarget instanceof ResourcefulSheepEntity sheep) {
+    public @NotNull InteractionResult interactLivingEntity(@NotNull ItemStack pStack, @NotNull Player pPlayer,
+                                                           @NotNull LivingEntity pInteractionTarget, @NotNull InteractionHand pHand) {
+        if (pInteractionTarget instanceof Sheep sheep) { // Broad check for any sheep
             if (pPlayer.level().isClientSide) {
                 long currentTime = System.currentTimeMillis();
                 long lastTime = lastScanTime.getOrDefault(pPlayer.getUUID(), 0L);
 
-                if (currentTime - lastTime < SCAN_COOLDOWN) {
+                if (currentTime - lastTime < SCAN_COOLDOWN_MS) {
                     return InteractionResult.SUCCESS; // Cooldown active, do nothing.
                 }
-
                 lastScanTime.put(pPlayer.getUUID(), currentTime);
 
-                Component message = buildSheepInfoComponent(sheep);
+                Component message;
+                if (sheep instanceof ResourcefulSheepEntity resourcefulSheep) {
+                    message = buildSheepInfoComponent(resourcefulSheep);
+                } else {
+                    message = buildVanillaSheepInfoComponent(sheep);
+                }
                 pPlayer.sendSystemMessage(message);
             }
             pPlayer.playSound(SoundEvents.UI_BUTTON_CLICK.value(), 1.0F, 1.0F);
@@ -60,8 +68,8 @@ public class SheepScanner extends Item {
         }
 
         MutableComponent mainComponent = Component.literal("");
-        // Header.
 
+        // Header.
         MutableComponent header = Component.literal("=== Sheep Scanner Result ===").withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD);
         mainComponent.append(header).append("\n");
 
@@ -87,8 +95,30 @@ public class SheepScanner extends Item {
             line3 = Component.literal("Amount : ").withStyle(ChatFormatting.DARK_GREEN)
                     .append(Component.literal(String.valueOf(variant.MinDrops)).withStyle(ChatFormatting.DARK_AQUA));
         }
-        mainComponent.append(line3);
+        // Couleur.
+        mainComponent.append(line3).append("\n");
+        DyeColor dyeColor = sheep.getColor();
+        String colorName = dyeColor.getName().substring(0, 1).toUpperCase() + dyeColor.getName().substring(1);
+        MutableComponent line4 = Component.literal("Color : ").withStyle(ChatFormatting.GRAY)
+                .append(Component.literal(colorName).withStyle(Style.EMPTY.withColor(dyeColor.getTextColor())));
+        mainComponent.append(line4);
+        return mainComponent;
+    }
 
+    private Component buildVanillaSheepInfoComponent(Sheep sheep) {
+        MutableComponent mainComponent = Component.literal("");
+
+        // Header.
+        MutableComponent header = Component.literal("=== Sheep Scanner Result ===").withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD);
+        mainComponent.append(header).append("\n");
+
+        // Description
+        DyeColor dyeColor = sheep.getColor();
+        String colorName = dyeColor.getName();
+        MutableComponent line2 = Component.literal("It's just a ").withStyle(ChatFormatting.GRAY)
+                .append(Component.literal(colorName).withStyle(Style.EMPTY.withColor(dyeColor.getTextColor())))
+                .append(Component.literal(" sheep.").withStyle(ChatFormatting.GRAY));
+        mainComponent.append(line2);
         return mainComponent;
     }
 }

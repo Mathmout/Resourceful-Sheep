@@ -43,7 +43,6 @@ public class ResourcefulSheepRenderer extends MobRenderer<ResourcefulSheepEntity
                 return customBodyTexture;
             }
         }
-
         return ResourceLocation.fromNamespaceAndPath("minecraft", "textures/entity/sheep/sheep.png");
     }
 
