@@ -20,11 +20,13 @@ import net.neoforged.fml.ModContainer;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
 
+
 // The value here should match an entry in the META-INF/neoforge.mods.toml file
 @Mod(ResourcefulSheepMod.MOD_ID)
 public class ResourcefulSheepMod {
     // Define mod id in a common place for everything to reference
     public static final String MOD_ID = "resourceful_sheep";
+
 
         public ResourcefulSheepMod(IEventBus modEventBus, ModContainer modContainer) {
 
@@ -66,8 +68,7 @@ public class ResourcefulSheepMod {
         @SubscribeEvent
         public static void onClientSetup(final FMLClientSetupEvent event) {
             ModEntities.SHEEP_ENTITIES.forEach((id, entityType) ->
-                    EntityRenderers.register(entityType.get(), ResourcefulSheepRenderer::new)
-            );
+                    EntityRenderers.register(entityType.get(), ResourcefulSheepRenderer::new));
         }
     }
 }

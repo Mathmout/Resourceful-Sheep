@@ -7,7 +7,6 @@ import com.mathmout.resourcefulsheep.entity.custom.SheepVariantData;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
-import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,9 +33,5 @@ public class ModEntities {
                             .build(id));
             SHEEP_ENTITIES.put(id, resourcefulSheep);
         }
-    }
-
-    public static void register(IEventBus eventBus) {
-        ENTITY_TYPES.register(eventBus);
     }
 }

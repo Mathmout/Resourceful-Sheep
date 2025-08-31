@@ -7,8 +7,6 @@ public class DefaultSheepTypes {
     public static List<SheepTypeData> getDefaults() {
         List<SheepTypeData> DefaultSheep = new ArrayList<>();
 
-        // Vérifier que cela n'ecrase pas la config existante !
-
         // Coal
         DefaultSheep.add(new SheepTypeData("coal","#252525", "#101015", List.of(
                 new SheepTypeData.TierData(1,"minecraft:coal", 8, 13),

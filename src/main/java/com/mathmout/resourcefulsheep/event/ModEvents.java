@@ -69,6 +69,7 @@ public class ModEvents {
                                     .withStyle(ChatFormatting.ITALIC)
                                     .withStyle(ChatFormatting.GRAY));
                         } else {
+                            // Dropped Item.
                             MutableComponent line = Component.literal("Dropped Item : ").withStyle(ChatFormatting.BLUE)
                                     .append(Component.literal(itemIdToText(variant.DroppedItem)).withStyle(ChatFormatting.YELLOW));
                             event.getToolTip().add(line);
@@ -99,7 +100,8 @@ public class ModEvents {
         }
     }
 
-    private static String itemIdToText(String itemId) {
+    //Transform "minecraft:iron_nugget" to "Iron Nugget"
+    public static String itemIdToText(String itemId) {
         String IdWithoutPrefixAndUnderscore = itemId.replace("minecraft:", "").replace('_', ' ');
         String[] words = IdWithoutPrefixAndUnderscore.split(" ");
         StringBuilder result = new StringBuilder();
