@@ -16,7 +16,7 @@ public class Lasso extends Item {
     }
 
     @Override
-    public void appendHoverText(@NotNull ItemStack stack, @NotNull TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
+    public void appendHoverText(@NotNull ItemStack stack, @NotNull TooltipContext context, List<Component> tooltipComponents, @NotNull TooltipFlag tooltipFlag) {
         tooltipComponents.add(Component.translatable("tooltip." + ResourcefulSheepMod.MOD_ID + ".lasso").withStyle(ChatFormatting.DARK_RED));
         super.appendHoverText(stack, context, tooltipComponents, tooltipFlag);
     }
