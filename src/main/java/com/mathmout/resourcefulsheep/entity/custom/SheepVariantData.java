@@ -8,10 +8,10 @@ public class SheepVariantData {
     public int MinDrops;
     public int MaxDrops;
     public String EggColorBackground;
-    public String EggColorSpots;
+    public String EggColorSpotsNTitle;
 
     public SheepVariantData(String id, String resource, int tier, String droppedItem, int minDrops, int maxDrops,
-                            String eggColorBackground, String eggColorSpots) {
+                            String eggColorBackground, String eggColorSpotsNTitle) {
         this.Id = id;
         this.Resource = resource;
         this.Tier = tier;
@@ -19,7 +19,7 @@ public class SheepVariantData {
         this.MinDrops = minDrops;
         this.MaxDrops = maxDrops;
         this.EggColorBackground = eggColorBackground;
-        this.EggColorSpots = eggColorSpots;
+        this.EggColorSpotsNTitle = eggColorSpotsNTitle;
     }
 
 }

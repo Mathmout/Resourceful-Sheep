@@ -1,4 +1,4 @@
-package com.mathmout.resourcefulsheep.config;
+package com.mathmout.resourcefulsheep.config.sheeptypes;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,6 +6,69 @@ import java.util.List;
 public class DefaultSheepTypes {
     public static List<SheepTypeData> getDefaults() {
         List<SheepTypeData> DefaultSheep = new ArrayList<>();
+
+        // Cobblestone
+        DefaultSheep.add(new SheepTypeData("cobblestone", "#808080", "#555555", List.of(
+                new SheepTypeData.TierData(1, "minecraft:cobblestone", 12, 20),
+                new SheepTypeData.TierData(2, "minecraft:cobblestone", 20, 32),
+                new SheepTypeData.TierData(3, "minecraft:cobblestone", 32, 48)
+        )));
+
+        // Stone
+        DefaultSheep.add(new SheepTypeData("stone", "#888888", "#555555", List.of(
+                new SheepTypeData.TierData(1, "minecraft:stone", 10, 18),
+                new SheepTypeData.TierData(2, "minecraft:stone", 18, 28),
+                new SheepTypeData.TierData(3, "minecraft:stone", 28, 32)
+        )));
+
+        // Sand
+        DefaultSheep.add(new SheepTypeData("sand", "#f0d890", "#d2b56b", List.of(
+                new SheepTypeData.TierData(1, "minecraft:sand", 16, 24),
+                new SheepTypeData.TierData(2, "minecraft:sand", 24, 36),
+                new SheepTypeData.TierData(3, "minecraft:sand", 36, 50)
+        )));
+
+        // Dripstone
+        DefaultSheep.add(new SheepTypeData("dripstone", "#c2b8a3", "#9e8f74", List.of(
+                new SheepTypeData.TierData(1, "minecraft:dripstone_block", 8, 14),
+                new SheepTypeData.TierData(2, "minecraft:dripstone_block", 14, 22),
+                new SheepTypeData.TierData(3, "minecraft:dripstone_block", 22, 34)
+        )));
+
+        // Granite
+        DefaultSheep.add(new SheepTypeData("granite", "#d16b6b", "#9c4747", List.of(
+                new SheepTypeData.TierData(1, "minecraft:granite", 10, 16),
+                new SheepTypeData.TierData(2, "minecraft:granite", 16, 24),
+                new SheepTypeData.TierData(3, "minecraft:granite", 24, 35)
+        )));
+
+        // Diorite
+        DefaultSheep.add(new SheepTypeData("diorite", "#c5c5c5", "#8a8a8a", List.of(
+                new SheepTypeData.TierData(1, "minecraft:diorite", 10, 16),
+                new SheepTypeData.TierData(2, "minecraft:diorite", 16, 24),
+                new SheepTypeData.TierData(3, "minecraft:diorite", 24, 33)
+        )));
+
+        // Andesite
+        DefaultSheep.add(new SheepTypeData("andesite", "#888888", "#666666", List.of(
+                new SheepTypeData.TierData(1, "minecraft:andesite", 10, 16),
+                new SheepTypeData.TierData(2, "minecraft:andesite", 16, 24),
+                new SheepTypeData.TierData(3, "minecraft:andesite", 24, 32)
+        )));
+
+        // Netherrack
+        DefaultSheep.add(new SheepTypeData("netherrack", "#5a2b2b", "#3d1d1d", List.of(
+                new SheepTypeData.TierData(1, "minecraft:netherrack", 12, 20),
+                new SheepTypeData.TierData(2, "minecraft:netherrack", 20, 30),
+                new SheepTypeData.TierData(3, "minecraft:netherrack", 30, 42)
+        )));
+
+        // Soul Sand
+        DefaultSheep.add(new SheepTypeData("soul_sand", "#4a3e32", "#30261c", List.of(
+                new SheepTypeData.TierData(1, "minecraft:soul_sand", 10, 18),
+                new SheepTypeData.TierData(2, "minecraft:soul_sand", 18, 28),
+                new SheepTypeData.TierData(3, "minecraft:soul_sand", 28, 40)
+        )));
 
         // Coal
         DefaultSheep.add(new SheepTypeData("coal","#252525", "#101015", List.of(

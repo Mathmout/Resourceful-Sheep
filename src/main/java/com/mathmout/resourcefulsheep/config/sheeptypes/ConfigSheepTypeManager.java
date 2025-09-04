@@ -1,4 +1,4 @@
-package com.mathmout.resourcefulsheep.config;
+package com.mathmout.resourcefulsheep.config.sheeptypes;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -16,12 +16,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Stream;
 
-public class ConfigManager {
+public class ConfigSheepTypeManager {
     public static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     public static final Path CONFIG_DIR = FMLPaths.CONFIGDIR.get().resolve("resourceful_sheep/sheep_types");
     private static final Map<String, SheepTypeData> SHEEP_TYPES = new HashMap<>();
     private static final Map<String, SheepVariantData> SHEEP_VARIANTS = new HashMap<>();
-    private static final Logger LOGGER = LoggerFactory.getLogger(ConfigManager.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ConfigSheepTypeManager.class);
 
     public static void init() {
         try {
@@ -86,7 +86,7 @@ public class ConfigManager {
                         tier.MinDrops,
                         tier.MaxDrops,
                         type.EggColorBackground,
-                        type.EggColorSpots
+                        type.EggColorSpotsNTitle
                 );
                 SHEEP_VARIANTS.put(id, variant);
             }

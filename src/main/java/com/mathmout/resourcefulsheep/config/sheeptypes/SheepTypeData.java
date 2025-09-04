@@ -1,17 +1,17 @@
-package com.mathmout.resourcefulsheep.config;
+package com.mathmout.resourcefulsheep.config.sheeptypes;
 
 import java.util.List;
 
 public class SheepTypeData {
     public String Resource;
     public String EggColorBackground;
-    public String EggColorSpots;
+    public String EggColorSpotsNTitle;
     public List<TierData> SheepTier;
 
-    public SheepTypeData(String Resource, String EggColorBackground, String EggColorSpots, List<TierData> SheepTier) {
+    public SheepTypeData(String Resource, String EggColorBackground, String EggColorSpotsNTitle, List<TierData> SheepTier) {
         this.Resource = Resource;
         this.EggColorBackground = EggColorBackground;
-        this.EggColorSpots = EggColorSpots;
+        this.EggColorSpotsNTitle = EggColorSpotsNTitle;
         this.SheepTier = SheepTier;
     }
     public static class TierData {

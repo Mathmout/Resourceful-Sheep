@@ -1,6 +1,7 @@
 package com.mathmout.resourcefulsheep.item.custom;
 
-import com.mathmout.resourcefulsheep.config.ConfigManager;
+import com.mathmout.resourcefulsheep.ResourcefulSheepMod;
+import com.mathmout.resourcefulsheep.config.sheeptypes.ConfigSheepTypeManager;
 import com.mathmout.resourcefulsheep.entity.custom.ResourcefulSheepEntity;
 import com.mathmout.resourcefulsheep.entity.custom.SheepVariantData;
 import com.mathmout.resourcefulsheep.event.ModEvents;
@@ -18,9 +19,11 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -61,7 +64,7 @@ public class SheepScanner extends Item {
 
     private Component buildSheepInfoComponent(ResourcefulSheepEntity sheep) {
         String variantId = BuiltInRegistries.ENTITY_TYPE.getKey(sheep.getType()).getPath();
-        SheepVariantData variant = ConfigManager.getSheepVariant().get(variantId);
+        SheepVariantData variant = ConfigSheepTypeManager.getSheepVariant().get(variantId);
 
         if (variant == null) {
             return Component.literal("Unknown Sheep Variant").withStyle(ChatFormatting.RED);
@@ -120,5 +123,11 @@ public class SheepScanner extends Item {
                 .append(Component.literal(" sheep.").withStyle(ChatFormatting.GRAY));
         mainComponent.append(line2);
         return mainComponent;
+    }
+
+    @Override
+    public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
+        tooltipComponents.add(Component.translatable("tooltip." + ResourcefulSheepMod.MOD_ID + ".sheep_scanner").withStyle(ChatFormatting.GRAY));
+        super.appendHoverText(stack, context, tooltipComponents, tooltipFlag);
     }
 }

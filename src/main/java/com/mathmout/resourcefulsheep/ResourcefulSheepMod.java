@@ -1,7 +1,8 @@
 package com.mathmout.resourcefulsheep;
 
 import com.mathmout.resourcefulsheep.client.renderer.ResourcefulSheepRenderer;
-import com.mathmout.resourcefulsheep.config.ConfigManager;
+import com.mathmout.resourcefulsheep.config.mutations.ConfigSheepMutationManager;
+import com.mathmout.resourcefulsheep.config.sheeptypes.ConfigSheepTypeManager;
 import com.mathmout.resourcefulsheep.datagen.DataGenerators;
 import com.mathmout.resourcefulsheep.entity.ModEntities;
 import com.mathmout.resourcefulsheep.event.ModEvents;
@@ -28,7 +29,7 @@ public class ResourcefulSheepMod {
     public static final String MOD_ID = "resourceful_sheep";
 
 
-        public ResourcefulSheepMod(IEventBus modEventBus, ModContainer modContainer) {
+    public ResourcefulSheepMod(IEventBus modEventBus, ModContainer modContainer) {
 
 
         NeoForge.EVENT_BUS.register(this);
@@ -37,7 +38,8 @@ public class ResourcefulSheepMod {
         modEventBus.addListener(ClientModEvents::onClientSetup);
         modEventBus.addListener(this::addEntityAttributes);
 
-        ConfigManager.init();
+        ConfigSheepTypeManager.init();
+        ConfigSheepMutationManager.init();
 
         ModEntities.registerVariantEntity();
         ModEntities.ENTITY_TYPES.register(modEventBus);

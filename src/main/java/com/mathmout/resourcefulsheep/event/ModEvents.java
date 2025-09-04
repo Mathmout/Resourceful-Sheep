@@ -1,7 +1,7 @@
 package com.mathmout.resourcefulsheep.event;
 
 import com.mathmout.resourcefulsheep.ResourcefulSheepMod;
-import com.mathmout.resourcefulsheep.config.ConfigManager;
+import com.mathmout.resourcefulsheep.config.sheeptypes.ConfigSheepTypeManager;
 import com.mathmout.resourcefulsheep.entity.custom.ResourcefulSheepEntity;
 import com.mathmout.resourcefulsheep.entity.custom.SheepVariantData;
 import net.minecraft.ChatFormatting;
@@ -32,7 +32,7 @@ public class ModEvents {
             if (event.getItemStack().getItem() == Items.SHEARS) {
                 if (!event.getLevel().isClientSide && !sheep.isSheared()) {
                     sheep.shear(SoundSource.PLAYERS);
-                    SheepVariantData variantData = ConfigManager.getSheepVariant()
+                    SheepVariantData variantData = ConfigSheepTypeManager.getSheepVariant()
                             .get(BuiltInRegistries.ENTITY_TYPE.getKey(sheep.getType()).getPath());
                     if (variantData != null) {
                         Item droppedItem = BuiltInRegistries.ITEM.get(ResourceLocation.tryParse(variantData.DroppedItem));
@@ -58,14 +58,14 @@ public class ModEvents {
                 String variantId = itemId
                         .replace(ResourcefulSheepMod.MOD_ID + ":", "")
                         .replace("_spawn_egg", "");
-                SheepVariantData variant = ConfigManager.getSheepVariant().get(variantId);
-                if (variant != null && variant.EggColorSpots != null) {
-                    int nameColor = Integer.parseInt(variant.EggColorSpots.substring(1), 16);
+                SheepVariantData variant = ConfigSheepTypeManager.getSheepVariant().get(variantId);
+                if (variant != null && variant.EggColorSpotsNTitle != null) {
+                    int nameColor = Integer.parseInt(variant.EggColorSpotsNTitle.substring(1), 16);
                     String displayName = "§lResourceful Sheep Spawn Egg";
                     if (!event.getToolTip().isEmpty()) {
                         event.getToolTip().set(0, Component.literal(displayName).withStyle(Style.EMPTY.withColor(nameColor)));
                         if (!isShiftKeyDown) {
-                            event.getToolTip().add(Component.literal("Hold SHIFT for more info")
+                            event.getToolTip().add(Component.literal("Hold SHIFT for more info.")
                                     .withStyle(ChatFormatting.ITALIC)
                                     .withStyle(ChatFormatting.GRAY));
                         } else {

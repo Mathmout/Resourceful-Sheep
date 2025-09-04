@@ -1,7 +1,7 @@
 package com.mathmout.resourcefulsheep.client.renderer;
 
 import com.mathmout.resourcefulsheep.ResourcefulSheepMod;
-import com.mathmout.resourcefulsheep.config.ConfigManager;
+import com.mathmout.resourcefulsheep.config.sheeptypes.ConfigSheepTypeManager;
 import com.mathmout.resourcefulsheep.entity.custom.ResourcefulSheepEntity;
 import com.mathmout.resourcefulsheep.entity.custom.SheepVariantData;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -31,7 +31,7 @@ public class ResourcefulSheepRenderer extends MobRenderer<ResourcefulSheepEntity
     @Override
     public @NotNull ResourceLocation getTextureLocation(ResourcefulSheepEntity entity) {
         String variantId = BuiltInRegistries.ENTITY_TYPE.getKey(entity.getType()).getPath();
-        SheepVariantData variant = ConfigManager.getSheepVariant().get(variantId);
+        SheepVariantData variant = ConfigSheepTypeManager.getSheepVariant().get(variantId);
 
         if (variant != null && variant.Id != null) {
             ResourceLocation customBodyTexture = ResourceLocation.fromNamespaceAndPath(
@@ -48,7 +48,7 @@ public class ResourcefulSheepRenderer extends MobRenderer<ResourcefulSheepEntity
 
     private ResourceLocation getFurTextureLocation(ResourcefulSheepEntity entity) {
         String variantId = BuiltInRegistries.ENTITY_TYPE.getKey(entity.getType()).getPath();
-        SheepVariantData variant = ConfigManager.getSheepVariant().get(variantId);
+        SheepVariantData variant = ConfigSheepTypeManager.getSheepVariant().get(variantId);
 
         if (variant != null && variant.Id != null) {
             ResourceLocation customFurTexture = ResourceLocation.fromNamespaceAndPath(
@@ -60,7 +60,6 @@ public class ResourcefulSheepRenderer extends MobRenderer<ResourcefulSheepEntity
                 return customFurTexture;
             }
         }
-
         return ResourceLocation.fromNamespaceAndPath("minecraft", "textures/entity/sheep/sheep_fur.png");
     }
 

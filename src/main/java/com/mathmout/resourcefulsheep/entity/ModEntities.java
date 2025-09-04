@@ -1,7 +1,7 @@
 package com.mathmout.resourcefulsheep.entity;
 
 import com.mathmout.resourcefulsheep.ResourcefulSheepMod;
-import com.mathmout.resourcefulsheep.config.ConfigManager;
+import com.mathmout.resourcefulsheep.config.sheeptypes.ConfigSheepTypeManager;
 import com.mathmout.resourcefulsheep.entity.custom.ResourcefulSheepEntity;
 import com.mathmout.resourcefulsheep.entity.custom.SheepVariantData;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -18,13 +18,14 @@ import java.util.function.Supplier;
 public class ModEntities {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ModEntities.class);
+
     public static final DeferredRegister<EntityType<?>> ENTITY_TYPES =
             DeferredRegister.create(BuiltInRegistries.ENTITY_TYPE, ResourcefulSheepMod.MOD_ID);
 
     public static final Map<String, Supplier<EntityType<ResourcefulSheepEntity>>> SHEEP_ENTITIES = new HashMap<>();
 
     public static void registerVariantEntity() {
-        for(SheepVariantData variant : ConfigManager.getSheepVariant().values()){
+        for(SheepVariantData variant : ConfigSheepTypeManager.getSheepVariant().values()){
             String id = variant.Id;
             LOGGER.info("Registering entity with ID: {}", id);
             Supplier<EntityType<ResourcefulSheepEntity>> resourcefulSheep =
