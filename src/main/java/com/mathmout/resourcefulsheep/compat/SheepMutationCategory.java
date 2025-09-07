@@ -106,34 +106,39 @@ public class SheepMutationCategory implements IRecipeCategory<SheepMutation> {
 
     @Override
     public void draw(SheepMutation recipe, @NotNull IRecipeSlotsView slots, @NotNull GuiGraphics g, double mouseX, double mouseY) {
-        // placement (166x128). On remonte tout pour éviter le vide au-dessus.
-        int scale = 22;    // un peu plus grand mais raisonnable
-        int baseY = getHeight()/2;       // centre vertical des moutons (plus haut qu’avant)
+        // Placement de moutons et leur taille.
+        int scale = 22;
+        int baseY = getHeight()/2;
         int momX = getWidth()/6;
         int dadX = getWidth()/2;
         int childX = 5*getWidth()/6;
 
-        // symboles parfaitement centrés entre les x
+        // Symboles + et =.
         int plusX = (momX + dadX) / 2;
         int eqX   = (dadX + childX) / 2;
         g.drawString(Minecraft.getInstance().font, "+", plusX, baseY, 0xFF404040, false);
         g.drawString(Minecraft.getInstance().font, "=",   eqX, baseY, 0xFF404040, false);
 
-        // moutons (vue de côté ~ 3/4, tête vers la droite), et anti-tremblement
-        drawSheep(g, recipe.MomId, momX,   baseY + scale, scale); // xRot, yRot
+        // Dessine les moutons.
+        drawSheep(g, recipe.MomId, momX,   baseY + scale, scale);
         drawSheep(g, recipe.DadId, dadX,   baseY + scale, scale);
         drawSheep(g, recipe.Child, childX, baseY + scale, scale);
 
-        // chance → une seule fois, sans ombre, sous l’enfant
+        // Affiche le % de chance.
         g.drawString(Minecraft.getInstance().font, "Chance of succes : " + recipe.Chance + " %",
                 ((childX + momX) - Minecraft.getInstance().font.width("Chance of succes : " + recipe.Chance + " %"))/2,
                 baseY - scale, 0xFF404040, false);
 
         // tooltips : zones compactes autour des modèles (calées sur l’alignement)
         List<Component> tips = new ArrayList<>();
-        if (isMouseOver(mouseX, mouseY, momX   - 18, baseY - 10, momX   + 18, baseY + 28)) addTooltip(tips, recipe.MomId);
-        if (isMouseOver(mouseX, mouseY, dadX   - 18, baseY - 10, dadX   + 18, baseY + 28)) addTooltip(tips, recipe.DadId);
-        if (isMouseOver(mouseX, mouseY, childX - 18, baseY - 10, childX + 18, baseY + 28)) addTooltip(tips, recipe.Child);
+        if (isMouseOver(mouseX, mouseY, momX   - 18, baseY - 10, momX   + 18, baseY + 28))
+            addTooltip(tips, recipe.MomId);
+
+        if (isMouseOver(mouseX, mouseY, dadX   - 18, baseY - 10, dadX   + 18, baseY + 28))
+            addTooltip(tips, recipe.DadId);
+
+        if (isMouseOver(mouseX, mouseY, childX - 18, baseY - 10, childX + 18, baseY + 28))
+            addTooltip(tips, recipe.Child);
 
         if (!tips.isEmpty()) g.renderComponentTooltip(Minecraft.getInstance().font, tips, (int) mouseX, (int) mouseY);
     }
@@ -175,7 +180,6 @@ public class SheepMutationCategory implements IRecipeCategory<SheepMutation> {
 
         String resourceText;
         try {
-            // même helper que tes autres tooltips/SheepScanner
             resourceText = ModEvents.itemIdToText(variant.Resource);
         } catch (Throwable t) {
             resourceText = String.valueOf(variant.Resource);
