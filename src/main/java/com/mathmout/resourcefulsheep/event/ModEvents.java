@@ -61,7 +61,7 @@ public class ModEvents {
                 SheepVariantData variant = ConfigSheepTypeManager.getSheepVariant().get(variantId);
                 if (variant != null && variant.EggColorSpotsNTitle != null) {
                     int nameColor = Integer.parseInt(variant.EggColorSpotsNTitle.substring(1), 16);
-                    String displayName = "§lResourceful Sheep Spawn Egg";
+                    String displayName = "§l" + itemIdToText(variant.Resource) + " Resourceful Sheep Egg";
                     if (!event.getToolTip().isEmpty()) {
                         event.getToolTip().set(0, Component.literal(displayName).withStyle(Style.EMPTY.withColor(nameColor)));
                         if (!isShiftKeyDown) {
@@ -71,7 +71,7 @@ public class ModEvents {
                         } else {
                             // Dropped Item.
                             MutableComponent line = Component.literal("Dropped Item : ").withStyle(ChatFormatting.BLUE)
-                                    .append(Component.literal(itemIdToText(variant.DroppedItem)).withStyle(ChatFormatting.YELLOW));
+                                    .append(Component.literal(ItemIdToName(variant.DroppedItem)).withStyle(ChatFormatting.YELLOW));
                             event.getToolTip().add(line);
 
                             // Tier.
@@ -79,7 +79,7 @@ public class ModEvents {
                                     .append(Component.literal(String.valueOf(variant.Tier)).withStyle(ChatFormatting.LIGHT_PURPLE));
                             event.getToolTip().add(line);
 
-                            // Nombre.
+                            // Quantité.
                             if (variant.MinDrops != variant.MaxDrops) {
                                 line = Component.literal("Amount : ").withStyle(ChatFormatting.DARK_GREEN)
                                         .append(Component.literal("From " + variant.MinDrops + " to " + variant.MaxDrops).withStyle(ChatFormatting.DARK_AQUA));
@@ -100,10 +100,21 @@ public class ModEvents {
         }
     }
 
-    //Transform "minecraft:iron_nugget" to "Iron Nugget"
+    // Utility to convert an item ID to its display name.
+    public static String ItemIdToName(String itemId) {
+        ResourceLocation id = ResourceLocation.tryParse(itemId);
+        if (id == null) {
+            return itemId;
+        }
+        Item item = BuiltInRegistries.ITEM.get(id);
+        Component name = item.getDescription();
+        return name.getString();
+    }
+
+    // Utility to convert an item ID to readable text.
     public static String itemIdToText(String itemId) {
-        String IdWithoutPrefixAndUnderscore = itemId.replace("minecraft:", "").replace('_', ' ');
-        String[] words = IdWithoutPrefixAndUnderscore.split(" ");
+        String IdWithoutUnderscore = itemId.replace('_', ' ');
+        String[] words = IdWithoutUnderscore.split(" ");
         StringBuilder result = new StringBuilder();
         for (String word : words) {
             if (!word.isEmpty()) {

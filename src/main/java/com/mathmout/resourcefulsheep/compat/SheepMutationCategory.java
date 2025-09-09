@@ -179,11 +179,9 @@ public class SheepMutationCategory implements IRecipeCategory<SheepMutation> {
         if (variant == null) return;
 
         String resourceText;
-        try {
-            resourceText = ModEvents.itemIdToText(variant.Resource);
-        } catch (Throwable t) {
-            resourceText = String.valueOf(variant.Resource);
-        }
+
+        resourceText = ModEvents.ItemIdToName(variant.Resource);
+
         MutableComponent lineRes = Component.literal("Resource : ").withStyle(ChatFormatting.BLUE)
                 .append(Component.literal(resourceText).withStyle(ChatFormatting.YELLOW));
         MutableComponent lineTier = Component.literal("Tier : ").withStyle(ChatFormatting.RED)
@@ -191,4 +189,6 @@ public class SheepMutationCategory implements IRecipeCategory<SheepMutation> {
 
         tips.add(lineRes);
         tips.add(lineTier);
-    }}
+    }
+
+}
