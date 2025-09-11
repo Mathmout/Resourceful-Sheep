@@ -31,7 +31,6 @@ public class ResourcefulSheepMod {
 
     public ResourcefulSheepMod(IEventBus modEventBus, ModContainer modContainer) {
 
-
         NeoForge.EVENT_BUS.register(this);
         NeoForge.EVENT_BUS.register(ModEvents.class);
 

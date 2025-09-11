@@ -29,7 +29,7 @@ import java.util.UUID;
 
 public class SheepScanner extends Item {
     private static final Map<UUID, Long> lastScanTime = new HashMap<>();
-    private static final long SCAN_COOLDOWN_MS = 1000; // 1 second
+    private static final long SCAN_COOLDOWN = 1000;
 
     public SheepScanner(Properties properties) {
         super(properties);
@@ -43,7 +43,7 @@ public class SheepScanner extends Item {
                 long currentTime = System.currentTimeMillis();
                 long lastTime = lastScanTime.getOrDefault(pPlayer.getUUID(), 0L);
 
-                if (currentTime - lastTime < SCAN_COOLDOWN_MS) {
+                if (currentTime - lastTime < SCAN_COOLDOWN) {
                     return InteractionResult.SUCCESS; // Cooldown active, do nothing.
                 }
                 lastScanTime.put(pPlayer.getUUID(), currentTime);
