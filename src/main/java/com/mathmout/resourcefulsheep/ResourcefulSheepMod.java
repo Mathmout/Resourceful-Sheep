@@ -1,5 +1,6 @@
 package com.mathmout.resourcefulsheep;
 
+import com.mathmout.resourcefulsheep.client.data.ClientEvents;
 import com.mathmout.resourcefulsheep.client.renderer.ResourcefulSheepRenderer;
 import com.mathmout.resourcefulsheep.config.mutations.ConfigSheepMutationManager;
 import com.mathmout.resourcefulsheep.config.sheeptypes.ConfigSheepTypeManager;
@@ -36,6 +37,7 @@ public class ResourcefulSheepMod {
 
         modEventBus.addListener(ClientModEvents::onClientSetup);
         modEventBus.addListener(this::addEntityAttributes);
+        modEventBus.addListener(ClientEvents::onAddPackFinders);
 
         ConfigSheepTypeManager.init();
         ConfigSheepMutationManager.init();
