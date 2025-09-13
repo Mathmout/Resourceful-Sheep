@@ -2,7 +2,6 @@ package com.mathmout.resourcefulsheep.config.mutations;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.mathmout.resourcefulsheep.entity.custom.SheepMutation;
 import net.neoforged.fml.loading.FMLPaths;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

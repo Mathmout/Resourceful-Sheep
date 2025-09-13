@@ -2,7 +2,7 @@ package com.mathmout.resourcefulsheep.compat;
 
 import com.mathmout.resourcefulsheep.ResourcefulSheepMod;
 import com.mathmout.resourcefulsheep.config.mutations.ConfigSheepMutationManager;
-import com.mathmout.resourcefulsheep.entity.custom.SheepMutation;
+import com.mathmout.resourcefulsheep.config.mutations.SheepMutation;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
 import mezz.jei.api.recipe.RecipeType;

@@ -4,7 +4,7 @@ import com.mathmout.resourcefulsheep.ResourcefulSheepMod;
 import com.mathmout.resourcefulsheep.config.sheeptypes.ConfigSheepTypeManager;
 import com.mathmout.resourcefulsheep.entity.ModEntities;
 import com.mathmout.resourcefulsheep.entity.custom.ResourcefulSheepEntity;
-import com.mathmout.resourcefulsheep.entity.custom.SheepMutation;
+import com.mathmout.resourcefulsheep.config.mutations.SheepMutation;
 import com.mathmout.resourcefulsheep.entity.custom.SheepVariantData;
 import com.mathmout.resourcefulsheep.event.ModEvents;
 import com.mathmout.resourcefulsheep.item.ModItems;

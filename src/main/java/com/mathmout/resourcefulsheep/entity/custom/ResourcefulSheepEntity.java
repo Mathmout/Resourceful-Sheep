@@ -1,6 +1,7 @@
 package com.mathmout.resourcefulsheep.entity.custom;
 
 import com.mathmout.resourcefulsheep.config.mutations.ConfigSheepMutationManager;
+import com.mathmout.resourcefulsheep.config.mutations.SheepMutation;
 import com.mathmout.resourcefulsheep.entity.ModEntities;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;

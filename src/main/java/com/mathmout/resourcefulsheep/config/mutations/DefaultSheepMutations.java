@@ -1,7 +1,5 @@
 package com.mathmout.resourcefulsheep.config.mutations;
 
-import com.mathmout.resourcefulsheep.entity.custom.SheepMutation;
-
 import java.util.ArrayList;
 import java.util.List;
 

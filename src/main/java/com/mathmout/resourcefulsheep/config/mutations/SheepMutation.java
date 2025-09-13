@@ -1,4 +1,4 @@
-package com.mathmout.resourcefulsheep.entity.custom;
+package com.mathmout.resourcefulsheep.config.mutations;
 
 public class SheepMutation {
     public String MomId;
