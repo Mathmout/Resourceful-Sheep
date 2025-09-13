@@ -34,9 +34,6 @@ public class ClientEvents {
                 Optional.empty()
         );
 
-        // The modern Pack.Metadata constructor is not easily accessible for virtual packs.
-        // We must use the deprecated constructor as it is the current recommended practice.
-        @SuppressWarnings("deprecation")
         var metadata = new Pack.Metadata(
                 locationInfo.title(),
                 PackCompatibility.COMPATIBLE,
