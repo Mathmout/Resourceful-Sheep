@@ -2,6 +2,7 @@ package com.mathmout.resourcefulsheep.datagen;
 
 
 
+import com.mathmout.resourcefulsheep.datagen.world.ModBiomeModifierProvider;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;
@@ -19,5 +20,7 @@ public class DataGenerators {
         PackOutput packOutput = generator.getPackOutput();
         ExistingFileHelper existingFileHelper = event.getExistingFileHelper();
         CompletableFuture<HolderLookup.Provider> lookupProvider = event.getLookupProvider();
+
+        generator.addProvider(event.includeServer(), new ModBiomeModifierProvider(packOutput, lookupProvider));
     }
 }

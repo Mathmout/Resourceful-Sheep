@@ -11,7 +11,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.sounds.SoundSource;
@@ -21,10 +21,10 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 
-
 import java.util.concurrent.ThreadLocalRandom;
 
 public class ModEvents {
+
 
     @SubscribeEvent
     public static void onPlayerInteract(PlayerInteractEvent.EntityInteract event) {
@@ -61,7 +61,7 @@ public class ModEvents {
                 SheepVariantData variant = ConfigSheepTypeManager.getSheepVariant().get(variantId);
                 if (variant != null && variant.EggColorSpotsNTitle != null) {
                     int nameColor = Integer.parseInt(variant.EggColorSpotsNTitle.substring(1), 16);
-                    String displayName = "§l" + itemIdToText(variant.Resource) + " Resourceful Sheep Egg";
+                    String displayName = "§l" + StringToText(variant.Resource) + " Resourceful Sheep Egg";
                     if (!event.getToolTip().isEmpty()) {
                         event.getToolTip().set(0, Component.literal(displayName).withStyle(Style.EMPTY.withColor(nameColor)));
                         if (!isShiftKeyDown) {
@@ -112,7 +112,7 @@ public class ModEvents {
     }
 
     // Utility to convert an item ID to readable text.
-    public static String itemIdToText(String itemId) {
+    public static String StringToText(String itemId) {
         String IdWithoutUnderscore = itemId.replace('_', ' ');
         String[] words = IdWithoutUnderscore.split(" ");
         StringBuilder result = new StringBuilder();

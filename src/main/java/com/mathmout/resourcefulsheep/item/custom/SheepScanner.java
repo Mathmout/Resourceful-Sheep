@@ -103,7 +103,7 @@ public class SheepScanner extends Item {
         DyeColor dyeColor = sheep.getColor();
         String colorName = dyeColor.getName().substring(0, 1).toUpperCase() + dyeColor.getName().substring(1);
         MutableComponent line4 = Component.literal("Color : ").withStyle(ChatFormatting.GRAY)
-                .append(Component.literal(ModEvents.itemIdToText(colorName)).withStyle(Style.EMPTY.withColor(dyeColor.getTextColor())));
+                .append(Component.literal(ModEvents.StringToText(colorName)).withStyle(Style.EMPTY.withColor(dyeColor.getTextColor())));
         mainComponent.append(line4);
         return mainComponent;
     }
@@ -117,7 +117,7 @@ public class SheepScanner extends Item {
 
         // Description
         DyeColor dyeColor = sheep.getColor();
-        String colorName = ModEvents.itemIdToText(dyeColor.getName());
+        String colorName = ModEvents.StringToText(dyeColor.getName());
         MutableComponent line2 = Component.literal("It's just a ").withStyle(ChatFormatting.GRAY)
                 .append(Component.literal(colorName).withStyle(Style.EMPTY.withColor(dyeColor.getTextColor())))
                 .append(Component.literal(" sheep.").withStyle(ChatFormatting.GRAY));

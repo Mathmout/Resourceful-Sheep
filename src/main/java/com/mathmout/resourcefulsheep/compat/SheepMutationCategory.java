@@ -180,7 +180,7 @@ public class SheepMutationCategory implements IRecipeCategory<SheepMutation> {
 
         String resourceText;
 
-        resourceText = ModEvents.itemIdToText(variant.Resource);
+        resourceText = ModEvents.StringToText(variant.Resource);
 
         MutableComponent lineRes = Component.literal("Resource : ").withStyle(ChatFormatting.BLUE)
                 .append(Component.literal(resourceText).withStyle(ChatFormatting.YELLOW));

@@ -4,15 +4,18 @@ import com.mathmout.resourcefulsheep.client.data.ClientEvents;
 import com.mathmout.resourcefulsheep.client.renderer.ResourcefulSheepRenderer;
 import com.mathmout.resourcefulsheep.config.mutations.ConfigSheepMutationManager;
 import com.mathmout.resourcefulsheep.config.sheeptypes.ConfigSheepTypeManager;
+import com.mathmout.resourcefulsheep.config.spawning.ConfigSheepSpawningManager;
 import com.mathmout.resourcefulsheep.datagen.DataGenerators;
 import com.mathmout.resourcefulsheep.entity.ModEntities;
 import com.mathmout.resourcefulsheep.event.ModEvents;
+import com.mathmout.resourcefulsheep.event.ModEventSetup;
 import com.mathmout.resourcefulsheep.item.ModCreativeTabs;
 import com.mathmout.resourcefulsheep.item.ModItems;
+import com.mathmout.resourcefulsheep.worldgen.modifier.ModBiomeModifierSerializers;
 import net.minecraft.client.renderer.entity.EntityRenderers;
-import net.minecraft.world.entity.animal.Sheep;
+
+
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
-import net.neoforged.neoforge.event.entity.EntityAttributeCreationEvent;
 
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -21,7 +24,6 @@ import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
-
 
 // The value here should match an entry in the META-INF/neoforge.mods.toml file
 @Mod(ResourcefulSheepMod.MOD_ID)
@@ -35,12 +37,14 @@ public class ResourcefulSheepMod {
         NeoForge.EVENT_BUS.register(this);
         NeoForge.EVENT_BUS.register(ModEvents.class);
 
+        modEventBus.register(ModEventSetup.class);
+
         modEventBus.addListener(ClientModEvents::onClientSetup);
-        modEventBus.addListener(this::addEntityAttributes);
         modEventBus.addListener(ClientEvents::onAddPackFinders);
 
         ConfigSheepTypeManager.init();
         ConfigSheepMutationManager.init();
+        ConfigSheepSpawningManager.init();
 
         ModEntities.registerVariantEntity();
         ModEntities.ENTITY_TYPES.register(modEventBus);
@@ -50,16 +54,13 @@ public class ResourcefulSheepMod {
         ModItems.register(modEventBus);
         ModItems.registerVariantSpawnEggs();
 
+        ModBiomeModifierSerializers.register(modEventBus);
+
+
         modEventBus.addListener(DataGenerators::gatherData);
 
         // Register our mod's ModConfigSpec so that FML can create and load the config file for us
         modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
-    }
-
-    private void addEntityAttributes(EntityAttributeCreationEvent event) {
-        ModEntities.SHEEP_ENTITIES.forEach((id, entityType) ->
-                event.put(entityType.get(), Sheep.createAttributes().build()));
-
     }
 
     // You can use SubscribeEvent and let the Event Bus discover methods to call
