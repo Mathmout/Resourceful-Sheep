@@ -29,7 +29,7 @@ public class ModEntities {
             String id = variant.Id;
             LOGGER.info("Registering entity with ID: {}", id);
             Supplier<EntityType<ResourcefulSheepEntity>> resourcefulSheep =
-            ENTITY_TYPES.register(id,() -> EntityType.Builder.of(ResourcefulSheepEntity::new, MobCategory.CREATURE)
+            ENTITY_TYPES.register(id,() -> EntityType.Builder.of(ResourcefulSheepEntity::new, MobCategory.AMBIENT)
                             .sized(0.9F, 1.3F)
                             .build(id));
             SHEEP_ENTITIES.put(id, resourcefulSheep);

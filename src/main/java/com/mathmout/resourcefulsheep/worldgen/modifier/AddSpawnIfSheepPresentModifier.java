@@ -28,7 +28,7 @@ public record AddSpawnIfSheepPresentModifier(List<MobSpawnSettings.SpawnerData> 
 
             if (vanillaSheepPresent) {
                 for (MobSpawnSettings.SpawnerData spawner : this.spawners) {
-                    builder.getMobSpawnSettings().addSpawn(MobCategory.CREATURE, spawner);
+                    builder.getMobSpawnSettings().addSpawn(MobCategory.AMBIENT, spawner);
                 }
             }
         }

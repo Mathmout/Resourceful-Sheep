@@ -22,6 +22,11 @@ public class ResourcefulSheepEntity extends Sheep {
         super(type, level);
     }
 
+    @Override
+    public boolean isPersistenceRequired() {
+        return true;
+    }
+
     @Nullable
     @Override
     public Sheep getBreedOffspring(@NotNull ServerLevel serverLevel, AgeableMob ageableMob) {
