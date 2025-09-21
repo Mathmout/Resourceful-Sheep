@@ -73,6 +73,8 @@ public class SheepSpawningCategory implements IRecipeCategory<SheepSpawningRecip
             SheepMutationCategory.addTooltip(tips, spawnData.sheepId());
         }
 
+        if (!tips.isEmpty()) g.renderComponentTooltip(Minecraft.getInstance().font, tips, (int) mouseX, (int) mouseY);
+
         int textX = (getWidth() + sheepX + scale)/2;
         int textY = sheepX - 10;
 

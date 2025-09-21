@@ -3,6 +3,7 @@ package com.mathmout.resourcefulsheep.datagen.world;
 import com.mathmout.resourcefulsheep.ResourcefulSheepMod;
 import com.mathmout.resourcefulsheep.config.spawning.ConfigSheepSpawningManager;
 import com.mathmout.resourcefulsheep.config.spawning.SheepSpawningData;
+import com.mathmout.resourcefulsheep.worldgen.modifier.AddSpawnIfSheepPresentModifier;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.HolderSet;
@@ -53,15 +54,17 @@ public class ModBiomeModifierProvider extends DatapackBuiltinEntriesProvider {
 
             ResourceKey<BiomeModifier> modifierKey = ResourceKey.create(NeoForgeRegistries.Keys.BIOME_MODIFIERS, entityRl);
 
-            // Case 2: Explicit biome spawning
-            if (!rule.biomes().isEmpty()) {
+            if (rule.biomes().isEmpty()) {
+                // Case 1: Empty biome list. Use our custom modifier to add spawns where vanilla sheep are present.
+                context.register(modifierKey, new AddSpawnIfSheepPresentModifier(List.of(spawner)));
+            } else {
+                // Case 2: Explicit biome list. Add spawn to specified biomes.
                 HolderSet<Biome> biomeHolderSet = HolderSet.direct(rule.biomes().stream()
                         .map(s -> ResourceKey.create(Registries.BIOME, ResourceLocation.parse(s)))
                         .map(biomeLookup::get)
                         .filter(Optional::isPresent)
                         .map(Optional::get)
                         .collect(Collectors.toList()));
-
                 context.register(modifierKey, new BiomeModifiers.AddSpawnsBiomeModifier(biomeHolderSet, List.of(spawner)));
             }
         }
