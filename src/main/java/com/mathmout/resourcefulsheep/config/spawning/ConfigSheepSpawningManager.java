@@ -2,6 +2,8 @@ package com.mathmout.resourcefulsheep.config.spawning;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.world.entity.EntityType;
 import net.neoforged.fml.loading.FMLPaths;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,6 +15,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class ConfigSheepSpawningManager {
@@ -20,6 +26,7 @@ public class ConfigSheepSpawningManager {
     public static final Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
     public static final Path CONFIG_DIR = FMLPaths.CONFIGDIR.get().resolve("resourceful_sheep/sheep_spawning");
     private static final List<SheepSpawningData> SHEEP_SPAWNING = new ArrayList<>();
+    private static Map<String, SheepSpawningData> sheepSpawningMap = Map.of();
     private static final Logger LOGGER = LoggerFactory.getLogger(ConfigSheepSpawningManager.class);
 
     public static void init() {
@@ -45,6 +52,7 @@ public class ConfigSheepSpawningManager {
                     LOGGER.error("Failed to read sheep spawning data from file: {}", path, e);
                 }
             });
+            sheepSpawningMap = SHEEP_SPAWNING.stream().collect(Collectors.toMap(SheepSpawningData::sheepId, Function.identity()));
         } catch (IOException e) {
             LOGGER.error("Failed to list sheep spawning configurations in: {}", CONFIG_DIR, e);
         }
@@ -77,5 +85,9 @@ public class ConfigSheepSpawningManager {
 
     public static List<SheepSpawningData> getSheepSpawning() {
         return SHEEP_SPAWNING;
+    }
+
+    public static Optional<SheepSpawningData> getSpawningDataFor(EntityType<?> entityType) {
+        return Optional.ofNullable(sheepSpawningMap.get(BuiltInRegistries.ENTITY_TYPE.getKey(entityType).getPath()));
     }
 }

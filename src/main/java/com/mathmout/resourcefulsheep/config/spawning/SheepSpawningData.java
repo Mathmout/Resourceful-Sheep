@@ -2,6 +2,12 @@ package com.mathmout.resourcefulsheep.config.spawning;
 
 import java.util.List;
 
-public record SheepSpawningData(String sheepId, int weight, int minCount, int maxCount, List<String> biomes, List<String> structures) {
+public record SheepSpawningData(String sheepId,
+                                int minCount,
+                                int maxCount,
+                                int densityRadius,
+                                int maxNearby,
+                                List<String> biomes)
+{
 
 }

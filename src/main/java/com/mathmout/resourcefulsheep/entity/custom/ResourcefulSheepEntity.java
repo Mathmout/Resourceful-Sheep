@@ -60,8 +60,8 @@ public class ResourcefulSheepEntity extends Sheep {
         List<SheepMutation> possibleMutations = new ArrayList<>();
 
         for (SheepMutation mutation : ConfigSheepMutationManager.getSheepMutations()) {
-            if ((mutation.MomId.equals(momId) && mutation.DadId.equals(dadId)) ||
-                (mutation.MomId.equals(dadId) && mutation.DadId.equals(momId))) {
+            if ((mutation.MomId().equals(momId) && mutation.DadId().equals(dadId)) ||
+                (mutation.MomId().equals(dadId) && mutation.DadId().equals(momId))) {
                 possibleMutations.add(mutation);
             }
         }
@@ -74,9 +74,9 @@ public class ResourcefulSheepEntity extends Sheep {
         int i = 0;
         while (childId == null && i < possibleMutations.size()) {
             SheepMutation mutation = possibleMutations.get(i);
-            cumulativeChance += mutation.Chance;
+            cumulativeChance += mutation.Chance();
             if (randomValue < cumulativeChance) {
-                childId = mutation.Child;
+                childId = mutation.Child();
             }
             i++;
         }

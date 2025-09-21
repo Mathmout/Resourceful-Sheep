@@ -39,8 +39,8 @@ public class ConfigSheepTypeManager {
             stream.filter(path -> path.toString().endsWith(".json")).forEach(path -> {
                 try (Reader reader = Files.newBufferedReader(path)) {
                     SheepTypeData data = GSON.fromJson(reader, SheepTypeData.class);
-                    if (data != null && data.Resource != null) {
-                        SHEEP_TYPES.put(data.Resource, data);
+                    if (data != null && data.Resource() != null) {
+                        SHEEP_TYPES.put(data.Resource(), data);
                     }
                 } catch (IOException e) {
                     LOGGER.error("Failed to read sheep type data from file: {}", path, e);
@@ -56,7 +56,7 @@ public class ConfigSheepTypeManager {
             if (stream.findAny().isEmpty()) {
                 LOGGER.info("No config files found in {}. Creating default configurations...", CONFIG_DIR);
                 for (SheepTypeData defaultType : DefaultSheepTypes.getDefaults()) {
-                    String fileName = defaultType.Resource + "_sheep.json";
+                    String fileName = defaultType.Resource() + "_sheep.json";
                     saveSheepType(fileName, defaultType);
                     LOGGER.info("Created default config file: {}", fileName);
                 }
@@ -76,17 +76,17 @@ public class ConfigSheepTypeManager {
     private static void buildVariants() {
         SHEEP_VARIANTS.clear();
         for (SheepTypeData type : SHEEP_TYPES.values()) {
-            for (SheepTypeData.TierData tier : type.SheepTier) {
-                String id = type.Resource.toLowerCase() + "_tier_" + tier.Tier;
+            for (SheepTypeData.TierData tier : type.SheepTier()) {
+                String id = type.Resource().toLowerCase() + "_tier_" + tier.Tier();
                 SheepVariantData variant = new SheepVariantData(
                         id,
-                        type.Resource,
-                        tier.Tier,
-                        tier.DroppedItem,
-                        tier.MinDrops,
-                        tier.MaxDrops,
-                        type.EggColorBackground,
-                        type.EggColorSpotsNTitle
+                        type.Resource(),
+                        tier.Tier(),
+                        tier.DroppedItem(),
+                        tier.MinDrops(),
+                        tier.MaxDrops(),
+                        type.EggColorBackground(),
+                        type.EggColorSpotsNTitle()
                 );
                 SHEEP_VARIANTS.put(id, variant);
             }

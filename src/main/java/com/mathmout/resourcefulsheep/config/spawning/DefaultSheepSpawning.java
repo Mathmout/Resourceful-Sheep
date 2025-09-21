@@ -9,32 +9,37 @@ public class DefaultSheepSpawning {
         List<SheepSpawningData> defaultSpawning = new ArrayList<>();
 
         //Stone
-        defaultSpawning.add(new SheepSpawningData("stone_tier_1", 8, 1, 1,
-                List.of(), List.of()));
+        defaultSpawning.add(new SheepSpawningData("stone_tier_1", 1, 1, 256, 1,
+                List.of()));
 
         //Cobblestone
-        defaultSpawning.add(new SheepSpawningData("cobblestone_tier_1", 8, 1, 1,
-                List.of(), List.of()));
+        defaultSpawning.add(new SheepSpawningData("cobblestone_tier_1", 1, 1, 256, 1,
+                List.of()));
 
         //Netherack
-        defaultSpawning.add(new SheepSpawningData("netherrack_tier_1", 8, 1, 1,
-                List.of("minecraft:nether_wastes"), List.of()));
-
-        //Soul Sand
-        defaultSpawning.add(new SheepSpawningData("soul_sand_tier_1", 8, 1, 1,
-                List.of("minecraft:soul_sand_valley","minecraft:crimson_forest"), List.of()));
-
-        //Sand
-        defaultSpawning.add(new SheepSpawningData("sand_tier_1", 8, 1, 1,
-                List.of("minecraft:savanna"), List.of()));
+        defaultSpawning.add(new SheepSpawningData("netherrack_tier_1", 1, 1, 256, 1,
+                List.of("minecraft:nether_wastes")));
 
         //Dripstone
-        defaultSpawning.add(new SheepSpawningData("dripstone_tier_1", 8, 1, 1,
-                List.of(), List.of()));
+        defaultSpawning.add(new SheepSpawningData("dripstone_tier_1", 1, 1, 256, 1,
+                List.of()));
+
+
+        //Soul Sand
+        defaultSpawning.add(new SheepSpawningData("soul_sand_tier_1", 1, 1, 256, 1,
+                List.of("minecraft:soul_sand_valley","minecraft:crimson_forest")));
+
+        //Sand
+        defaultSpawning.add(new SheepSpawningData("sand_tier_1", 1, 1, 256, 1,
+                List.of("minecraft:savanna")));
 
         //Nether Star
-        defaultSpawning.add(new SheepSpawningData("nether_star_tier_1", 4, 1, 1,
-                List.of("minecraft:soul_sand_valley"), List.of()));
+        defaultSpawning.add(new SheepSpawningData("nether_star_tier_1", 1, 1, 512, 1,
+                List.of("minecraft:soul_sand_valley")));
+
+        //Gold
+        defaultSpawning.add(new SheepSpawningData("gold_tier_1", 1, 1, 512, 1,
+                List.of("minecraft:wooded_badlands")));
 
         return defaultSpawning;
     }

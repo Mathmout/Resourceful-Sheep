@@ -1,5 +1,7 @@
 package com.mathmout.resourcefulsheep.event;
 
+import com.mathmout.resourcefulsheep.config.spawning.ConfigSheepSpawningManager;
+import com.mathmout.resourcefulsheep.config.spawning.SheepSpawningData;
 import com.mathmout.resourcefulsheep.entity.ModEntities;
 import com.mathmout.resourcefulsheep.entity.custom.ResourcefulSheepEntity;
 import com.mojang.logging.LogUtils;
@@ -20,6 +22,8 @@ import net.neoforged.neoforge.event.entity.EntityAttributeCreationEvent;
 import net.neoforged.neoforge.event.entity.RegisterSpawnPlacementsEvent;
 import org.slf4j.Logger;
 
+import java.util.Optional;
+
 public class ModEventSetup {
 
     private static final Logger LOGGER = LogUtils.getLogger();
@@ -36,9 +40,17 @@ public class ModEventSetup {
     public static boolean checkResourcefulSheepSpawnRules(EntityType<? extends Animal> entityType, ServerLevelAccessor level, MobSpawnType spawnType, BlockPos pos, RandomSource random) {
         LOGGER.info("Attempting spawn for {} at {} in biome {}", BuiltInRegistries.ENTITY_TYPE.getKey(entityType), pos, level.getBiome(pos).unwrapKey().map(k -> k.location().toString()).orElse("?"));
 
+        Optional<SheepSpawningData> spawningDataOpt = ConfigSheepSpawningManager.getSpawningDataFor(entityType);
+        if (spawningDataOpt.isEmpty()) {
+            LOGGER.warn("Could not find spawning data for sheep type: {}", BuiltInRegistries.ENTITY_TYPE.getKey(entityType));
+            return false; // Or handle as you see fit
+        }
+
+        SheepSpawningData spawningData = spawningDataOpt.get();
+
         // Check for nearby sheep to limit density
-        int nearbySheep = level.getEntitiesOfClass(ResourcefulSheepEntity.class, new AABB(pos).inflate(256), e -> e.getType() == entityType).size();
-        if (nearbySheep > 1 ) {
+        int nearbySheep = level.getEntitiesOfClass(ResourcefulSheepEntity.class, new AABB(pos).inflate(spawningData.densityRadius()), e -> e.getType() == entityType).size();
+        if (nearbySheep > spawningData.maxNearby()) {
             LOGGER.info(" -> Failed: Too many sheep nearby.");
             return false;
         }
@@ -48,6 +60,7 @@ public class ModEventSetup {
         if (!canSpawn) {
             LOGGER.info(" -> Failed: Block below is not sturdy.");
         }
+
         return canSpawn;
     }
 

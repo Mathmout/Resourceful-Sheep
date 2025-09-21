@@ -3,7 +3,6 @@ package com.mathmout.resourcefulsheep.datagen.world;
 import com.mathmout.resourcefulsheep.ResourcefulSheepMod;
 import com.mathmout.resourcefulsheep.config.spawning.ConfigSheepSpawningManager;
 import com.mathmout.resourcefulsheep.config.spawning.SheepSpawningData;
-import com.mathmout.resourcefulsheep.worldgen.modifier.AddSpawnIfSheepPresentModifier;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.HolderSet;
@@ -47,19 +46,15 @@ public class ModBiomeModifierProvider extends DatapackBuiltinEntriesProvider {
 
             MobSpawnSettings.SpawnerData spawner = new MobSpawnSettings.SpawnerData(
                     entityType,
-                    rule.weight(),
+                    8,
                     rule.minCount(),
                     rule.maxCount()
             );
 
             ResourceKey<BiomeModifier> modifierKey = ResourceKey.create(NeoForgeRegistries.Keys.BIOME_MODIFIERS, entityRl);
 
-            // Case 1: Dynamic spawning if both lists are empty
-            if (rule.biomes().isEmpty() && rule.structures().isEmpty()) {
-                context.register(modifierKey, new AddSpawnIfSheepPresentModifier(List.of(spawner)));
-            }
             // Case 2: Explicit biome spawning
-            else if (!rule.biomes().isEmpty()) {
+            if (!rule.biomes().isEmpty()) {
                 HolderSet<Biome> biomeHolderSet = HolderSet.direct(rule.biomes().stream()
                         .map(s -> ResourceKey.create(Registries.BIOME, ResourceLocation.parse(s)))
                         .map(biomeLookup::get)
