@@ -55,7 +55,7 @@ public class ConfigSheepMutationManager {
             if (stream.findAny().isEmpty()) {
                 LOGGER.info("No config files found in {}. Creating default configurations...", CONFIG_DIR);
                 for (SheepMutation defaultMutation : DefaultSheepMutations.getDefaults()) {
-                    String fileName = defaultMutation.MomId() + "_x_" + defaultMutation.DadId() + "_to_" + defaultMutation.Child() + ".json";
+                    String fileName = defaultMutation.Child() + ".json";
                     saveSheepMutation(fileName, defaultMutation);
                     LOGGER.info("Created default config file: {}", fileName);
                 }

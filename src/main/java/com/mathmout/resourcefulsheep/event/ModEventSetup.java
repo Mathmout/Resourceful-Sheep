@@ -33,7 +33,7 @@ public class ModEventSetup {
         ModEntities.SHEEP_ENTITIES.forEach((id, entityType) -> event.register(entityType.get(),
                 SpawnPlacementTypes.NO_RESTRICTIONS,
                 Heightmap.Types.MOTION_BLOCKING,
-                ModEventSetup::checkResourcefulSheepSpawnRules, // Using our custom rule
+                ModEventSetup::checkResourcefulSheepSpawnRules,
                 RegisterSpawnPlacementsEvent.Operation.REPLACE));
     }
 
@@ -43,7 +43,7 @@ public class ModEventSetup {
         Optional<SheepSpawningData> spawningDataOpt = ConfigSheepSpawningManager.getSpawningDataFor(entityType);
         if (spawningDataOpt.isEmpty()) {
             LOGGER.warn("Could not find spawning data for sheep type: {}", BuiltInRegistries.ENTITY_TYPE.getKey(entityType));
-            return false; // Or handle as you see fit
+            return false;
         }
 
         SheepSpawningData spawningData = spawningDataOpt.get();

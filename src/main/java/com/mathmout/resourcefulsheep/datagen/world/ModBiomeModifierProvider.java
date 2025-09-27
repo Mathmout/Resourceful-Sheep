@@ -29,6 +29,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 public class ModBiomeModifierProvider extends DatapackBuiltinEntriesProvider {
+
     public static final RegistrySetBuilder BUILDER = new RegistrySetBuilder()
             .add(NeoForgeRegistries.Keys.BIOME_MODIFIERS, ModBiomeModifierProvider::bootstrap);
 
@@ -39,11 +40,15 @@ public class ModBiomeModifierProvider extends DatapackBuiltinEntriesProvider {
     private static void bootstrap(BootstrapContext<BiomeModifier> context) {
         ConfigSheepSpawningManager.init();
         List<SheepSpawningData> spawningRules = ConfigSheepSpawningManager.getSheepSpawning();
+
         HolderGetter<Biome> biomeLookup = context.lookup(Registries.BIOME);
+        HolderGetter<EntityType<?>> entityLookup = context.lookup(Registries.ENTITY_TYPE);
 
         for (SheepSpawningData rule : spawningRules) {
             ResourceLocation entityRl = ResourceLocation.fromNamespaceAndPath(ResourcefulSheepMod.MOD_ID, rule.sheepId());
-            EntityType<?> entityType = BuiltInRegistries.ENTITY_TYPE.get(entityRl);
+            EntityType<?> entityType = entityLookup.getOrThrow(
+                    ResourceKey.create(Registries.ENTITY_TYPE, entityRl)
+            ).value();
 
             MobSpawnSettings.SpawnerData spawner = new MobSpawnSettings.SpawnerData(
                     entityType,
@@ -64,7 +69,7 @@ public class ModBiomeModifierProvider extends DatapackBuiltinEntriesProvider {
                         .map(biomeLookup::get)
                         .filter(Optional::isPresent)
                         .map(Optional::get)
-                        .collect(Collectors.toList()));
+                        .toList());
                 context.register(modifierKey, new BiomeModifiers.AddSpawnsBiomeModifier(biomeHolderSet, List.of(spawner)));
             }
         }

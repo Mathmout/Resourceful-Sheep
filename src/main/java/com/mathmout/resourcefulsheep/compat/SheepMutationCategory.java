@@ -42,13 +42,11 @@ import java.util.Map;
 
 public class SheepMutationCategory implements IRecipeCategory<SheepMutation> {
     public static final ResourceLocation UID = ResourceLocation.fromNamespaceAndPath(ResourcefulSheepMod.MOD_ID, "sheep_mutation");
-    private final IDrawable background;
     private final IDrawable icon;
 
     private static final Map<String, ResourcefulSheepEntity> sheepCache = new HashMap<>();
 
     public SheepMutationCategory(IGuiHelper guiHelper) {
-        this.background = guiHelper.createBlankDrawable(getWidth(), getHeight());
         this.icon = guiHelper.createDrawableIngredient(VanillaTypes.ITEM_STACK, new ItemStack(ModItems.LASSO.get()));
     }
 
@@ -60,10 +58,6 @@ public class SheepMutationCategory implements IRecipeCategory<SheepMutation> {
     @Override
     public @NotNull Component getTitle() {
         return Component.translatable("recipe."+ ResourcefulSheepMod.MOD_ID +".mutation");
-    }
-
-    public @NotNull IDrawable getBackground() {
-        return background;
     }
 
     @Override

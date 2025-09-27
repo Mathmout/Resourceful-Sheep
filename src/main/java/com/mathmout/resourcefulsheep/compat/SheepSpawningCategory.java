@@ -26,11 +26,9 @@ import java.util.List;
 
 public class SheepSpawningCategory implements IRecipeCategory<SheepSpawningRecipeWrapper> {
     public static final ResourceLocation UID = ResourceLocation.fromNamespaceAndPath(ResourcefulSheepMod.MOD_ID, "sheep_spawning");
-    private final IDrawable background;
     private final IDrawable icon;
 
     public SheepSpawningCategory(IGuiHelper guiHelper) {
-        this.background = guiHelper.createBlankDrawable(180, 120);
         this.icon = guiHelper.createDrawableIngredient(VanillaTypes.ITEM_STACK, new ItemStack(ModItems.SHEEP_SCANNER.get()));
     }
 
@@ -45,13 +43,18 @@ public class SheepSpawningCategory implements IRecipeCategory<SheepSpawningRecip
     }
 
     @Override
-    public @NotNull IDrawable getBackground() {
-        return background;
+    public @NotNull IDrawable getIcon() {
+        return icon;
     }
 
     @Override
-    public @NotNull IDrawable getIcon() {
-        return icon;
+    public int getWidth() {
+        return 180;
+    }
+
+    @Override
+    public int getHeight() {
+        return 128;
     }
 
     @Override

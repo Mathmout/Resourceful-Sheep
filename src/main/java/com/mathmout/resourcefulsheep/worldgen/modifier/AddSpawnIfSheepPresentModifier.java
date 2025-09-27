@@ -23,7 +23,8 @@ public record AddSpawnIfSheepPresentModifier(List<MobSpawnSettings.SpawnerData> 
     @Override
     public void modify(@NotNull Holder<Biome> biome, @NotNull Phase phase, ModifiableBiomeInfo.BiomeInfo.@NotNull Builder builder) {
         if (phase == Phase.ADD) {
-            boolean vanillaSheepPresent = biome.value().getMobSettings().getMobs(MobCategory.CREATURE).unwrap().stream()
+            boolean vanillaSheepPresent = biome.value().getMobSettings()
+                    .getMobs(MobCategory.CREATURE).unwrap().stream()
                     .anyMatch(s -> s.type.equals(EntityType.SHEEP));
 
             if (vanillaSheepPresent) {

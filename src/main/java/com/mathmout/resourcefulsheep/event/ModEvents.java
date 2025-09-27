@@ -25,7 +25,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class ModEvents {
 
-
+    // Handle shearing of Resourceful Sheep to drop custom items.
     @SubscribeEvent
     public static void onPlayerInteract(PlayerInteractEvent.EntityInteract event) {
         if (event.getTarget() instanceof ResourcefulSheepEntity sheep) {
@@ -48,6 +48,7 @@ public class ModEvents {
         }
     }
 
+    // Add tooltip information to spawn eggs.
     @SubscribeEvent
     public static void onItemTooltip(ItemTooltipEvent event) {
         Item item = event.getItemStack().getItem();
@@ -127,4 +128,5 @@ public class ModEvents {
         }
         return result.toString().trim();
     }
+
 }
