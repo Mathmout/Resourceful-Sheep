@@ -7,11 +7,10 @@ import com.mathmout.resourcefulsheep.config.sheeptypes.ConfigSheepTypeManager;
 import com.mathmout.resourcefulsheep.config.spawning.ConfigSheepSpawningManager;
 import com.mathmout.resourcefulsheep.datagen.DataGenerators;
 import com.mathmout.resourcefulsheep.entity.ModEntities;
-import com.mathmout.resourcefulsheep.event.ModEvents;
 import com.mathmout.resourcefulsheep.event.ModEventSetup;
+import com.mathmout.resourcefulsheep.event.ModEvents;
 import com.mathmout.resourcefulsheep.item.ModCreativeTabs;
 import com.mathmout.resourcefulsheep.item.ModItems;
-import com.mathmout.resourcefulsheep.worldgen.modifier.ModBiomeModifierSerializers;
 import net.minecraft.client.renderer.entity.EntityRenderers;
 
 
@@ -53,9 +52,6 @@ public class ResourcefulSheepMod {
 
         ModItems.register(modEventBus);
         ModItems.registerVariantSpawnEggs();
-
-        ModBiomeModifierSerializers.register(modEventBus);
-
 
         modEventBus.addListener(DataGenerators::gatherData);
 
