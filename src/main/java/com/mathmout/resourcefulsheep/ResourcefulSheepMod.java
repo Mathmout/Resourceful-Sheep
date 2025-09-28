@@ -40,6 +40,7 @@ public class ResourcefulSheepMod {
 
         modEventBus.addListener(ClientModEvents::onClientSetup);
         modEventBus.addListener(ClientEvents::onAddPackFinders);
+        modEventBus.addListener(ClientEvents::onRegisterClientReloadListeners);
 
         ConfigSheepTypeManager.init();
         ConfigSheepMutationManager.init();

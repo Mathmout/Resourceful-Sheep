@@ -12,6 +12,7 @@ import java.io.Reader;
 import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Stream;
@@ -96,5 +97,9 @@ public class ConfigSheepTypeManager {
 
     public static Map<String, SheepVariantData> getSheepVariant() {
         return SHEEP_VARIANTS;
+    }
+
+    public static Collection<SheepTypeData> getSheepTypes() {
+        return SHEEP_TYPES.values();
     }
 }

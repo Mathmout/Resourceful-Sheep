@@ -6,7 +6,6 @@ import com.mathmout.resourcefulsheep.entity.custom.ResourcefulSheepEntity;
 import com.mathmout.resourcefulsheep.entity.custom.SheepVariantData;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.SheepFurModel;
 import net.minecraft.client.model.SheepModel;
 import net.minecraft.client.model.geom.EntityModelSet;
@@ -39,7 +38,7 @@ public class ResourcefulSheepRenderer extends MobRenderer<ResourcefulSheepEntity
                     "textures/entity/sheep/" + variant.Id + ".png"
             );
 
-            if (Minecraft.getInstance().getResourceManager().getResource(customBodyTexture).isPresent()) {
+            if (net.minecraft.client.Minecraft.getInstance().getResourceManager().getResource(customBodyTexture).isPresent()) {
                 return customBodyTexture;
             }
         }
@@ -56,7 +55,7 @@ public class ResourcefulSheepRenderer extends MobRenderer<ResourcefulSheepEntity
                     "textures/entity/sheep/" + variant.Id + "_fur.png"
             );
 
-            if (Minecraft.getInstance().getResourceManager().getResource(customFurTexture).isPresent()) {
+            if (net.minecraft.client.Minecraft.getInstance().getResourceManager().getResource(customFurTexture).isPresent()) {
                 return customFurTexture;
             }
         }

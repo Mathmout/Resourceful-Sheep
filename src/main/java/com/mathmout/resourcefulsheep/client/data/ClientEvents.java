@@ -9,15 +9,25 @@ import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.repository.Pack;
 import net.minecraft.server.packs.repository.PackCompatibility;
 import net.minecraft.server.packs.repository.PackSource;
+import net.minecraft.server.packs.resources.PreparableReloadListener;
+import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.flag.FeatureFlagSet;
 import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.neoforge.client.event.RegisterClientReloadListenersEvent;
 import net.neoforged.neoforge.event.AddPackFindersEvent;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
 
 public class ClientEvents {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ClientEvents.class);
 
     @SubscribeEvent
     public static void onAddPackFinders(AddPackFindersEvent event) {
@@ -26,6 +36,32 @@ public class ClientEvents {
         } else if (event.getPackType() == PackType.SERVER_DATA) {
             event.addRepositorySource((packConsumer) -> packConsumer.accept(createDynamicServerPack()));
         }
+    }
+
+    @SubscribeEvent
+    public static void onRegisterClientReloadListeners(RegisterClientReloadListenersEvent event) {
+        event.registerReloadListener(new PreparableReloadListener() {
+            @Override
+            public @NotNull CompletableFuture<Void> reload(
+                    @NotNull PreparationBarrier preparationBarrier,
+                    @NotNull ResourceManager resourceManager,
+                    @NotNull ProfilerFiller preparationsProfiler,
+                    @NotNull ProfilerFiller reloadProfiler,
+                    @NotNull Executor backgroundExecutor,
+                    @NotNull Executor gameExecutor) {
+                LOGGER.info("Dynamic textures reload listener: Starting reload...");
+                return CompletableFuture.runAsync(() -> LOGGER.info("Dynamic textures reload listener: Prepare stage running."), backgroundExecutor).thenCompose(preparationBarrier::wait).thenRunAsync(() -> {
+                    LOGGER.info("Dynamic textures reload listener: Apply stage starting...");
+                    try {
+                        DynamicSheepTextureGenerator.clear();
+                        new DynamicSheepTextureGenerator().generateAllTextures(resourceManager);
+                    } catch (Exception e) {
+                        LOGGER.error("Failed to run dynamic texture generator", e);
+                    }
+                    LOGGER.info("Dynamic textures reload listener: Apply stage finished.");
+                }, gameExecutor);
+            }
+        });
     }
 
     private static Pack createDynamicClientPack() {

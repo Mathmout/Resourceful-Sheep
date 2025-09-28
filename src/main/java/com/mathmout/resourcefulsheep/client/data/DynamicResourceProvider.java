@@ -86,6 +86,11 @@ public class DynamicResourceProvider implements PackResources {
             if (resourceCache.containsKey(path)) {
                 return () -> new ByteArrayInputStream(resourceCache.get(path));
             }
+
+            byte[] textureBytes = DynamicSheepTextureGenerator.DYNAMIC_TEXTURES.get(location);
+            if (textureBytes != null) {
+                return () -> new ByteArrayInputStream(textureBytes);
+            }
         }
         return null;
     }
@@ -101,6 +106,12 @@ public class DynamicResourceProvider implements PackResources {
                             entry.getKey().substring(("assets/" + namespace + "/").length())
                     );
                     resourceOutput.accept(resourcelocation, () -> new ByteArrayInputStream(entry.getValue()));
+                }
+            }
+
+            for (Map.Entry<ResourceLocation, byte[]> entry : DynamicSheepTextureGenerator.DYNAMIC_TEXTURES.entrySet()) {
+                if (entry.getKey().getNamespace().equals(namespace) && entry.getKey().getPath().startsWith(path)) {
+                    resourceOutput.accept(entry.getKey(), () -> new ByteArrayInputStream(entry.getValue()));
                 }
             }
         }
