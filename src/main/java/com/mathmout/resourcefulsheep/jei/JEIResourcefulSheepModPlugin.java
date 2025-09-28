@@ -1,4 +1,4 @@
-package com.mathmout.resourcefulsheep.compat;
+package com.mathmout.resourcefulsheep.jei;
 
 import com.mathmout.resourcefulsheep.ResourcefulSheepMod;
 import com.mathmout.resourcefulsheep.config.mutations.ConfigSheepMutationManager;
