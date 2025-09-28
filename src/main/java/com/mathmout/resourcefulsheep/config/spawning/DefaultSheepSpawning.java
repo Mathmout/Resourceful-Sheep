@@ -27,11 +27,11 @@ public class DefaultSheepSpawning {
 
         //Soul Sand
         defaultSpawning.add(new SheepSpawningData("soul_sand_tier_1", 1, 1, 256, 1,
-                List.of("minecraft:soul_sand_valley","minecraft:crimson_forest")));
+                List.of("minecraft:soul_sand_valley")));
 
         //Sand
         defaultSpawning.add(new SheepSpawningData("sand_tier_1", 1, 1, 256, 1,
-                List.of("minecraft:savanna")));
+                List.of()));
 
         //Nether Star
         defaultSpawning.add(new SheepSpawningData("nether_star_tier_1", 1, 1, 512, 1,

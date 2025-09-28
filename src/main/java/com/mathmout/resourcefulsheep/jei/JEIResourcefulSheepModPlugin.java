@@ -3,8 +3,10 @@ package com.mathmout.resourcefulsheep.jei;
 import com.mathmout.resourcefulsheep.ResourcefulSheepMod;
 import com.mathmout.resourcefulsheep.config.mutations.ConfigSheepMutationManager;
 import com.mathmout.resourcefulsheep.config.mutations.SheepMutation;
+import com.mathmout.resourcefulsheep.config.sheeptypes.ConfigSheepTypeManager;
 import com.mathmout.resourcefulsheep.config.spawning.ConfigSheepSpawningManager;
 import com.mathmout.resourcefulsheep.config.spawning.SheepSpawningData;
+import com.mathmout.resourcefulsheep.entity.custom.SheepVariantData;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
 import mezz.jei.api.recipe.RecipeType;
@@ -23,6 +25,8 @@ public class JEIResourcefulSheepModPlugin implements IModPlugin {
             new RecipeType<>(SheepMutationCategory.UID, SheepMutation.class);
     public static final RecipeType<SheepSpawningRecipeWrapper> SPAWNING_TYPE =
             new RecipeType<>(SheepSpawningCategory.UID, SheepSpawningRecipeWrapper.class);
+    public static final RecipeType<SheepVariantData> DROPPING_TYPE =
+            new RecipeType<>(SheepDroppingCategory.UID, SheepVariantData.class);
 
     @Override
     public @NotNull ResourceLocation getPluginUid() {
@@ -33,13 +37,16 @@ public class JEIResourcefulSheepModPlugin implements IModPlugin {
     public void registerCategories(IRecipeCategoryRegistration registration) {
         registration.addRecipeCategories(new SheepMutationCategory(registration.getJeiHelpers().getGuiHelper()));
         registration.addRecipeCategories(new SheepSpawningCategory(registration.getJeiHelpers().getGuiHelper()));
+        registration.addRecipeCategories(new SheepDroppingCategory(registration.getJeiHelpers().getGuiHelper()));
     }
 
     @Override
     public void registerRecipes(IRecipeRegistration registration) {
+        // Mutation Recipes
         List<SheepMutation> mutations = ConfigSheepMutationManager.getSheepMutations();
         registration.addRecipes(MUTATION_TYPE, mutations);
 
+        // Spawning Recipes
         List<SheepSpawningData> spawns = ConfigSheepSpawningManager.getSheepSpawning();
         List<SheepSpawningRecipeWrapper> wrappedSpawns = new ArrayList<>();
         final int biomesPerPage = 5;
@@ -56,6 +63,10 @@ public class JEIResourcefulSheepModPlugin implements IModPlugin {
             }
         }
         registration.addRecipes(SPAWNING_TYPE, wrappedSpawns);
+
+        // Dropping Recipes
+        List<SheepVariantData> variants = new ArrayList<>(ConfigSheepTypeManager.getSheepVariant().values());
+        registration.addRecipes(DROPPING_TYPE, variants);
     }
 
     @Override
