@@ -82,7 +82,7 @@ public class SheepDroppingCategory implements IRecipeCategory<SheepVariantData> 
         g.drawString(Minecraft.getInstance().font, "→", sheepX * 2, baseY, 0xFF404040, false);
 
         List<Component> tips = new ArrayList<>();
-        if (SheepMutationCategory.isMouseOver(mouseX, mouseY, sheepX - scale, baseY, sheepX + scale, baseY - 2 * scale)) {
+        if (SheepMutationCategory.isMouseOver(mouseX, mouseY, sheepX - scale, baseY - 3 * scale/4,sheepX + scale, baseY + 3 * scale/4)) {
             SheepMutationCategory.addTooltip(tips, recipe.Id);
         }
 
