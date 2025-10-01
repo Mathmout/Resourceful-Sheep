@@ -37,7 +37,7 @@ public class ConfigSheepMutationManager {
             stream.filter(path -> path.toString().endsWith(".json")).forEach(path -> {
                 try (Reader reader = Files.newBufferedReader(path)) {
                     SheepMutation data = GSON.fromJson(reader, SheepMutation.class);
-                    if (data != null && data.MomId() != null && data.DadId() != null && data.Child() != null) {
+                    if (data != null && data.MomId() != null && data.DadId() != null && data.ChildId() != null) {
                         SHEEP_MUTATIONS.add(data);
                     }
                 } catch (IOException e) {
@@ -55,7 +55,7 @@ public class ConfigSheepMutationManager {
             if (stream.findAny().isEmpty()) {
                 LOGGER.info("No config files found in {}. Creating default configurations...", CONFIG_DIR);
                 for (SheepMutation defaultMutation : DefaultSheepMutations.getDefaults()) {
-                    String fileName = defaultMutation.Child() + ".json";
+                    String fileName = defaultMutation.ChildId() + ".json";
                     saveSheepMutation(fileName, defaultMutation);
                     LOGGER.info("Created default config file: {}", fileName);
                 }

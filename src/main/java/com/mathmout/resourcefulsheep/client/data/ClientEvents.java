@@ -67,7 +67,7 @@ public class ClientEvents {
     private static Pack createDynamicClientPack() {
         var locationInfo = new PackLocationInfo(
                 ResourcefulSheepMod.MOD_ID + "_dynamic_client",
-                Component.literal("Resourceful Sheep Dynamic Client Resources"),
+                Component.literal("Resourceful Sheep Resource Pack"),
                 PackSource.DEFAULT,
                 Optional.empty()
         );

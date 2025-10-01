@@ -76,7 +76,7 @@ public class ResourcefulSheepEntity extends Sheep {
             SheepMutation mutation = possibleMutations.get(i);
             cumulativeChance += mutation.Chance();
             if (randomValue < cumulativeChance) {
-                childId = mutation.Child();
+                childId = mutation.ChildId();
             }
             i++;
         }

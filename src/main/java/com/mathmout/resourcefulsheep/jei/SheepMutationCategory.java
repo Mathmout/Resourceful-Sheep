@@ -79,7 +79,7 @@ public class SheepMutationCategory implements IRecipeCategory<SheepMutation> {
     public void setRecipe(@NotNull IRecipeLayoutBuilder builder, @NotNull SheepMutation recipe, @NotNull IFocusGroup focuses) {
         Item momEgg = BuiltInRegistries.ITEM.get(ResourceLocation.fromNamespaceAndPath(ResourcefulSheepMod.MOD_ID, recipe.MomId() + "_spawn_egg"));
         Item dadEgg = BuiltInRegistries.ITEM.get(ResourceLocation.fromNamespaceAndPath(ResourcefulSheepMod.MOD_ID, recipe.DadId() + "_spawn_egg"));
-        Item childEgg = BuiltInRegistries.ITEM.get(ResourceLocation.fromNamespaceAndPath(ResourcefulSheepMod.MOD_ID, recipe.Child() + "_spawn_egg"));
+        Item childEgg = BuiltInRegistries.ITEM.get(ResourceLocation.fromNamespaceAndPath(ResourcefulSheepMod.MOD_ID, recipe.ChildId() + "_spawn_egg"));
 
         builder.addInvisibleIngredients(RecipeIngredientRole.INPUT).addItemStack(new ItemStack(momEgg));
         builder.addInvisibleIngredients(RecipeIngredientRole.INPUT).addItemStack(new ItemStack(dadEgg));
@@ -101,7 +101,7 @@ public class SheepMutationCategory implements IRecipeCategory<SheepMutation> {
 
         drawSheep(g, recipe.MomId(), momX, baseY + scale, scale);
         drawSheep(g, recipe.DadId(), dadX, baseY + scale, scale);
-        drawSheep(g, recipe.Child(), childX, baseY + scale, scale);
+        drawSheep(g, recipe.ChildId(), childX, baseY + scale, scale);
 
         g.drawString(Minecraft.getInstance().font, "Chance of success : " + recipe.Chance() + " %",
                 ((childX + momX) - Minecraft.getInstance().font.width("Chance of success : " + recipe.Chance() + " %")) / 2,
@@ -115,7 +115,7 @@ public class SheepMutationCategory implements IRecipeCategory<SheepMutation> {
             addTooltip(tips, recipe.DadId());
 
         if (isMouseOver(mouseX, mouseY, childX - 18, baseY - 10, childX + 18, baseY + 28))
-            addTooltip(tips, recipe.Child());
+            addTooltip(tips, recipe.ChildId());
 
         if (!tips.isEmpty()) g.renderComponentTooltip(Minecraft.getInstance().font, tips, (int) mouseX, (int) mouseY);
     }
