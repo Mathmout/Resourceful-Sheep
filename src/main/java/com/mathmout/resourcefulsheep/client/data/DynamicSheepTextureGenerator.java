@@ -135,8 +135,9 @@ public class DynamicSheepTextureGenerator {
             int tier = variant.Tier;
 
             double coverage;
+
             if (maxTier > MAX_TIER_INCREMENT) {
-                coverage = tier * MAX_TIER_INCREMENT * (tier / maxTier);
+                coverage = (MAX_TIER_INCREMENT / 10.0) * (tier / maxTier);
             } else {
                 coverage = tier * TIER_INCREMENT;
             }

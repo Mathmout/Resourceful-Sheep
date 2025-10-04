@@ -15,7 +15,13 @@ public class CustomDeferredSpawnEggItem extends DeferredSpawnEggItem {
     private final String displayName;
     private final int nameColor;
 
-    public CustomDeferredSpawnEggItem(Supplier<? extends EntityType<? extends Mob>> type, int backgroundColor, int highlightColor, Properties props, String displayName, int nameColor) {
+    public CustomDeferredSpawnEggItem(Supplier<? extends EntityType<? extends Mob>> type,
+                                      int backgroundColor,
+                                      int highlightColor,
+                                      Properties props,
+                                      String displayName,
+                                      int nameColor) {
+
         super(type, backgroundColor, highlightColor, props);
         this.displayName = displayName;
         this.nameColor = nameColor;
