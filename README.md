@@ -14,7 +14,7 @@ The mod is **fully customizable**:
 You can change drops, tiers, and spawning as you like.
 
 👉 More information on CurseForge :  
-[Resourceful Sheep on CurseForge] : https://www.curseforge.com/minecraft/mc-mods/resourceful-sheep
+[Resourceful Sheep on CurseForge] : https://www.curseforge.com/minecraft/mc-mods/resourcefulsheep
 
 ✨ Thanks for checking out Resourceful Sheep!  
 Feel free to open suggestions or ideas to make it better.
