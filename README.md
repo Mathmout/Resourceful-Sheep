@@ -1,25 +1,20 @@
+# Resourceful Sheep 🐑
 
-Installation information
-=======
+Resourceful Sheep is a Minecraft mod that lets you raise sheep that drop resources.  
+From simple cobblestone to the Nether Star, everything is possible.  
 
-This template repository can be directly cloned to get you started with a new
-mod. Simply create a new repository cloned from this one, by following the
-instructions provided by [GitHub](https://docs.github.com/en/repositories/creating-and-managing-repositories/creating-a-repository-from-a-template).
+The mod is **fully customizable**:  
+- Add new sheep types linked to any item or block.  
+- Breed sheep into higher tiers for more drops.  
+- Define mutations to create new sheep.  
+- Control spawning in the world.  
+- Full JEI integration to see recipes and info in-game.  
 
-Once you have your clone, simply open the repository in the IDE of your choice. The usual recommendation for an IDE is either IntelliJ IDEA or Eclipse.
+⚡ All configuration is done with **JSON files**.  
+You can change drops, tiers, and spawning as you like.
 
-If at any point you are missing libraries in your IDE, or you've run into problems you can
-run `gradlew --refresh-dependencies` to refresh the local cache. `gradlew clean` to reset everything 
-{this does not affect your code} and then start the process again.
+👉 More information on CurseForge :  
+[Resourceful Sheep on CurseForge] : https://www.curseforge.com/minecraft/mc-mods/resourceful-sheep
 
-Mapping Names:
-============
-By default, the MDK is configured to use the official mapping names from Mojang for methods and fields 
-in the Minecraft codebase. These names are covered by a specific license. All modders should be aware of this
-license. For the latest license text, refer to the mapping file itself, or the reference copy here:
-https://github.com/NeoForged/NeoForm/blob/main/Mojang.md
-
-Additional Resources: 
-==========
-Community Documentation: https://docs.neoforged.net/  
-NeoForged Discord: https://discord.neoforged.net/
+✨ Thanks for checking out Resourceful Sheep!  
+Feel free to open suggestions or ideas to make it better.
