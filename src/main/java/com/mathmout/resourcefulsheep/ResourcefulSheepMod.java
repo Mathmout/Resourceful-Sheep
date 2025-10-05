@@ -10,9 +10,9 @@ import com.mathmout.resourcefulsheep.entity.ModEntities;
 import com.mathmout.resourcefulsheep.event.ModEventSetup;
 import com.mathmout.resourcefulsheep.event.ModEvents;
 import com.mathmout.resourcefulsheep.item.ModCreativeTabs;
+import com.mathmout.resourcefulsheep.item.ModDataComponents;
 import com.mathmout.resourcefulsheep.item.ModItems;
 import net.minecraft.client.renderer.entity.EntityRenderers;
-
 
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 
@@ -54,6 +54,8 @@ public class ResourcefulSheepMod {
         ModItems.register(modEventBus);
         ModItems.registerVariantSpawnEggs();
 
+        ModDataComponents.register(modEventBus);
+
         modEventBus.addListener(DataGenerators::gatherData);
 
         // Register our mod's ModConfigSpec so that FML can create and load the config file for us
@@ -65,7 +67,7 @@ public class ResourcefulSheepMod {
     public void onServerStarting(ServerStartingEvent event) {
     }
 
-    public static class ClientModEvents {
+public static class ClientModEvents {
         @SubscribeEvent
         public static void onClientSetup(final FMLClientSetupEvent event) {
             ModEntities.SHEEP_ENTITIES.forEach((id, entityType) ->

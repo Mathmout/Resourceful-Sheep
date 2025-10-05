@@ -16,6 +16,8 @@ public class ModRecipeProvider extends RecipeProvider {
 
     @Override
     protected void buildRecipes(@NotNull RecipeOutput pRecipeOutput) {
+
+        // Recipe for Sheep Scanner
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.SHEEP_SCANNER.get())
                 .pattern("IGI")
                 .pattern("IRI")
@@ -25,6 +27,17 @@ public class ModRecipeProvider extends RecipeProvider {
                 .define('R', Items.REDSTONE)
                 .define('D', Items.DIAMOND)
                 .unlockedBy("has_iron_ingot", has(Items.IRON_INGOT))
+                .save(pRecipeOutput);
+
+        // Recipe for Lasso.
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.LASSO.get())
+                .pattern("SLS")
+                .pattern("LIL")
+                .pattern("SLS")
+                .define('S', Items.STRING)
+                .define('L', Items.LEAD)
+                .define('I', Items.SLIME_BLOCK)
+                .unlockedBy("has_string", has(Items.STRING))
                 .save(pRecipeOutput);
     }
 }

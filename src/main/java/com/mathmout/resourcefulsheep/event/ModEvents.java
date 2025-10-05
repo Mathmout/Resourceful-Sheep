@@ -49,6 +49,7 @@ public class ModEvents {
         }
     }
 
+
     // Add tooltip information to spawn eggs.
     @SubscribeEvent
     public static void onItemTooltip(ItemTooltipEvent event) {
