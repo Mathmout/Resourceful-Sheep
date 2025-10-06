@@ -1,6 +1,5 @@
 package com.mathmout.resourcefulsheep.item.custom;
 
-import com.mathmout.resourcefulsheep.ResourcefulSheepMod;
 import com.mathmout.resourcefulsheep.config.sheeptypes.ConfigSheepTypeManager;
 import com.mathmout.resourcefulsheep.entity.custom.ResourcefulSheepEntity;
 import com.mathmout.resourcefulsheep.entity.custom.SheepVariantData;
@@ -127,7 +126,7 @@ public class SheepScanner extends Item {
 
     @Override
     public void appendHoverText(@NotNull ItemStack stack, Item.@NotNull TooltipContext context, List<Component> tooltipComponents, @NotNull TooltipFlag tooltipFlag) {
-        tooltipComponents.add(Component.translatable("tooltip." + ResourcefulSheepMod.MOD_ID + ".sheep_scanner").withStyle(ChatFormatting.GRAY));
+        tooltipComponents.add(Component.literal("Right click on a sheep to scan it.").withStyle(ChatFormatting.GRAY));
         super.appendHoverText(stack, context, tooltipComponents, tooltipFlag);
     }
 }
