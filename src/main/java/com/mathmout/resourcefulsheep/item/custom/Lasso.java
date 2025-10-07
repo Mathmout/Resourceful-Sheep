@@ -52,7 +52,7 @@ public class Lasso extends Item {
                 fullLasso.set(ModDataComponents.CAPTURED_ENTITY.get(), entityTag);
 
                 sheep.discard();
-                player.level().playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.PLAYER_LEVELUP, SoundSource.PLAYERS, 0.5F, 1.5F);
+                player.level().playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.LEASH_KNOT_PLACE, SoundSource.PLAYERS, 0.5F, 1.5F);
 
                 player.setItemInHand(usedHand, fullLasso);
                 return InteractionResult.SUCCESS;
@@ -82,7 +82,7 @@ public class Lasso extends Item {
                 });
 
                 player.setItemInHand(context.getHand(), new ItemStack(this));
-                context.getLevel().playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.PLAYER_SPLASH, SoundSource.PLAYERS, 0.5F, 1.5F);
+                context.getLevel().playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.LEASH_KNOT_BREAK, SoundSource.PLAYERS, 0.5F, 1.5F);
                 return InteractionResult.SUCCESS;
             }
         }
@@ -110,6 +110,7 @@ public class Lasso extends Item {
         } else {
             tooltipComponents.add(Component.literal("Allows you to carry a sheep in your pocket.").withStyle(ChatFormatting.GRAY));
         }
+        super.appendHoverText(stack, context, tooltipComponents, tooltipFlag);
     }
 
     private void appendResourcefulSheepInfo(List<Component> tooltips, CompoundTag nbt, ResourceLocation entityId, @NotNull TooltipContext context) {
