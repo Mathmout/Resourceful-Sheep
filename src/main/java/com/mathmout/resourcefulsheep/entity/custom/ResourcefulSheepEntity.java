@@ -2,13 +2,19 @@ package com.mathmout.resourcefulsheep.entity.custom;
 
 import com.mathmout.resourcefulsheep.config.mutations.ConfigSheepMutationManager;
 import com.mathmout.resourcefulsheep.config.mutations.SheepMutation;
+import com.mathmout.resourcefulsheep.config.sheeptypes.ConfigSheepTypeManager;
 import com.mathmout.resourcefulsheep.entity.ModEntities;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.animal.Sheep;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
@@ -16,6 +22,7 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class ResourcefulSheepEntity extends Sheep {
     public ResourcefulSheepEntity(EntityType<? extends Sheep> type, Level level) {
@@ -25,6 +32,32 @@ public class ResourcefulSheepEntity extends Sheep {
     @Override
     public boolean isPersistenceRequired() {
         return true;
+    }
+
+    @Override
+    public boolean isShearable(@org.jetbrains.annotations.Nullable Player player, @NotNull ItemStack item, @NotNull Level level, @NotNull BlockPos pos) {
+        return this.isAlive() && !this.isSheared() && !this.isBaby();
+    }
+
+    @Override
+    public @NotNull List<ItemStack> onSheared(@Nullable Player player, @NotNull ItemStack item, @NotNull Level world, @NotNull BlockPos pos) {
+        List<ItemStack> vanillaDrops = super.onSheared(player, item, world, pos);
+        List<ItemStack> drops = new ArrayList<>(vanillaDrops);
+
+        if (!world.isClientSide) {
+            SheepVariantData variantData = ConfigSheepTypeManager.getSheepVariant()
+                    .get(BuiltInRegistries.ENTITY_TYPE.getKey(this.getType()).getPath());
+
+            if (variantData != null) {
+                Item droppedItem = BuiltInRegistries.ITEM.get(ResourceLocation.tryParse(variantData.DroppedItem));
+
+                if (droppedItem != Items.AIR) {
+                    int count = ThreadLocalRandom.current().nextInt(variantData.MinDrops, variantData.MaxDrops + 1);
+                    drops.add(new ItemStack(droppedItem, count));
+                }
+            }
+        }
+        return drops;
     }
 
     @Nullable

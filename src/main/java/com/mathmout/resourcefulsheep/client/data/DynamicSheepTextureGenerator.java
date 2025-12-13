@@ -81,11 +81,9 @@ public class DynamicSheepTextureGenerator {
                     LOGGER.error("Failed to generate textures for sheep variant: {}", variant.Id, e);
                 }
             }
-
         } catch (IOException e) {
             LOGGER.error("Error processing base sheep templates.", e);
         }
-
         LOGGER.info("Dynamic sheep texture generation finished. Generated {} textures.", DYNAMIC_TEXTURES.size());
     }
 
