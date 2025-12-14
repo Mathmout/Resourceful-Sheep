@@ -52,12 +52,12 @@ public class JEIResourcefulSheepModPlugin implements IModPlugin {
         final int biomesPerPage = 5;
 
         for (SheepSpawningData spawnData : spawns) {
-            if (spawnData.biomes().isEmpty()) {
+            if (spawnData.Biomes().isEmpty()) {
                 wrappedSpawns.add(new SheepSpawningRecipeWrapper(spawnData, List.of()));
             } else {
-                for (int i = 0; i < spawnData.biomes().size(); i += biomesPerPage) {
-                    int end = Math.min(i + biomesPerPage, spawnData.biomes().size());
-                    List<String> pageBiomes = spawnData.biomes().subList(i, end);
+                for (int i = 0; i < spawnData.Biomes().size(); i += biomesPerPage) {
+                    int end = Math.min(i + biomesPerPage, spawnData.Biomes().size());
+                    List<String> pageBiomes = spawnData.Biomes().subList(i, end);
                     wrappedSpawns.add(new SheepSpawningRecipeWrapper(spawnData, pageBiomes));
                 }
             }

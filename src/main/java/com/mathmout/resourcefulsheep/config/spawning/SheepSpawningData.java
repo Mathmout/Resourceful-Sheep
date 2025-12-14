@@ -7,7 +7,8 @@ public record SheepSpawningData(String sheepId,
                                 int maxCount,
                                 int densityRadius,
                                 int maxNearby,
-                                List<String> biomes)
+                                List<String> Biomes,
+                                boolean RequireSeeSky)
 {
 
 }

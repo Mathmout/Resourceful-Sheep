@@ -93,7 +93,7 @@ public class SheepSpawningCategory implements IRecipeCategory<SheepSpawningRecip
                 textY,
                 0xFF404040, false);
 
-        if (spawnData.biomes().isEmpty()) {
+        if (spawnData.Biomes().isEmpty()) {
             String texte = "Spawns where the Minecraft";
             g.drawString(Minecraft.getInstance().font, texte,
                     (getWidth() - Minecraft.getInstance().font.width(texte))/2,
@@ -106,7 +106,7 @@ public class SheepSpawningCategory implements IRecipeCategory<SheepSpawningRecip
                     sheepX + scale/2 + 15,
                     0xFF404040, false);
         } else {
-            String texte = "Spawns in the following biomes:";
+            String texte = "Spawns in the following Biomes:";
             g.drawString(Minecraft.getInstance().font, texte,
                     (getWidth() - Minecraft.getInstance().font.width(texte))/2,
                     sheepX + scale/2 + 5,

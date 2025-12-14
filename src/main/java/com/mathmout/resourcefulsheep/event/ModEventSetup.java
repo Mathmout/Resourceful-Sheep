@@ -26,6 +26,8 @@ import net.neoforged.neoforge.registries.RegisterEvent;
 
 import java.util.Optional;
 
+import static net.minecraft.world.level.block.Blocks.BEDROCK;
+
 public class ModEventSetup {
 
     @SubscribeEvent
@@ -48,15 +50,27 @@ public class ModEventSetup {
 
     public static boolean checkResourcefulSheepSpawnRules(EntityType<? extends Animal> entityType, ServerLevelAccessor level, MobSpawnType spawnType, BlockPos pos, RandomSource random) {
 
+        // 1. On récupère la config tout de suite
         Optional<SheepSpawningData> spawningDataOpt = ConfigSheepSpawningManager.getSpawningDataFor(entityType);
         if (spawningDataOpt.isEmpty()) {
             return false;
         }
-
         SheepSpawningData spawningData = spawningDataOpt.get();
 
-        // Check for nearby sheep to limit density
-        int nearbySheep = level.getEntitiesOfClass(ResourcefulSheepEntity.class, new AABB(pos).inflate(spawningData.densityRadius()), e -> e.getType() == entityType).size();
+        if (level.getBlockState(pos.below()).is(BEDROCK)) {
+            return false;
+        }
+
+        if (spawningData.RequireSeeSky()) {
+            int highestY = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, pos.getX(), pos.getZ());
+            if (pos.getY() < highestY) {
+                return false;
+            }
+        }
+        int nearbySheep = level.getEntitiesOfClass(ResourcefulSheepEntity.class,
+                new AABB(pos).inflate(spawningData.densityRadius()),
+                e -> e.getType() == entityType).size();
+
         if (nearbySheep > spawningData.maxNearby()) {
             return false;
         }

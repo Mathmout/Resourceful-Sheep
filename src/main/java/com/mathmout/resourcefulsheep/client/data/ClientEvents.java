@@ -96,7 +96,7 @@ public class ClientEvents {
         var locationInfo = new PackLocationInfo(
                 ResourcefulSheepMod.MOD_ID + "_dynamic_server",
                 Component.literal("Resourceful Sheep Dynamic Server Data"),
-                PackSource.DEFAULT,
+                PackSource.BUILT_IN,
                 Optional.empty()
         );
 

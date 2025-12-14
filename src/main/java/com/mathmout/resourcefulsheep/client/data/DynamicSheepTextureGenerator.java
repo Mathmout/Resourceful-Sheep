@@ -99,7 +99,7 @@ public class DynamicSheepTextureGenerator {
 
         Optional<Resource> textureResource = resourceManager.getResource(actualItemTextureLocation);
         if (textureResource.isEmpty()) {
-            // Retry with the other path if the first one fails (e.g. some mods use item path for blocks)
+            // Retry with the other path if the first one fails, some mods use item path for blocks)
             texturePath = item instanceof BlockItem ? "textures/item/" : "textures/block/";
             actualItemTextureLocation = ResourceLocation.fromNamespaceAndPath(itemKey.getNamespace(), texturePath + itemKey.getPath() + ".png");
             textureResource = resourceManager.getResource(actualItemTextureLocation);
