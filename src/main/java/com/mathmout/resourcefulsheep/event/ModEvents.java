@@ -32,9 +32,9 @@ public class ModEvents {
                         .replace(ResourcefulSheepMod.MOD_ID + ":", "")
                         .replace("_spawn_egg", "");
                 SheepVariantData variant = ConfigSheepTypeManager.getSheepVariant().get(variantId);
-                if (variant != null && variant.EggColorSpotsNTitle != null) {
-                    int nameColor = Integer.parseInt(variant.EggColorSpotsNTitle.substring(1), 16);
-                    String displayName = "§l" + StringToText(variant.Resource) + " Resourceful Sheep Egg";
+                if (variant != null && variant.EggColorSpotsNTitle() != null) {
+                    int nameColor = Integer.parseInt(variant.EggColorSpotsNTitle().substring(1), 16);
+                    String displayName = "§l" + StringToText(variant.Resource()) + " Resourceful Sheep Egg";
                     if (!event.getToolTip().isEmpty()) {
                         event.getToolTip().set(0, Component.literal(displayName).withStyle(Style.EMPTY.withColor(nameColor)));
                         if (!isShiftKeyDown) {
@@ -44,26 +44,26 @@ public class ModEvents {
                         } else {
                             // Dropped Item.
                             MutableComponent line = Component.literal("Dropped Item : ").withStyle(ChatFormatting.BLUE)
-                                    .append(Component.literal(ItemIdToName(variant.DroppedItem)).withStyle(ChatFormatting.YELLOW));
+                                    .append(Component.literal(ItemIdToName(variant.DroppedItem())).withStyle(ChatFormatting.YELLOW));
                             event.getToolTip().add(line);
 
                             // Tier.
                             line = Component.literal("Tier : ").withStyle(ChatFormatting.RED)
-                                    .append(Component.literal(String.valueOf(variant.Tier)).withStyle(ChatFormatting.LIGHT_PURPLE));
+                                    .append(Component.literal(String.valueOf(variant.Tier())).withStyle(ChatFormatting.LIGHT_PURPLE));
                             event.getToolTip().add(line);
 
                             // Quantité.
-                            if (variant.MinDrops != variant.MaxDrops) {
+                            if (variant.MinDrops() != variant.MaxDrops()) {
                                 line = Component.literal("Amount : ").withStyle(ChatFormatting.DARK_GREEN)
-                                        .append(Component.literal("From " + variant.MinDrops + " to " + variant.MaxDrops).withStyle(ChatFormatting.DARK_AQUA));
+                                        .append(Component.literal("From " + variant.MinDrops() + " to " + variant.MaxDrops()).withStyle(ChatFormatting.DARK_AQUA));
                             event.getToolTip().add(line);
-                            } else if (variant.MinDrops == 0) {
+                            } else if (variant.MinDrops() == 0) {
                                 line = Component.literal("Amount : ").withStyle(ChatFormatting.DARK_GREEN)
                                         .append(Component.literal("Nothing").withStyle(ChatFormatting.DARK_AQUA));
                                 event.getToolTip().add(line);
                             } else {
                                 line = Component.literal("Amount : ").withStyle(ChatFormatting.DARK_GREEN)
-                                        .append(Component.literal(String.valueOf(variant.MinDrops)).withStyle(ChatFormatting.DARK_AQUA));
+                                        .append(Component.literal(String.valueOf(variant.MinDrops())).withStyle(ChatFormatting.DARK_AQUA));
                                 event.getToolTip().add(line);
                             }
                         }

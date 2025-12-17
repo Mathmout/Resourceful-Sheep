@@ -77,25 +77,25 @@ public class SheepScanner extends Item {
 
         // Dropped Item.
         MutableComponent line1 = Component.literal("Dropped Item : ").withStyle(ChatFormatting.BLUE)
-                .append(Component.literal(ModEvents.ItemIdToName(variant.DroppedItem)).withStyle(ChatFormatting.YELLOW));
+                .append(Component.literal(ModEvents.ItemIdToName(variant.DroppedItem())).withStyle(ChatFormatting.YELLOW));
         mainComponent.append(line1).append("\n");
 
         // Tier.
         MutableComponent line2 = Component.literal("Tier : ").withStyle(ChatFormatting.RED)
-                .append(Component.literal(String.valueOf(variant.Tier)).withStyle(ChatFormatting.LIGHT_PURPLE));
+                .append(Component.literal(String.valueOf(variant.Tier())).withStyle(ChatFormatting.LIGHT_PURPLE));
         mainComponent.append(line2).append("\n");
 
         // Nombre.
         MutableComponent line3;
-        if (variant.MinDrops != variant.MaxDrops) {
+        if (variant.MinDrops() != variant.MaxDrops()) {
             line3 = Component.literal("Amount : ").withStyle(ChatFormatting.DARK_GREEN)
-                    .append(Component.literal("From " + variant.MinDrops + " to " + variant.MaxDrops).withStyle(ChatFormatting.DARK_AQUA));
-        } else if (variant.MinDrops == 0) {
+                    .append(Component.literal("From " + variant.MinDrops() + " to " + variant.MaxDrops()).withStyle(ChatFormatting.DARK_AQUA));
+        } else if (variant.MinDrops() == 0) {
             line3 = Component.literal("Amount : ").withStyle(ChatFormatting.DARK_GREEN)
                     .append(Component.literal("Nothing").withStyle(ChatFormatting.DARK_AQUA));
         } else {
             line3 = Component.literal("Amount : ").withStyle(ChatFormatting.DARK_GREEN)
-                    .append(Component.literal(String.valueOf(variant.MinDrops)).withStyle(ChatFormatting.DARK_AQUA));
+                    .append(Component.literal(String.valueOf(variant.MinDrops())).withStyle(ChatFormatting.DARK_AQUA));
         }
         // Couleur.
         mainComponent.append(line3).append("\n");

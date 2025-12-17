@@ -69,11 +69,11 @@ public class SheepSpawningCategory implements IRecipeCategory<SheepSpawningRecip
         int scale = 22;
         int sheepX = getWidth() / 6;
 
-        SheepMutationCategory.drawSheep(g, spawnData.sheepId(), sheepX, sheepX + scale/2, scale);
+        JEIUtilitiesMethodes.drawSheep(g, spawnData.sheepId(), sheepX, sheepX + scale/2, scale);
 
         List<Component> tips = new ArrayList<>();
-        if (SheepMutationCategory.isMouseOver(mouseX, mouseY, sheepX - scale, sheepX - scale, sheepX + scale, sheepX + scale/2)) {
-            SheepMutationCategory.addTooltip(tips, spawnData.sheepId());
+        if (JEIUtilitiesMethodes.isMouseOver(mouseX, mouseY, sheepX - scale, sheepX - scale, sheepX + scale, sheepX + scale/2)) {
+            JEIUtilitiesMethodes.addTooltip(tips, spawnData.sheepId());
         }
 
         if (!tips.isEmpty()) g.renderComponentTooltip(Minecraft.getInstance().font, tips, (int) mouseX, (int) mouseY);

@@ -27,6 +27,8 @@ public class JEIResourcefulSheepModPlugin implements IModPlugin {
             new RecipeType<>(SheepSpawningCategory.UID, SheepSpawningRecipeWrapper.class);
     public static final RecipeType<SheepVariantData> DROPPING_TYPE =
             new RecipeType<>(SheepDroppingCategory.UID, SheepVariantData.class);
+    public static final RecipeType<SheepVariantData> FEEDING_TYPE =
+            new RecipeType<>(SheepFeedingCategory.UID, SheepVariantData.class);
 
     @Override
     public @NotNull ResourceLocation getPluginUid() {
@@ -38,6 +40,7 @@ public class JEIResourcefulSheepModPlugin implements IModPlugin {
         registration.addRecipeCategories(new SheepMutationCategory(registration.getJeiHelpers().getGuiHelper()));
         registration.addRecipeCategories(new SheepSpawningCategory(registration.getJeiHelpers().getGuiHelper()));
         registration.addRecipeCategories(new SheepDroppingCategory(registration.getJeiHelpers().getGuiHelper()));
+        registration.addRecipeCategories(new SheepFeedingCategory(registration.getJeiHelpers().getGuiHelper()));
     }
 
     @Override
@@ -67,6 +70,9 @@ public class JEIResourcefulSheepModPlugin implements IModPlugin {
         // Dropping Recipes
         List<SheepVariantData> variants = new ArrayList<>(ConfigSheepTypeManager.getSheepVariant().values());
         registration.addRecipes(DROPPING_TYPE, variants);
+
+        // Feeding Recipes
+        registration.addRecipes(FEEDING_TYPE, variants);
     }
 
     @Override

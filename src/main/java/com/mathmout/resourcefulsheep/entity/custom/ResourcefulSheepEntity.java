@@ -8,8 +8,12 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.ai.goal.Goal;
+import net.minecraft.world.entity.ai.goal.TemptGoal;
+import net.minecraft.world.entity.ai.goal.WrappedGoal;
 import net.minecraft.world.entity.animal.Sheep;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -25,9 +29,76 @@ import java.util.List;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
+
 public class ResourcefulSheepEntity extends Sheep {
     public ResourcefulSheepEntity(EntityType<? extends Sheep> type, Level level) {
         super(type, level);
+    }
+
+    @Override
+    public boolean fireImmune() {
+        SheepVariantData variant = ConfigSheepTypeManager.getSheepVariant()
+                .get(BuiltInRegistries.ENTITY_TYPE.getKey(this.getType()).getPath());
+        return false; //variant.fireImmune();
+    }
+
+    @Override
+    public boolean isAffectedByPotions() {
+        return super.isAffectedByPotions();
+    }
+
+    @Override
+    protected void registerGoals() {
+        super.registerGoals();
+        List<Goal> goalsToRemove = this.goalSelector.getAvailableGoals().stream()
+                .map(WrappedGoal::getGoal)
+                .filter(goal -> goal instanceof TemptGoal)
+                .toList();
+        goalsToRemove.forEach(this.goalSelector::removeGoal);
+        this.goalSelector.addGoal(3, new TemptGoal(this, 1.1, this::isFood, false));
+    }
+
+    @Override
+    public float getWalkTargetValue(@NotNull BlockPos pos, @NotNull LevelReader level) {
+        return 10F;
+    }
+
+    @Override
+    public boolean isFood(@NotNull ItemStack stack) {
+        SheepVariantData variant = ConfigSheepTypeManager.getSheepVariant()
+                .get(BuiltInRegistries.ENTITY_TYPE.getKey(this.getType()).getPath());
+
+        if (variant != null && variant.FoodItems() != null && !variant.FoodItems().isEmpty()) {
+            for (String id : variant.FoodItems()) {
+                if (matchesItemOrTag(stack, id)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        return stack.is(Items.WHEAT);
+    }
+
+    private boolean matchesItemOrTag(ItemStack stack, String id) {
+        if (id == null || id.isEmpty()) return false;
+
+        // Tags
+        if (id.startsWith("#")) {
+            ResourceLocation tagLoc = ResourceLocation.tryParse(id.substring(1));
+            if (tagLoc != null) {
+                TagKey<Item> tagKey = TagKey.create(BuiltInRegistries.ITEM.key(), tagLoc);
+                return stack.is(tagKey);
+            }
+        }
+        // Items
+        else {
+            ResourceLocation itemLoc = ResourceLocation.tryParse(id);
+            if (itemLoc != null) {
+                Item item = BuiltInRegistries.ITEM.get(itemLoc);
+                return item != Items.AIR && stack.is(item);
+            }
+        }
+        return false;
     }
 
     @Override
@@ -50,10 +121,10 @@ public class ResourcefulSheepEntity extends Sheep {
                     .get(BuiltInRegistries.ENTITY_TYPE.getKey(this.getType()).getPath());
 
             if (variantData != null) {
-                Item droppedItem = BuiltInRegistries.ITEM.get(ResourceLocation.tryParse(variantData.DroppedItem));
+                Item droppedItem = BuiltInRegistries.ITEM.get(ResourceLocation.tryParse(variantData.DroppedItem()));
 
                 if (droppedItem != Items.AIR) {
-                    int count = ThreadLocalRandom.current().nextInt(variantData.MinDrops, variantData.MaxDrops + 1);
+                    int count = ThreadLocalRandom.current().nextInt(variantData.MinDrops(), variantData.MaxDrops() + 1);
                     drops.add(new ItemStack(droppedItem, count));
                 }
             }
@@ -124,10 +195,5 @@ public class ResourcefulSheepEntity extends Sheep {
             }
         }
         return childId;
-    }
-
-    @Override
-    public float getWalkTargetValue(@NotNull BlockPos pos, @NotNull LevelReader level) {
-        return 10F;
     }
 }

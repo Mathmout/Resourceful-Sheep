@@ -30,13 +30,13 @@ public class ModItems {
     public static void registerVariantSpawnEggs() {
         for (SheepVariantData variant : ConfigSheepTypeManager.getSheepVariant().values()) {
             DeferredItem<SpawnEggItem> spawnEgg = ITEMS.registerItem(
-            variant.Id + "_spawn_egg", (Function<Item.Properties, ? extends SpawnEggItem>)
-            properties -> new CustomDeferredSpawnEggItem( ModEntities.SHEEP_ENTITIES.get(variant.Id),
-                    Integer.parseInt(variant.EggColorBackground.substring(1), 16),
-                    Integer.parseInt(variant.EggColorSpotsNTitle.substring(1), 16),
+            variant.Id() + "_spawn_egg", (Function<Item.Properties, ? extends SpawnEggItem>)
+            properties -> new CustomDeferredSpawnEggItem( ModEntities.SHEEP_ENTITIES.get(variant.Id()),
+                    Integer.parseInt(variant.EggColorBackground().substring(1), 16),
+                    Integer.parseInt(variant.EggColorSpotsNTitle().substring(1), 16),
                     properties,
-                    "§l" + ModEvents.StringToText(variant.Resource) + " Resourceful Sheep Egg",
-                    Integer.parseInt(variant.EggColorSpotsNTitle.substring(1), 16)
+                    "§l" + ModEvents.StringToText(variant.Resource()) + " Resourceful Sheep Egg",
+                    Integer.parseInt(variant.EggColorSpotsNTitle().substring(1), 16)
                     ));
             SHEEP_SPAWN_EGGS.add(spawnEgg);
         }

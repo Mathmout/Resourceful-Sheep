@@ -60,10 +60,10 @@ public class SheepDroppingCategory implements IRecipeCategory<SheepVariantData> 
 
     @Override
     public void setRecipe(@NotNull IRecipeLayoutBuilder builder, @NotNull SheepVariantData recipe, @NotNull IFocusGroup focuses) {
-        Item droppedItem = BuiltInRegistries.ITEM.get(ResourceLocation.parse(recipe.DroppedItem));
+        Item droppedItem = BuiltInRegistries.ITEM.get(ResourceLocation.parse(recipe.DroppedItem()));
         ItemStack droppedItemStack = new ItemStack(droppedItem);
 
-        var sheepEgg = BuiltInRegistries.ITEM.get(ResourceLocation.fromNamespaceAndPath(ResourcefulSheepMod.MOD_ID, recipe.Id + "_spawn_egg"));
+        var sheepEgg = BuiltInRegistries.ITEM.get(ResourceLocation.fromNamespaceAndPath(ResourcefulSheepMod.MOD_ID, recipe.Id() + "_spawn_egg"));
         builder.addInvisibleIngredients(RecipeIngredientRole.INPUT).addItemStack(new ItemStack(sheepEgg));
 
         builder.addSlot(RecipeIngredientRole.OUTPUT, 3 * getWidth() / 4, getHeight()/2 - 9/2).addItemStack(droppedItemStack);
@@ -77,13 +77,13 @@ public class SheepDroppingCategory implements IRecipeCategory<SheepVariantData> 
         int baseY = getHeight() / 2;
         int sheepX = getWidth() / 4;
 
-        SheepMutationCategory.drawSheep(g, recipe.Id, sheepX, baseY + 3 * scale/4, scale);
+        JEIUtilitiesMethodes.drawSheep(g, recipe.Id(), sheepX, baseY + 3 * scale/4, scale);
 
         g.drawString(Minecraft.getInstance().font, "→", sheepX * 2, baseY, 0xFF404040, false);
 
         List<Component> tips = new ArrayList<>();
-        if (SheepMutationCategory.isMouseOver(mouseX, mouseY, sheepX - scale, baseY - 3 * scale/4,sheepX + scale, baseY + 3 * scale/4)) {
-            SheepMutationCategory.addTooltip(tips, recipe.Id);
+        if (JEIUtilitiesMethodes.isMouseOver(mouseX, mouseY, sheepX - scale, baseY - 3 * scale/4,sheepX + scale, baseY + 3 * scale/4)) {
+            JEIUtilitiesMethodes.addTooltip(tips, recipe.Id());
         }
 
         if (!tips.isEmpty()) {

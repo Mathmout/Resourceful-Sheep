@@ -118,10 +118,10 @@ public class Lasso extends Item {
         if (variant == null) return;
 
         tooltips.add(Component.literal("Dropped Item: ").withStyle(ChatFormatting.BLUE)
-                .append(Component.literal(ModEvents.ItemIdToName(variant.DroppedItem)).withStyle(ChatFormatting.YELLOW)));
+                .append(Component.literal(ModEvents.ItemIdToName(variant.DroppedItem())).withStyle(ChatFormatting.YELLOW)));
 
         tooltips.add(Component.literal("Tier: ").withStyle(ChatFormatting.RED)
-                .append(Component.literal(String.valueOf(variant.Tier)).withStyle(ChatFormatting.LIGHT_PURPLE)));
+                .append(Component.literal(String.valueOf(variant.Tier())).withStyle(ChatFormatting.LIGHT_PURPLE)));
 
         appendCommonSheepInfo(tooltips, nbt, context);
     }

@@ -49,11 +49,12 @@ public class DynamicResourceProvider implements PackResources {
         langJson.addProperty("recipe." + ResourcefulSheepMod.MOD_ID + ".mutation", "Sheep Mutations");
         langJson.addProperty("recipe." + ResourcefulSheepMod.MOD_ID + ".sheep_spawning", "Sheep Spawning");
         langJson.addProperty("recipe." + ResourcefulSheepMod.MOD_ID + ".sheep_dropping", "Sheep Dropping");
+        langJson.addProperty("recipe." + ResourcefulSheepMod.MOD_ID + ".sheep_feeding", "Sheep Feeding");
 
         // Traductions dynamiques.
 
         for (SheepVariantData variant : ConfigSheepTypeManager.getSheepVariant().values()) {
-            String entityKey = "entity." + ResourcefulSheepMod.MOD_ID + "." + variant.Id;
+            String entityKey = "entity." + ResourcefulSheepMod.MOD_ID + "." + variant.Id();
             langJson.addProperty(entityKey, "§lResourceful Sheep");
         }
         resourceCache.put(

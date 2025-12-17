@@ -32,10 +32,10 @@ public class ResourcefulSheepRenderer extends MobRenderer<ResourcefulSheepEntity
         String variantId = BuiltInRegistries.ENTITY_TYPE.getKey(entity.getType()).getPath();
         SheepVariantData variant = ConfigSheepTypeManager.getSheepVariant().get(variantId);
 
-        if (variant != null && variant.Id != null) {
+        if (variant != null && variant.Id() != null) {
             ResourceLocation customBodyTexture = ResourceLocation.fromNamespaceAndPath(
                     ResourcefulSheepMod.MOD_ID,
-                    "textures/entity/sheep/" + variant.Id + ".png"
+                    "textures/entity/sheep/" + variant.Id() + ".png"
             );
 
             if (net.minecraft.client.Minecraft.getInstance().getResourceManager().getResource(customBodyTexture).isPresent()) {
@@ -49,10 +49,10 @@ public class ResourcefulSheepRenderer extends MobRenderer<ResourcefulSheepEntity
         String variantId = BuiltInRegistries.ENTITY_TYPE.getKey(entity.getType()).getPath();
         SheepVariantData variant = ConfigSheepTypeManager.getSheepVariant().get(variantId);
 
-        if (variant != null && variant.Id != null) {
+        if (variant != null && variant.Id() != null) {
             ResourceLocation customFurTexture = ResourceLocation.fromNamespaceAndPath(
                     ResourcefulSheepMod.MOD_ID,
-                    "textures/entity/sheep/" + variant.Id + "_fur.png"
+                    "textures/entity/sheep/" + variant.Id() + "_fur.png"
             );
 
             if (net.minecraft.client.Minecraft.getInstance().getResourceManager().getResource(customFurTexture).isPresent()) {

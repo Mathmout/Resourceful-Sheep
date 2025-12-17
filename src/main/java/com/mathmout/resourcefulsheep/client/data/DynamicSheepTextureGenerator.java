@@ -76,9 +76,9 @@ public class DynamicSheepTextureGenerator {
 
             for (SheepVariantData variant : ConfigSheepTypeManager.getSheepVariant().values()) {
                 try {
-                    generateTexturesForVariant(variant, resourceManager, sheepBaseImage, furBaseImage, sourceTextureCache.get(variant.Resource));
+                    generateTexturesForVariant(variant, resourceManager, sheepBaseImage, furBaseImage, sourceTextureCache.get(variant.Resource()));
                 } catch (IOException e) {
-                    LOGGER.error("Failed to generate textures for sheep variant: {}", variant.Id, e);
+                    LOGGER.error("Failed to generate textures for sheep variant: {}", variant.Id(), e);
                 }
             }
         } catch (IOException e) {
@@ -89,7 +89,7 @@ public class DynamicSheepTextureGenerator {
 
     private void generateTexturesForVariant(SheepVariantData variant, ResourceManager resourceManager, BufferedImage sheepBaseImage, BufferedImage furBaseImage, ResourceLocation itemKey) throws IOException {
         if (itemKey == null) {
-            LOGGER.warn("No suitable item/block texture found for sheep resource: {}", variant.Resource);
+            LOGGER.warn("No suitable item/block texture found for sheep resource: {}", variant.Resource());
             return;
         }
 
@@ -126,11 +126,11 @@ public class DynamicSheepTextureGenerator {
             int bodyPixelsTotal = calculateTotalPixels(BODY_REGIONS);
             int furPixelsTotal = calculateTotalPixels(FUR_REGIONS);
 
-            SheepTypeData sheepType = ConfigSheepTypeManager.getSheepTypes().stream().filter(st -> st.Resource().equals(variant.Resource)).findFirst().orElse(null);
+            SheepTypeData sheepType = ConfigSheepTypeManager.getSheepTypes().stream().filter(st -> st.Resource().equals(variant.Resource())).findFirst().orElse(null);
             if (sheepType == null) return;
 
             double maxTier = sheepType.SheepTier().stream().mapToInt(SheepTypeData.TierData::Tier).max().orElse(1);
-            int tier = variant.Tier;
+            int tier = variant.Tier();
 
             double coverage;
 
@@ -150,11 +150,11 @@ public class DynamicSheepTextureGenerator {
             addRandomPixels(furImage, FUR_REGIONS, weightedColorPalette, furPixelsToAdd);
 
             ResourceLocation sheepTextureLocation = ResourceLocation.fromNamespaceAndPath(ResourcefulSheepMod.MOD_ID,
-                    "textures/entity/sheep/" + variant.Id + ".png");
+                    "textures/entity/sheep/" + variant.Id() + ".png");
             DYNAMIC_TEXTURES.put(sheepTextureLocation, bufferedImageToPngBytes(sheepImage));
 
             ResourceLocation furTextureLocation = ResourceLocation.fromNamespaceAndPath(ResourcefulSheepMod.MOD_ID,
-                    "textures/entity/sheep/" + variant.Id + "_fur.png");
+                    "textures/entity/sheep/" + variant.Id() + "_fur.png");
             DYNAMIC_TEXTURES.put(furTextureLocation, bufferedImageToPngBytes(furImage));
         }
     }
