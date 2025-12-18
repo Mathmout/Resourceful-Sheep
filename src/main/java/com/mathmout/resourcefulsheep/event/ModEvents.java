@@ -16,8 +16,6 @@ import net.minecraft.world.item.SpawnEggItem;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
 
-
-
 public class ModEvents {
 
     // Add tooltip information to spawn eggs.
@@ -38,7 +36,7 @@ public class ModEvents {
                     if (!event.getToolTip().isEmpty()) {
                         event.getToolTip().set(0, Component.literal(displayName).withStyle(Style.EMPTY.withColor(nameColor)));
                         if (!isShiftKeyDown) {
-                            event.getToolTip().add(Component.literal("Hold SHIFT for more info.")
+                            event.getToolTip().add(Component.literal("Hold SHIFT for details.")
                                     .withStyle(ChatFormatting.ITALIC)
                                     .withStyle(ChatFormatting.GRAY));
                         } else {

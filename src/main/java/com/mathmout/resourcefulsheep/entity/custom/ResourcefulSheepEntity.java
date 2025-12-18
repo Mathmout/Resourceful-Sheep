@@ -9,6 +9,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.TagKey;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ai.goal.Goal;
@@ -26,6 +27,7 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -39,12 +41,22 @@ public class ResourcefulSheepEntity extends Sheep {
     public boolean fireImmune() {
         SheepVariantData variant = ConfigSheepTypeManager.getSheepVariant()
                 .get(BuiltInRegistries.ENTITY_TYPE.getKey(this.getType()).getPath());
-        return false; //variant.fireImmune();
+        return variant.FireImmune();
     }
 
     @Override
-    public boolean isAffectedByPotions() {
-        return super.isAffectedByPotions();
+    public boolean canBeAffected(@NotNull MobEffectInstance effectInstance) {
+
+        SheepVariantData variant = ConfigSheepTypeManager.getSheepVariant()
+                .get(BuiltInRegistries.ENTITY_TYPE.getKey(this.getType()).getPath());
+
+        if (variant != null && variant.ImmuneEffects() != null) {
+            String effectId = Objects.requireNonNull(BuiltInRegistries.MOB_EFFECT.getKey(effectInstance.getEffect().value())).toString();
+            if (variant.ImmuneEffects().contains(effectId)) {
+                return false;
+            }
+        }
+        return super.canBeAffected(effectInstance);
     }
 
     @Override

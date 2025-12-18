@@ -2,6 +2,7 @@ package com.mathmout.resourcefulsheep.jei;
 
 import com.mathmout.resourcefulsheep.ResourcefulSheepMod;
 import com.mathmout.resourcefulsheep.entity.custom.SheepVariantData;
+import com.mojang.blaze3d.platform.Lighting;
 import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.drawable.IDrawable;
@@ -64,7 +65,6 @@ public class SheepFeedingCategory implements IRecipeCategory<SheepVariantData> {
 
     @Override
     public void setRecipe(@NotNull IRecipeLayoutBuilder builder, @NotNull SheepVariantData recipe, @NotNull IFocusGroup focuses) {
-
 
         Item Egg = BuiltInRegistries.ITEM.get(ResourceLocation.fromNamespaceAndPath(ResourcefulSheepMod.MOD_ID, recipe.Id() + "_spawn_egg"));
 
@@ -145,5 +145,6 @@ public class SheepFeedingCategory implements IRecipeCategory<SheepVariantData> {
             guiGraphics.renderComponentTooltip(Minecraft.getInstance().font, tips, (int) mouseX, (int) mouseY);
         }
         guiGraphics.drawString(Minecraft.getInstance().font, "Eats:", 60, 2, 0xFF404040, false);
+        Lighting.setupForFlatItems();
     }
 }

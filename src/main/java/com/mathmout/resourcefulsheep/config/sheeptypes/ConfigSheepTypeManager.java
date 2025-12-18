@@ -88,7 +88,9 @@ public class ConfigSheepTypeManager {
                         tier.MaxDrops(),
                         type.EggColorBackground(),
                         type.EggColorSpotsNTitle(),
-                        type.FoodItems()
+                        type.FoodItems(),
+                        type.FireImmune(),
+                        type.ImmuneEffects()
                 );
                 SHEEP_VARIANTS.put(id, variant);
             }

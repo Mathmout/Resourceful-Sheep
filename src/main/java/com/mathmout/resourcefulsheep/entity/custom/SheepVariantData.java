@@ -11,7 +11,8 @@ public record SheepVariantData(
         int MaxDrops,
         String EggColorBackground,
         String EggColorSpotsNTitle,
-        List<String> FoodItems
-)
+        List<String> FoodItems,
+        boolean FireImmune,
+        List<String> ImmuneEffects)
 {
 }
