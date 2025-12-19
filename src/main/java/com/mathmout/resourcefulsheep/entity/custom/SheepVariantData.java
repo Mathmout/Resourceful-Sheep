@@ -1,6 +1,7 @@
 package com.mathmout.resourcefulsheep.entity.custom;
 
 import java.util.List;
+import java.util.Map;
 
 public record SheepVariantData(
         String Id,
@@ -13,6 +14,7 @@ public record SheepVariantData(
         String EggColorSpotsNTitle,
         List<String> FoodItems,
         boolean FireImmune,
-        List<String> ImmuneEffects)
+        List<String> ImmuneEffects,
+        Map<String, String> EtableBocksMap)
 {
 }

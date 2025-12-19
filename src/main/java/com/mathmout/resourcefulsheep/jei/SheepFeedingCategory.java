@@ -71,58 +71,52 @@ public class SheepFeedingCategory implements IRecipeCategory<SheepVariantData> {
         builder.addInvisibleIngredients(RecipeIngredientRole.INPUT).addItemStack(new ItemStack(Egg));
         builder.addInvisibleIngredients(RecipeIngredientRole.OUTPUT).addItemStack(new ItemStack(Egg));
 
-        // Zone de départ pour les items (à droite du mouton)
         int startX = 60;
         int startY = 10;
         int slotSize = 18;
-        int columns = 7; // Nombre d'items par ligne avant retour à la ligne
-
+        int columns = 7;
         List<String> foodItems = recipe.FoodItems();
 
-        // CAS 1 : Aucune nourriture définie dans le JSON -> Comportement par défaut (Blé)
+        // 1. Aucune nourriture définie dans le JSON donc Comportement par défaut.
         if (foodItems == null || foodItems.isEmpty()) {
             builder.addSlot(RecipeIngredientRole.INPUT, startX, startY)
                     .addItemStack(new ItemStack(Items.WHEAT));
             return;
         }
 
-        // CAS 2 : Liste définie -> On boucle sur les Strings
-        int index = 0;
+        // 2.
+        int i = 0;
         for (String foodId : foodItems) {
             List<ItemStack> stacksToAdd = new ArrayList<>();
 
             if (foodId.startsWith("#")) {
-                // C'est un TAG (ex: #minecraft:planks)
                 try {
                     ResourceLocation tagLoc = ResourceLocation.parse(foodId.substring(1));
                     TagKey<Item> tagKey = TagKey.create(Registries.ITEM, tagLoc);
-
-                    // On récupère tous les items du tag
                     var tagWrapper = BuiltInRegistries.ITEM.getTag(tagKey);
                     tagWrapper.ifPresent(holders -> StreamSupport.stream(holders.spliterator(), false)
                             .map(Holder::value)
                             .forEach(item -> stacksToAdd.add(new ItemStack(item))));
-                } catch (Exception e) {
-                    // Ignorer les tags invalides
+                } catch (Exception ignored) {
+
                 }
             } else {
-                // C'est un ITEM SIMPLE (ex: minecraft:carrot)
                 Item item = BuiltInRegistries.ITEM.get(ResourceLocation.parse(foodId));
                 if (item != Items.AIR) {
                     stacksToAdd.add(new ItemStack(item));
                 }
             }
 
-            // Si on a trouvé des items valides, on crée un slot
+            // Création des slots.
             if (!stacksToAdd.isEmpty()) {
-                int x = startX + (index % columns) * slotSize;
-                int y = startY + (index / columns) * slotSize;
+                int x = startX + (i % columns) * slotSize;
+                int y = startY + (i / columns) * slotSize;
 
-                // Si on dépasse la hauteur, on arrête d'afficher (ou on pourrait agrandir getHeight())
+                // Si on dépasse la hauteur, on arrête d'afficher.
                 if (y + slotSize <= getHeight()) {
                     builder.addSlot(RecipeIngredientRole.INPUT, x, y)
-                            .addItemStacks(stacksToAdd); // JEI fera cycler les items du tag automatiquement
-                    index++;
+                            .addItemStacks(stacksToAdd);
+                    i++;
                 }
             }
         }

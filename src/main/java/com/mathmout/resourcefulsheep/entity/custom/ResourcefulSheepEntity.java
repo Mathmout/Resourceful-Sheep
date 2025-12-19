@@ -4,6 +4,7 @@ import com.mathmout.resourcefulsheep.config.mutations.ConfigSheepMutationManager
 import com.mathmout.resourcefulsheep.config.mutations.SheepMutation;
 import com.mathmout.resourcefulsheep.config.sheeptypes.ConfigSheepTypeManager;
 import com.mathmout.resourcefulsheep.entity.ModEntities;
+import com.mathmout.resourcefulsheep.entity.ResourcefulSheepEatBlockGoal;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
@@ -12,6 +13,7 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.ai.goal.EatBlockGoal;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.ai.goal.TemptGoal;
 import net.minecraft.world.entity.ai.goal.WrappedGoal;
@@ -33,22 +35,21 @@ import java.util.concurrent.ThreadLocalRandom;
 
 
 public class ResourcefulSheepEntity extends Sheep {
+
     public ResourcefulSheepEntity(EntityType<? extends Sheep> type, Level level) {
         super(type, level);
     }
 
     @Override
     public boolean fireImmune() {
-        SheepVariantData variant = ConfigSheepTypeManager.getSheepVariant()
-                .get(BuiltInRegistries.ENTITY_TYPE.getKey(this.getType()).getPath());
+        SheepVariantData variant = getSheepVariantData();
         return variant.FireImmune();
     }
 
     @Override
     public boolean canBeAffected(@NotNull MobEffectInstance effectInstance) {
 
-        SheepVariantData variant = ConfigSheepTypeManager.getSheepVariant()
-                .get(BuiltInRegistries.ENTITY_TYPE.getKey(this.getType()).getPath());
+        SheepVariantData variant = getSheepVariantData();
 
         if (variant != null && variant.ImmuneEffects() != null) {
             String effectId = Objects.requireNonNull(BuiltInRegistries.MOB_EFFECT.getKey(effectInstance.getEffect().value())).toString();
@@ -64,9 +65,12 @@ public class ResourcefulSheepEntity extends Sheep {
         super.registerGoals();
         List<Goal> goalsToRemove = this.goalSelector.getAvailableGoals().stream()
                 .map(WrappedGoal::getGoal)
-                .filter(goal -> goal instanceof TemptGoal)
+                .filter(goal -> goal instanceof TemptGoal || goal instanceof EatBlockGoal)
                 .toList();
         goalsToRemove.forEach(this.goalSelector::removeGoal);
+        
+        ResourcefulSheepEatBlockGoal eatBlockGoal = new ResourcefulSheepEatBlockGoal(this);
+        this.goalSelector.addGoal(5, eatBlockGoal);
         this.goalSelector.addGoal(3, new TemptGoal(this, 1.1, this::isFood, false));
     }
 
@@ -77,9 +81,7 @@ public class ResourcefulSheepEntity extends Sheep {
 
     @Override
     public boolean isFood(@NotNull ItemStack stack) {
-        SheepVariantData variant = ConfigSheepTypeManager.getSheepVariant()
-                .get(BuiltInRegistries.ENTITY_TYPE.getKey(this.getType()).getPath());
-
+        SheepVariantData variant = getSheepVariantData();
         if (variant != null && variant.FoodItems() != null && !variant.FoodItems().isEmpty()) {
             for (String id : variant.FoodItems()) {
                 if (matchesItemOrTag(stack, id)) {
@@ -129,9 +131,7 @@ public class ResourcefulSheepEntity extends Sheep {
         List<ItemStack> drops = new ArrayList<>(vanillaDrops);
 
         if (!world.isClientSide) {
-            SheepVariantData variantData = ConfigSheepTypeManager.getSheepVariant()
-                    .get(BuiltInRegistries.ENTITY_TYPE.getKey(this.getType()).getPath());
-
+            SheepVariantData variantData = getSheepVariantData();
             if (variantData != null) {
                 Item droppedItem = BuiltInRegistries.ITEM.get(ResourceLocation.tryParse(variantData.DroppedItem()));
 
@@ -207,5 +207,10 @@ public class ResourcefulSheepEntity extends Sheep {
             }
         }
         return childId;
+    }
+
+    public SheepVariantData getSheepVariantData() {
+        return ConfigSheepTypeManager.getSheepVariant()
+                .get(BuiltInRegistries.ENTITY_TYPE.getKey(this.getType()).getPath());
     }
 }

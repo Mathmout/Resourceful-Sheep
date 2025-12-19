@@ -90,7 +90,8 @@ public class ConfigSheepTypeManager {
                         type.EggColorSpotsNTitle(),
                         type.FoodItems(),
                         type.FireImmune(),
-                        type.ImmuneEffects()
+                        type.ImmuneEffects(),
+                        type.EtableBocksMap()
                 );
                 SHEEP_VARIANTS.put(id, variant);
             }
