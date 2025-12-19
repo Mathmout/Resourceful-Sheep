@@ -18,6 +18,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @JeiPlugin
 public class JEIResourcefulSheepModPlugin implements IModPlugin {
@@ -29,6 +30,8 @@ public class JEIResourcefulSheepModPlugin implements IModPlugin {
             new RecipeType<>(SheepDroppingCategory.UID, SheepVariantData.class);
     public static final RecipeType<SheepVariantData> FEEDING_TYPE =
             new RecipeType<>(SheepFeedingCategory.UID, SheepVariantData.class);
+    public static final RecipeType<SheepEatingRecipeWrapper> EATING_TYPE =
+            new RecipeType<>(SheepEatingCategory.UID, SheepEatingRecipeWrapper.class);
 
     @Override
     public @NotNull ResourceLocation getPluginUid() {
@@ -41,6 +44,7 @@ public class JEIResourcefulSheepModPlugin implements IModPlugin {
         registration.addRecipeCategories(new SheepSpawningCategory(registration.getJeiHelpers().getGuiHelper()));
         registration.addRecipeCategories(new SheepDroppingCategory(registration.getJeiHelpers().getGuiHelper()));
         registration.addRecipeCategories(new SheepFeedingCategory(registration.getJeiHelpers().getGuiHelper()));
+        registration.addRecipeCategories(new SheepEatingCategory(registration.getJeiHelpers().getGuiHelper()));
     }
 
     @Override
@@ -73,6 +77,37 @@ public class JEIResourcefulSheepModPlugin implements IModPlugin {
 
         // Feeding Recipes
         registration.addRecipes(FEEDING_TYPE, variants);
+
+        // Eating Recipes
+        registration.addRecipes(EATING_TYPE, getWrappedEatingRecipes(variants));
+    }
+
+
+    private List<SheepEatingRecipeWrapper> getWrappedEatingRecipes(List<SheepVariantData> variants) {
+        List<SheepEatingRecipeWrapper> wrappedRecipes = new ArrayList<>();
+        final int eatingPairsPerPage = 4;
+
+        for (SheepVariantData variant : variants) {
+            List<Map.Entry<String, String>> entries = getEntriesForVariant(variant);
+
+            for (int i = 0; i < entries.size(); i += eatingPairsPerPage) {
+                int end = Math.min(i + eatingPairsPerPage, entries.size());
+                List<Map.Entry<String, String>> pageEntries = entries.subList(i, end);
+                wrappedRecipes.add(new SheepEatingRecipeWrapper(variant, pageEntries));
+        }
+    }
+    return wrappedRecipes;
+}
+    private List<Map.Entry<String, String>> getEntriesForVariant(SheepVariantData variant) {
+        Map<String, String> map = variant.EtableBocksMap();
+        if (map == null || map.isEmpty()) {
+            return List.of(
+                    Map.entry("minecraft:grass_block", "minecraft:dirt"),
+                    Map.entry("minecraft:short_grass", "minecraft:air"),
+                    Map.entry("minecraft:fern", "minecraft:air")
+            );
+        }
+        return new ArrayList<>(map.entrySet());
     }
 
     @Override

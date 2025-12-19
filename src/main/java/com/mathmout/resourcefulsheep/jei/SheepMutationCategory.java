@@ -25,7 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SheepMutationCategory implements IRecipeCategory<SheepMutation> {
-    public static final ResourceLocation UID = ResourceLocation.fromNamespaceAndPath(ResourcefulSheepMod.MOD_ID, "sheep_mutation");
+    public static final ResourceLocation UID = ResourceLocation.fromNamespaceAndPath(ResourcefulSheepMod.MOD_ID, "sheep_mutations");
     private final IDrawable icon;
 
 
@@ -40,7 +40,7 @@ public class SheepMutationCategory implements IRecipeCategory<SheepMutation> {
 
     @Override
     public @NotNull Component getTitle() {
-        return Component.translatable("recipe."+ ResourcefulSheepMod.MOD_ID +".mutation");
+        return Component.translatable("recipe."+ ResourcefulSheepMod.MOD_ID +".sheep_mutations");
     }
 
     @Override

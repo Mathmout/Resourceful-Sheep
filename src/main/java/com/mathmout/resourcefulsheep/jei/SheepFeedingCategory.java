@@ -72,7 +72,7 @@ public class SheepFeedingCategory implements IRecipeCategory<SheepVariantData> {
         builder.addInvisibleIngredients(RecipeIngredientRole.OUTPUT).addItemStack(new ItemStack(Egg));
 
         int startX = 60;
-        int startY = 10;
+        int startY = 18;
         int slotSize = 18;
         int columns = 7;
         List<String> foodItems = recipe.FoodItems();
@@ -138,7 +138,7 @@ public class SheepFeedingCategory implements IRecipeCategory<SheepVariantData> {
         if (!tips.isEmpty()) {
             guiGraphics.renderComponentTooltip(Minecraft.getInstance().font, tips, (int) mouseX, (int) mouseY);
         }
-        guiGraphics.drawString(Minecraft.getInstance().font, "Eats:", 60, 2, 0xFF404040, false);
+        guiGraphics.drawString(Minecraft.getInstance().font, "Feed with :", 60, 4, 0xFF404040, false);
         Lighting.setupForFlatItems();
     }
 }

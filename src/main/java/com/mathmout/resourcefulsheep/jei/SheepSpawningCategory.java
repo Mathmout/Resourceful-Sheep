@@ -54,7 +54,7 @@ public class SheepSpawningCategory implements IRecipeCategory<SheepSpawningRecip
 
     @Override
     public int getHeight() {
-        return 128;
+        return 145;
     }
 
     @Override

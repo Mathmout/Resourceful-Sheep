@@ -10,6 +10,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -27,7 +28,7 @@ public class JEIUtilitiesMethodes {
     private static final Map<String, ResourcefulSheepEntity> sheepCache = new HashMap<>();
 
     public static void drawSheep(GuiGraphics g, String sheepId, int x, int y, float scale) {
-        var sheep = getSheep(sheepId);
+        ResourcefulSheepEntity sheep = getSheep(sheepId);
         if (sheep == null) return;
 
         PoseStack ps = g.pose();
@@ -42,7 +43,7 @@ public class JEIUtilitiesMethodes {
         ps.mulPose(rot);
 
         EntityRenderDispatcher ed = Minecraft.getInstance().getEntityRenderDispatcher();
-        var buf = Minecraft.getInstance().renderBuffers().bufferSource();
+        MultiBufferSource.BufferSource buf = Minecraft.getInstance().renderBuffers().bufferSource();
 
         RenderSystem.setShaderLights(new Vector3f(0f, 1f, 1f), new Vector3f(0f, 0f, 0f));
         ed.setRenderShadow(false);

@@ -95,12 +95,16 @@ public class DefaultSheepTypes {
 
         // Netherrack
         DefaultSheep.add(new SheepTypeData("netherrack", "#5a2b2b", "#3d1d1d",
-                List.of("minecraft:crimson_fungus", "minecraft:crimson_roots", "minecraft:warped_fungus", "minecraft:warped_roots"),
+                List.of("minecraft:nether_wart"),
                 true,
                 List.of(),
                 new HashMap<>(Map.of(
                         "minecraft:crimson_nylium", "minecraft:netherrack",
-                        "minecraft:warped_nylium", "minecraft:netherrack"
+                        "minecraft:warped_nylium", "minecraft:netherrack",
+                        "minecraft:crimson_fungus", "minecraft:air",
+                        "minecraft:crimson_roots", "minecraft:air",
+                        "minecraft:warped_fungus","minecraft:air",
+                        "minecraft:warped_roots", "minecraft:air"
                 )),
                 List.of(
                         new SheepTypeData.TierData(1, "minecraft:netherrack", 12, 20),
@@ -110,10 +114,17 @@ public class DefaultSheepTypes {
 
         // Soul Sand
         DefaultSheep.add(new SheepTypeData("soul_sand", "#4a3e32", "#30261c",
-                List.of("minecraft:crimson_fungus", "minecraft:crimson_roots", "minecraft:warped_fungus", "minecraft:warped_roots"),
+                List.of("minecraft:nether_wart"),
                 true,
                 List.of(),
-                new HashMap<>(Map.of()),
+                new HashMap<>(Map.of(
+                        "minecraft:crimson_nylium", "minecraft:netherrack",
+                        "minecraft:warped_nylium", "minecraft:netherrack",
+                        "minecraft:crimson_fungus", "minecraft:air",
+                        "minecraft:crimson_roots", "minecraft:air",
+                        "minecraft:warped_fungus","minecraft:air",
+                        "minecraft:warped_roots", "minecraft:air"
+                )),
                 List.of(
                         new SheepTypeData.TierData(1, "minecraft:soul_sand", 10, 18),
                         new SheepTypeData.TierData(2, "minecraft:soul_sand", 18, 28),
@@ -156,10 +167,18 @@ public class DefaultSheepTypes {
 
         // Redstone
         DefaultSheep.add(new SheepTypeData("redstone", "#FF0000", "#8B0000",
-                List.of(),
+                List.of("minecraft:nether_wart", "minecraft:wheat"),
                 true,
                 List.of(),
-                new HashMap<>(Map.of()),
+                new HashMap<>(Map.of(
+                        "minecraft:crimson_nylium", "minecraft:netherrack",
+                        "minecraft:warped_nylium", "minecraft:netherrack",
+                        "minecraft:grass_block", "minecraft:dirt",
+                        "minecraft:crimson_fungus", "minecraft:air",
+                        "minecraft:crimson_roots", "minecraft:air",
+                        "minecraft:warped_fungus","minecraft:air",
+                        "minecraft:warped_roots", "minecraft:air"
+                )),
                 List.of(
                         new SheepTypeData.TierData(1, "minecraft:redstone", 8, 13),
                         new SheepTypeData.TierData(2, "minecraft:redstone_block", 4, 7)
@@ -178,10 +197,18 @@ public class DefaultSheepTypes {
 
         // Quartz
         DefaultSheep.add(new SheepTypeData("quartz", "#EAE5DE", "#D4CCC5",
-                List.of("minecraft:crimson_fungus", "minecraft:crimson_roots", "minecraft:warped_fungus", "minecraft:warped_roots", "minecraft:wheat"),
+                List.of("minecraft:nether_wart", "minecraft:wheat"),
                 true,
                 List.of(),
-                new HashMap<>(Map.of()),
+                new HashMap<>(Map.of(
+                        "minecraft:crimson_nylium", "minecraft:netherrack",
+                        "minecraft:warped_nylium", "minecraft:netherrack",
+                        "minecraft:grass_block", "minecraft:dirt",
+                        "minecraft:crimson_fungus", "minecraft:air",
+                        "minecraft:crimson_roots", "minecraft:air",
+                        "minecraft:warped_fungus","minecraft:air",
+                        "minecraft:warped_roots", "minecraft:air"
+                )),
                 List.of(
                         new SheepTypeData.TierData(1, "minecraft:quartz", 11, 17),
                         new SheepTypeData.TierData(2, "minecraft:quartz_block", 8, 11)
@@ -223,10 +250,17 @@ public class DefaultSheepTypes {
 
         // Netherite Scrap
         DefaultSheep.add(new SheepTypeData("netherite_scrap", "#654740", "#4a281d",
-                List.of("minecraft:crimson_fungus", "minecraft:crimson_roots", "minecraft:warped_fungus", "minecraft:warped_roots"),
+                List.of("minecraft:nether_wart"),
                 true,
                 List.of(),
-                new HashMap<>(Map.of()),
+                new HashMap<>(Map.of(
+                        "minecraft:crimson_nylium", "minecraft:netherrack",
+                        "minecraft:warped_nylium", "minecraft:netherrack",
+                        "minecraft:crimson_fungus", "minecraft:air",
+                        "minecraft:crimson_roots", "minecraft:air",
+                        "minecraft:warped_fungus","minecraft:air",
+                        "minecraft:warped_roots", "minecraft:air"
+                )),
                 List.of(
                         new SheepTypeData.TierData(1, "minecraft:netherite_scrap", 0, 1),
                         new SheepTypeData.TierData(2, "minecraft:netherite_scrap", 3, 7),
@@ -235,10 +269,18 @@ public class DefaultSheepTypes {
 
         // Netherite
         DefaultSheep.add(new SheepTypeData("netherite", "#4d494d", "#31292a",
-                List.of("minecraft:crimson_fungus", "minecraft:crimson_roots", "minecraft:warped_fungus", "minecraft:warped_roots", "minecraft:wheat"),
+                List.of("minecraft:nether_wart", "minecraft:wheat"),
                 true,
                 List.of(),
-                new HashMap<>(Map.of()),
+                new HashMap<>(Map.of(
+                        "minecraft:crimson_nylium", "minecraft:netherrack",
+                        "minecraft:warped_nylium", "minecraft:netherrack",
+                        "minecraft:grass_block", "minecraft:dirt",
+                        "minecraft:crimson_fungus", "minecraft:air",
+                        "minecraft:crimson_roots", "minecraft:air",
+                        "minecraft:warped_fungus","minecraft:air",
+                        "minecraft:warped_roots", "minecraft:air"
+                )),
                 List.of(
                         new SheepTypeData.TierData(1, "minecraft:netherite_ingot", 1, 3),
                         new SheepTypeData.TierData(2, "minecraft:netherite_block", 0, 1)
@@ -246,10 +288,17 @@ public class DefaultSheepTypes {
 
         // Nether Star
         DefaultSheep.add(new SheepTypeData("nether_star", "#e7e5ff", "#777bc7",
-                List.of("minecraft:crimson_fungus", "minecraft:crimson_roots", "minecraft:warped_fungus", "minecraft:warped_roots"),
+                List.of("minecraft:nether_wart"),
                 true,
                 List.of(),
-                new HashMap<>(Map.of()),
+                new HashMap<>(Map.of(
+                        "minecraft:crimson_nylium", "minecraft:netherrack",
+                        "minecraft:warped_nylium", "minecraft:netherrack",
+                        "minecraft:crimson_fungus", "minecraft:air",
+                        "minecraft:crimson_roots", "minecraft:air",
+                        "minecraft:warped_fungus","minecraft:air",
+                        "minecraft:warped_roots", "minecraft:air"
+                )),
                 List.of(
                         new SheepTypeData.TierData(1, "minecraft:nether_star", 0, 0),
                         new SheepTypeData.TierData(2, "minecraft:nether_star", 0, 2)
