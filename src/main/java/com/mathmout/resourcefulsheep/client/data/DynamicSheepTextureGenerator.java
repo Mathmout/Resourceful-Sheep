@@ -70,11 +70,9 @@ public class DynamicSheepTextureGenerator {
             BufferedImage sheepBaseImage = ImageIO.read(sheepBaseStream);
             BufferedImage furBaseImage = ImageIO.read(furBaseStream);
 
-            Map<String, List<ResourceLocation>> sourceTextureCache = findSourceTextures();
-
             for (SheepVariantData variant : ConfigSheepTypeManager.getSheepVariant().values()) {
                 try {
-                    List<ResourceLocation> sources = sourceTextureCache.get(variant.Resource());
+                    List<ResourceLocation> sources = getVariantSourceTextures(variant);
                     generateTexturesForVariant(variant, resourceManager, sheepBaseImage, furBaseImage, sources);
                 } catch (IOException e) {
                     LOGGER.error("Failed to generate textures for sheep variant: {}", variant.Id(), e);
@@ -92,7 +90,7 @@ public class DynamicSheepTextureGenerator {
             return;
         }
 
-        // Map combinée pour stocker les couleurs de TOUS les items
+        // Map combinée pour stocker les couleurs.
         Map<Integer, Integer> combinedPalette = new HashMap<>();
 
         // On boucle sur chaque item (block ou item) associé à ce type de mouton
@@ -150,6 +148,20 @@ public class DynamicSheepTextureGenerator {
         DYNAMIC_TEXTURES.put(furTextureLocation, bufferedImageToPngBytes(furImage));
     }
 
+    private List<ResourceLocation> getVariantSourceTextures(SheepVariantData variant) {
+        Set<ResourceLocation> uniqueItems = new HashSet<>();
+
+        if (variant.DroppedItems() != null) {
+            for (SheepVariantData.DroppedItems dropData : variant.DroppedItems()) {
+                ResourceLocation loc = ResourceLocation.tryParse(dropData.ItemId());
+                if (loc != null) {
+                    uniqueItems.add(loc);
+                }
+            }
+        }
+        return new ArrayList<>(uniqueItems);
+    }
+
     private BufferedImage loadBufferedImage(ResourceManager resourceManager, ResourceLocation itemKey) {
         Item item = BuiltInRegistries.ITEM.get(itemKey);
         // Try primary path first
@@ -175,14 +187,6 @@ public class DynamicSheepTextureGenerator {
             LOGGER.debug("Could not find texture resource for: {}", itemKey);
         }
         return null;
-    }
-
-    private Map<String, List<ResourceLocation>> findSourceTextures() {
-        Map<String, List<ResourceLocation>> cache = new HashMap<>();
-        for (SheepTypeData sheepType : ConfigSheepTypeManager.getSheepTypes()) {
-            cache.put(sheepType.Resource(), getSourceTextureLocation(sheepType));
-        }
-        return cache;
     }
 
     private byte[] bufferedImageToPngBytes(BufferedImage image) throws IOException {
@@ -261,22 +265,5 @@ public class DynamicSheepTextureGenerator {
         BufferedImage copy = new BufferedImage(source.getWidth(), source.getHeight(), BufferedImage.TYPE_INT_ARGB);
         copy.getGraphics().drawImage(source, 0, 0, null);
         return copy;
-    }
-
-    private List<ResourceLocation> getSourceTextureLocation(SheepTypeData sheepType) {
-        Set<ResourceLocation> locs = new HashSet<>();
-
-        // Find the last item in the tier list that is NOT a block
-        if (sheepType.SheepTier() != null) {
-            for (SheepTypeData.TierData tierData : sheepType.SheepTier()) {
-                if (tierData.DroppedItems() != null) {
-                    for (SheepTypeData.TierData.DroppedItems DroppedItems : tierData.DroppedItems()) {
-                        ResourceLocation item = ResourceLocation.parse(DroppedItems.ItemId());
-                        locs.add(item);
-                    }
-                }
-            }
-        }
-        return new ArrayList<>(locs);
     }
 }

@@ -117,7 +117,7 @@ public class Lasso extends Item {
         SheepVariantData variant = ConfigSheepTypeManager.getSheepVariant().get(entityId.getPath());
         if (variant == null) return;
 
-        tooltips.add(Component.literal("Dropped Items: ").withStyle(ChatFormatting.BLUE));
+        tooltips.add(Component.literal("Dropped Items : ").withStyle(ChatFormatting.BLUE));
 
         List<SheepVariantData.DroppedItems> drops = variant.DroppedItems();
 
