@@ -19,10 +19,8 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Comparator;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class DynamicSheepTextureGenerator {
@@ -72,11 +70,12 @@ public class DynamicSheepTextureGenerator {
             BufferedImage sheepBaseImage = ImageIO.read(sheepBaseStream);
             BufferedImage furBaseImage = ImageIO.read(furBaseStream);
 
-            Map<String, ResourceLocation> sourceTextureCache = findSourceTextures();
+            Map<String, List<ResourceLocation>> sourceTextureCache = findSourceTextures();
 
             for (SheepVariantData variant : ConfigSheepTypeManager.getSheepVariant().values()) {
                 try {
-                    generateTexturesForVariant(variant, resourceManager, sheepBaseImage, furBaseImage, sourceTextureCache.get(variant.Resource()));
+                    List<ResourceLocation> sources = sourceTextureCache.get(variant.Resource());
+                    generateTexturesForVariant(variant, resourceManager, sheepBaseImage, furBaseImage, sources);
                 } catch (IOException e) {
                     LOGGER.error("Failed to generate textures for sheep variant: {}", variant.Id(), e);
                 }
@@ -87,80 +86,99 @@ public class DynamicSheepTextureGenerator {
         LOGGER.info("Dynamic sheep texture generation finished. Generated {} textures.", DYNAMIC_TEXTURES.size());
     }
 
-    private void generateTexturesForVariant(SheepVariantData variant, ResourceManager resourceManager, BufferedImage sheepBaseImage, BufferedImage furBaseImage, ResourceLocation itemKey) throws IOException {
-        if (itemKey == null) {
-            LOGGER.warn("No suitable item/block texture found for sheep resource: {}", variant.Resource());
+    private void generateTexturesForVariant(SheepVariantData variant, ResourceManager resourceManager, BufferedImage sheepBaseImage, BufferedImage furBaseImage, List<ResourceLocation> itemKeys) throws IOException {
+        if (itemKeys == null || itemKeys.isEmpty()) {
+            LOGGER.warn("No suitable item/block textures found for sheep resource: {}", variant.Resource());
             return;
         }
 
-        Item item = BuiltInRegistries.ITEM.get(itemKey);
-        String texturePath = item instanceof BlockItem ? "textures/block/" : "textures/item/";
-        ResourceLocation actualItemTextureLocation = ResourceLocation.fromNamespaceAndPath(itemKey.getNamespace(), texturePath + itemKey.getPath() + ".png");
+        // Map combinée pour stocker les couleurs de TOUS les items
+        Map<Integer, Integer> combinedPalette = new HashMap<>();
 
-        Optional<Resource> textureResource = resourceManager.getResource(actualItemTextureLocation);
-        if (textureResource.isEmpty()) {
-            // Retry with the other path if the first one fails, some mods use item path for blocks)
-            texturePath = item instanceof BlockItem ? "textures/item/" : "textures/block/";
-            actualItemTextureLocation = ResourceLocation.fromNamespaceAndPath(itemKey.getNamespace(), texturePath + itemKey.getPath() + ".png");
-            textureResource = resourceManager.getResource(actualItemTextureLocation);
-            if (textureResource.isEmpty()) {
-                LOGGER.warn("Could not find texture resource for: {} in both item and block paths", itemKey);
-                return;
+        // On boucle sur chaque item (block ou item) associé à ce type de mouton
+        for (ResourceLocation itemKey : itemKeys) {
+            BufferedImage sourceTexture = loadBufferedImage(resourceManager, itemKey);
+
+            if (sourceTexture != null) {
+                Map<Integer, Integer> texturePalette = analyzeTexture(sourceTexture);
+                // On fusionne la palette de cet item dans la palette globale
+                texturePalette.forEach((color, count) -> combinedPalette.merge(color, count, Integer::sum));
             }
         }
 
-        try (InputStream inputStream = textureResource.get().open()) {
-            BufferedImage sourceTexture = ImageIO.read(inputStream);
-            if (sourceTexture == null) {
-                LOGGER.warn("Failed to read image for texture: {}", actualItemTextureLocation);
-                return;
-            }
-            Map<Integer, Integer> colorPalette = analyzeTexture(sourceTexture);
-            if (colorPalette.isEmpty()) {
-                LOGGER.warn("Color palette for {} is empty. Skipping texture generation.", actualItemTextureLocation);
-                return;
-            }
-
-            List<Map.Entry<Integer, Integer>> weightedColorPalette = new java.util.ArrayList<>(colorPalette.entrySet());
-
-            int bodyPixelsTotal = calculateTotalPixels(BODY_REGIONS);
-            int furPixelsTotal = calculateTotalPixels(FUR_REGIONS);
-
-            SheepTypeData sheepType = ConfigSheepTypeManager.getSheepTypes().stream().filter(st -> st.Resource().equals(variant.Resource())).findFirst().orElse(null);
-            if (sheepType == null) return;
-
-            double maxTier = sheepType.SheepTier().stream().mapToInt(SheepTypeData.TierData::Tier).max().orElse(1);
-            int tier = variant.Tier();
-
-            double coverage;
-
-            if (maxTier > MAX_TIER_INCREMENT) {
-                coverage = (MAX_TIER_INCREMENT / 10.0) * (tier / maxTier);
-            } else {
-                coverage = tier * TIER_INCREMENT;
-            }
-
-            int bodyPixelsToAdd = (int) (bodyPixelsTotal * coverage * BODY_INTENSITY_FACTOR);
-            int furPixelsToAdd = (int) (furPixelsTotal * coverage);
-
-            BufferedImage sheepImage = copyImage(sheepBaseImage);
-            BufferedImage furImage = copyImage(furBaseImage);
-
-            addRandomPixels(sheepImage, BODY_REGIONS, weightedColorPalette, bodyPixelsToAdd);
-            addRandomPixels(furImage, FUR_REGIONS, weightedColorPalette, furPixelsToAdd);
-
-            ResourceLocation sheepTextureLocation = ResourceLocation.fromNamespaceAndPath(ResourcefulSheepMod.MOD_ID,
-                    "textures/entity/sheep/" + variant.Id() + ".png");
-            DYNAMIC_TEXTURES.put(sheepTextureLocation, bufferedImageToPngBytes(sheepImage));
-
-            ResourceLocation furTextureLocation = ResourceLocation.fromNamespaceAndPath(ResourcefulSheepMod.MOD_ID,
-                    "textures/entity/sheep/" + variant.Id() + "_fur.png");
-            DYNAMIC_TEXTURES.put(furTextureLocation, bufferedImageToPngBytes(furImage));
+        if (combinedPalette.isEmpty()) {
+            LOGGER.warn("Combined color palette for {} is empty (all source textures failed). Skipping.", variant.Resource());
+            return;
         }
+
+        List<Map.Entry<Integer, Integer>> weightedColorPalette = new ArrayList<>(combinedPalette.entrySet());
+
+        int bodyPixelsTotal = calculateTotalPixels(BODY_REGIONS);
+        int furPixelsTotal = calculateTotalPixels(FUR_REGIONS);
+
+        SheepTypeData sheepType = ConfigSheepTypeManager.getSheepTypes().stream()
+                .filter(st -> st.Resource().equals(variant.Resource()))
+                .findFirst()
+                .orElse(null);
+        if (sheepType == null) return;
+
+        double maxTier = sheepType.SheepTier().stream().mapToInt(SheepTypeData.TierData::Tier).max().orElse(1);
+        int tier = variant.Tier();
+
+        double coverage;
+        if (maxTier > MAX_TIER_INCREMENT) {
+            coverage = (MAX_TIER_INCREMENT / 10.0) * (tier / maxTier);
+        } else {
+            coverage = tier * TIER_INCREMENT;
+        }
+
+        int bodyPixelsToAdd = (int) (bodyPixelsTotal * coverage * BODY_INTENSITY_FACTOR);
+        int furPixelsToAdd = (int) (furPixelsTotal * coverage);
+
+        BufferedImage sheepImage = copyImage(sheepBaseImage);
+        BufferedImage furImage = copyImage(furBaseImage);
+
+        addRandomPixels(sheepImage, BODY_REGIONS, weightedColorPalette, bodyPixelsToAdd);
+        addRandomPixels(furImage, FUR_REGIONS, weightedColorPalette, furPixelsToAdd);
+
+        ResourceLocation sheepTextureLocation = ResourceLocation.fromNamespaceAndPath(ResourcefulSheepMod.MOD_ID,
+                "textures/entity/sheep/" + variant.Id() + ".png");
+        DYNAMIC_TEXTURES.put(sheepTextureLocation, bufferedImageToPngBytes(sheepImage));
+
+        ResourceLocation furTextureLocation = ResourceLocation.fromNamespaceAndPath(ResourcefulSheepMod.MOD_ID,
+                "textures/entity/sheep/" + variant.Id() + "_fur.png");
+        DYNAMIC_TEXTURES.put(furTextureLocation, bufferedImageToPngBytes(furImage));
     }
 
-    private Map<String, ResourceLocation> findSourceTextures() {
-        Map<String, ResourceLocation> cache = new java.util.HashMap<>();
+    private BufferedImage loadBufferedImage(ResourceManager resourceManager, ResourceLocation itemKey) {
+        Item item = BuiltInRegistries.ITEM.get(itemKey);
+        // Try primary path first
+        String primaryPath = item instanceof BlockItem ? "textures/block/" : "textures/item/";
+        ResourceLocation loc = ResourceLocation.fromNamespaceAndPath(itemKey.getNamespace(), primaryPath + itemKey.getPath() + ".png");
+
+        Optional<Resource> res = resourceManager.getResource(loc);
+
+        // If fail, try secondary path
+        if (res.isEmpty()) {
+            String secondaryPath = item instanceof BlockItem ? "textures/item/" : "textures/block/";
+            loc = ResourceLocation.fromNamespaceAndPath(itemKey.getNamespace(), secondaryPath + itemKey.getPath() + ".png");
+            res = resourceManager.getResource(loc);
+        }
+
+        if (res.isPresent()) {
+            try (InputStream is = res.get().open()) {
+                return ImageIO.read(is);
+            } catch (IOException e) {
+                LOGGER.warn("Failed to read texture stream for: {}", loc);
+            }
+        } else {
+            LOGGER.debug("Could not find texture resource for: {}", itemKey);
+        }
+        return null;
+    }
+
+    private Map<String, List<ResourceLocation>> findSourceTextures() {
+        Map<String, List<ResourceLocation>> cache = new HashMap<>();
         for (SheepTypeData sheepType : ConfigSheepTypeManager.getSheepTypes()) {
             cache.put(sheepType.Resource(), getSourceTextureLocation(sheepType));
         }
@@ -175,7 +193,7 @@ public class DynamicSheepTextureGenerator {
     }
 
     private Map<Integer, Integer> analyzeTexture(BufferedImage image) {
-        Map<Integer, Integer> colorCounts = new java.util.HashMap<>();
+        Map<Integer, Integer> colorCounts = new HashMap<>();
         int width = image.getWidth();
         int height = image.getHeight();
 
@@ -245,33 +263,20 @@ public class DynamicSheepTextureGenerator {
         return copy;
     }
 
-    private ResourceLocation getSourceTextureLocation(SheepTypeData sheepType) {
-        ResourceLocation candidate = null;
-
-        // Sort tiers to process them in order
-        List<SheepTypeData.TierData> sortedTiers = sheepType.SheepTier().stream()
-                .sorted(Comparator.comparingInt(SheepTypeData.TierData::Tier))
-                .toList();
+    private List<ResourceLocation> getSourceTextureLocation(SheepTypeData sheepType) {
+        Set<ResourceLocation> locs = new HashSet<>();
 
         // Find the last item in the tier list that is NOT a block
-        for (SheepTypeData.TierData tierData : sortedTiers) {
-            Item item = BuiltInRegistries.ITEM.get(ResourceLocation.parse(tierData.DroppedItem()));
-            if (!(item instanceof BlockItem)) {
-                candidate = BuiltInRegistries.ITEM.getKey(item);
+        if (sheepType.SheepTier() != null) {
+            for (SheepTypeData.TierData tierData : sheepType.SheepTier()) {
+                if (tierData.DroppedItems() != null) {
+                    for (SheepTypeData.TierData.DroppedItems DroppedItems : tierData.DroppedItems()) {
+                        ResourceLocation item = ResourceLocation.parse(DroppedItems.ItemId());
+                        locs.add(item);
+                    }
+                }
             }
         }
-
-        // If a non-block item was found, return it
-        if (candidate != null) {
-            return candidate;
-        }
-
-        // Otherwise, all items are blocks. Return the first one found.
-        return sheepType.SheepTier().stream()
-                .map(tierData -> BuiltInRegistries.ITEM.get(ResourceLocation.parse(tierData.DroppedItem())))
-                .filter(item -> item instanceof BlockItem)
-                .map(BuiltInRegistries.ITEM::getKey)
-                .findFirst()
-                .orElse(null); // Fallback if no item is found at all
+        return new ArrayList<>(locs);
     }
 }

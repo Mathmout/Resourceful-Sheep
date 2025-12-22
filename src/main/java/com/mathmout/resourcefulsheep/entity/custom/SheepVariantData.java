@@ -7,9 +7,7 @@ public record SheepVariantData(
         String Id,
         String Resource,
         int Tier,
-        String DroppedItem,
-        int MinDrops,
-        int MaxDrops,
+        List<DroppedItems> DroppedItems,
         String EggColorBackground,
         String EggColorSpotsNTitle,
         List<String> FoodItems,
@@ -17,4 +15,9 @@ public record SheepVariantData(
         List<String> ImmuneEffects,
         Map<String, String> EtableBocksMap)
 {
+    public record DroppedItems(String ItemId,
+                               int MinDrops,
+                               int MaxDrops) {
+    }
+
 }

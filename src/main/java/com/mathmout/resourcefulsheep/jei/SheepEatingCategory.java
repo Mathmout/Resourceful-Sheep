@@ -69,7 +69,7 @@ public class SheepEatingCategory implements IRecipeCategory<SheepEatingRecipeWra
     public void setRecipe(@NotNull IRecipeLayoutBuilder builder, @NotNull SheepEatingRecipeWrapper recipe, @NotNull IFocusGroup focuses) {
 
         Item egg = BuiltInRegistries.ITEM.get(ResourceLocation.fromNamespaceAndPath(ResourcefulSheepMod.MOD_ID, recipe.variant().Id() + "_spawn_egg"));
-        builder.addInvisibleIngredients(RecipeIngredientRole.OUTPUT).addItemStack(new ItemStack(egg));
+        builder.addInvisibleIngredients(RecipeIngredientRole.INPUT).addItemStack(new ItemStack(egg));
 
         int startX = 60;
         int startY = 18;
@@ -115,7 +115,7 @@ public class SheepEatingCategory implements IRecipeCategory<SheepEatingRecipeWra
                     .addItemStacks(inputStacks);
 
 
-            // BLoch placé.
+            // Block placé.
             if (!entry.getValue().equals("minecraft:air") && !entry.getValue().isEmpty()) {
                 Item outputItem = BuiltInRegistries.ITEM.get(ResourceLocation.tryParse(entry.getValue()));
                 builder.addSlot(RecipeIngredientRole.OUTPUT, x + 32, y)
@@ -136,7 +136,7 @@ public class SheepEatingCategory implements IRecipeCategory<SheepEatingRecipeWra
     public void draw(@NotNull SheepEatingRecipeWrapper recipe, @NotNull IRecipeSlotsView recipeSlotsView, @NotNull GuiGraphics guiGraphics, double mouseX, double mouseY) {
         int scale = 22;
         int baseY = getHeight() / 2;
-        int sheepX = 30;
+        int sheepX = getWidth() / 6;;
 
         // Dessiner le mouton
         JEIUtilitiesMethodes.drawSheep(guiGraphics, recipe.variant().Id(), sheepX, baseY + 3 * scale / 4, scale);
@@ -151,7 +151,8 @@ public class SheepEatingCategory implements IRecipeCategory<SheepEatingRecipeWra
         }
 
         // Titre
-        guiGraphics.drawString(Minecraft.getInstance().font, "Eats :", 60, 4, 0xFF404040, false);
+        guiGraphics.drawString(Minecraft.getInstance().font, "Eats :",
+                (getWidth() - Minecraft.getInstance().font.width("Eats :")) / 2, 4, 0xFF404040, false);
 
         // Dessiner les flèches "→"
         int startX = 60;

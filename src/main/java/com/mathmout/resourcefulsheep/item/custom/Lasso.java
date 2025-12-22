@@ -117,9 +117,21 @@ public class Lasso extends Item {
         SheepVariantData variant = ConfigSheepTypeManager.getSheepVariant().get(entityId.getPath());
         if (variant == null) return;
 
-        tooltips.add(Component.literal("Dropped Item: ").withStyle(ChatFormatting.BLUE)
-                .append(Component.literal(ModEvents.ItemIdToName(variant.DroppedItem())).withStyle(ChatFormatting.YELLOW)));
+        tooltips.add(Component.literal("Dropped Items: ").withStyle(ChatFormatting.BLUE));
 
+        List<SheepVariantData.DroppedItems> drops = variant.DroppedItems();
+
+        if (drops != null && !drops.isEmpty() && !drops.getFirst().ItemId().equals("minecraft:air")) {
+            for (SheepVariantData.DroppedItems dropData : drops) {
+
+                String itemName = ModEvents.ItemIdToName(dropData.ItemId());
+
+                tooltips.add(Component.literal(" - ").withStyle(ChatFormatting.GRAY)
+                        .append(Component.literal(itemName).withStyle(ChatFormatting.YELLOW)));
+            }
+        } else {
+            tooltips.add(Component.literal(" - None").withStyle(ChatFormatting.GRAY));
+        }
         tooltips.add(Component.literal("Tier: ").withStyle(ChatFormatting.RED)
                 .append(Component.literal(String.valueOf(variant.Tier())).withStyle(ChatFormatting.LIGHT_PURPLE)));
 

@@ -43,6 +43,15 @@ public class DefaultSheepMutations {
         DefaultMutation.add(new SheepMutation("gold_tier_2", "gold_tier_2", "gold_tier_3", 25));
         DefaultMutation.add(new SheepMutation("netherite_scrap_tier_2", "netherite_scrap_tier_2", "netherite_scrap_tier_3", 25));
         DefaultMutation.add(new SheepMutation("soul_sand_tier_2", "soul_sand_tier_2", "soul_sand_tier_3", 25));
+        DefaultMutation.add(new SheepMutation("coal_tier_2", "coal_tier_2", "coal_tier_3", 25));
+        DefaultMutation.add(new SheepMutation("copper_tier_2", "copper_tier_2", "copper_tier_3", 25));
+        DefaultMutation.add(new SheepMutation("redstone_tier_2", "redstone_tier_2", "redstone_tier_3", 25));
+        DefaultMutation.add(new SheepMutation("lapis_lazuli_tier_2", "lapis_lazuli_tier_2", "lapis_lazuli_tier_3", 25));
+        DefaultMutation.add(new SheepMutation("quartz_tier_2", "quartz_tier_2", "quartz_tier_3", 25));
+        DefaultMutation.add(new SheepMutation("diamond_tier_2", "diamond_tier_2", "diamond_tier_3", 25));
+        DefaultMutation.add(new SheepMutation("emerald_tier_2", "emerald_tier_2", "emerald_tier_3", 25));
+        DefaultMutation.add(new SheepMutation("nether_star_tier_2", "nether_star_tier_2", "nether_star_tier_3", 15));
+        DefaultMutation.add(new SheepMutation("netherite_tier_2", "netherite_tier_2", "netherite_tier_3", 15));
 
         // Cobblestone + Stone = Diorite
         DefaultMutation.add(new SheepMutation("cobblestone_tier_3", "stone_tier_3", "diorite_tier_1", 30));
@@ -69,7 +78,7 @@ public class DefaultSheepMutations {
         DefaultMutation.add(new SheepMutation("sand_tier_3", "netherrack_tier_3", "redstone_tier_1", 30));
 
         // Coal + Dripstone = Diamond
-        DefaultMutation.add(new SheepMutation("coal_tier_2", "dripstone_tier_3", "diamond_tier_1", 25));
+        DefaultMutation.add(new SheepMutation("coal_tier_3", "dripstone_tier_3", "diamond_tier_1", 25));
 
         //Diorite + Stone = Emerald
         DefaultMutation.add(new SheepMutation("diorite_tier_3", "stone_tier_3", "emerald_tier_1", 25));

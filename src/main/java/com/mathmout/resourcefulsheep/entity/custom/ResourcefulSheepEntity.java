@@ -132,15 +132,19 @@ public class ResourcefulSheepEntity extends Sheep {
 
         if (!world.isClientSide) {
             SheepVariantData variantData = getSheepVariantData();
-            if (variantData != null) {
-                Item droppedItem = BuiltInRegistries.ITEM.get(ResourceLocation.tryParse(variantData.DroppedItem()));
-
-                if (droppedItem != Items.AIR) {
-                    int count = ThreadLocalRandom.current().nextInt(variantData.MinDrops(), variantData.MaxDrops() + 1);
-                    drops.add(new ItemStack(droppedItem, count));
+                if (variantData != null && variantData.DroppedItems() != null && !variantData.DroppedItems().isEmpty()) {
+                    Item droppedItem;
+                    for (SheepVariantData.DroppedItems dropData : variantData.DroppedItems()){
+                        droppedItem = BuiltInRegistries.ITEM.get(ResourceLocation.tryParse(dropData.ItemId()));
+                        if (droppedItem != Items.AIR) {
+                            int count = ThreadLocalRandom.current().nextInt(dropData.MinDrops(), dropData.MaxDrops() + 1);
+                            if (count > 0){
+                                drops.add(new ItemStack(droppedItem, count));
+                            }
+                        }
+                    }
                 }
             }
-        }
         return drops;
     }
 

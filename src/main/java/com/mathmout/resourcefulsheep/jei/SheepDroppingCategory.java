@@ -12,6 +12,7 @@ import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.IRecipeCategory;
 import com.mojang.blaze3d.platform.Lighting;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -60,35 +61,88 @@ public class SheepDroppingCategory implements IRecipeCategory<SheepVariantData> 
 
     @Override
     public void setRecipe(@NotNull IRecipeLayoutBuilder builder, @NotNull SheepVariantData recipe, @NotNull IFocusGroup focuses) {
-        Item droppedItem = BuiltInRegistries.ITEM.get(ResourceLocation.parse(recipe.DroppedItem()));
-        ItemStack droppedItemStack = new ItemStack(droppedItem);
 
-        var sheepEgg = BuiltInRegistries.ITEM.get(ResourceLocation.fromNamespaceAndPath(ResourcefulSheepMod.MOD_ID, recipe.Id() + "_spawn_egg"));
+        Item sheepEgg = BuiltInRegistries.ITEM.get(ResourceLocation.fromNamespaceAndPath(ResourcefulSheepMod.MOD_ID, recipe.Id() + "_spawn_egg"));
         builder.addInvisibleIngredients(RecipeIngredientRole.INPUT).addItemStack(new ItemStack(sheepEgg));
 
-        builder.addSlot(RecipeIngredientRole.OUTPUT, 3 * getWidth() / 4, getHeight()/2 - 9/2).addItemStack(droppedItemStack);
+        int startX = 60;
+        int startY = 18;
+        int slotSize = 18;
+        int columns = 7;
+        List<SheepVariantData.DroppedItems> DroppedItemsData = recipe.DroppedItems();
 
-        builder.addInvisibleIngredients(RecipeIngredientRole.OUTPUT).addItemStack(droppedItemStack);
+        if (DroppedItemsData == null || DroppedItemsData.isEmpty()) {
+            return;
+        }
+
+        int i = 0;
+        for (SheepVariantData.DroppedItems droppedItems : DroppedItemsData) {
+            List<ItemStack> stacksToAdd = new ArrayList<>();
+
+            Item item = BuiltInRegistries.ITEM.get(ResourceLocation.parse(droppedItems.ItemId()));
+            if (item != Items.AIR) {
+                ItemStack stack = new ItemStack(item);
+                int average = (droppedItems.MinDrops() + droppedItems.MaxDrops()) / 2;
+                if (average == 0) average = 1;
+                stack.setCount(average);
+                stacksToAdd.add(stack);
+            }
+
+            // Slots.
+            if (!stacksToAdd.isEmpty()) {
+                int x = startX + (i % columns) * slotSize;
+                int y = startY + (i / columns) * slotSize;
+
+                if (y + slotSize <= getHeight()) {
+                    if (droppedItems.MinDrops() == droppedItems.MaxDrops() && droppedItems.MinDrops() > 0) {
+                        builder.addSlot(RecipeIngredientRole.OUTPUT, x, y)
+                                .addItemStacks(stacksToAdd).addRichTooltipCallback((recipeSlotView, tooltip)
+                                        -> tooltip.add(Component.literal("Amount : " + droppedItems.MinDrops())
+                                        .withStyle(ChatFormatting.DARK_AQUA)));
+                        i++;
+                    } else {
+                        builder.addSlot(RecipeIngredientRole.OUTPUT, x, y)
+                                .addItemStacks(stacksToAdd).addRichTooltipCallback((recipeSlotView, tooltip)
+                                        -> tooltip.add(Component.literal("Amount : " + droppedItems.MinDrops() + " to " + droppedItems.MaxDrops())
+                                        .withStyle(ChatFormatting.DARK_AQUA)));
+                    }
+                    i++;
+                }
+            }
+        }
     }
 
     @Override
-    public void draw(SheepVariantData recipe, @NotNull IRecipeSlotsView slots, @NotNull GuiGraphics g, double mouseX, double mouseY) {
+    public void draw(SheepVariantData recipe, @NotNull IRecipeSlotsView slots, @NotNull GuiGraphics guiGraphics, double mouseX, double mouseY) {
         int scale = 22;
         int baseY = getHeight() / 2;
-        int sheepX = getWidth() / 4;
+        int sheepX = getWidth() / 6;
 
-        JEIUtilitiesMethodes.drawSheep(g, recipe.Id(), sheepX, baseY + 3 * scale/4, scale);
+        // Dessiner le mouton
+        JEIUtilitiesMethodes.drawSheep(guiGraphics, recipe.Id(), sheepX, baseY + 3 * scale / 4, scale);
 
-        g.drawString(Minecraft.getInstance().font, "→", sheepX * 2, baseY, 0xFF404040, false);
-
+        // Tooltip mouton
         List<Component> tips = new ArrayList<>();
-        if (JEIUtilitiesMethodes.isMouseOver(mouseX, mouseY, sheepX - scale, baseY - 3 * scale/4,sheepX + scale, baseY + 3 * scale/4)) {
+        if (JEIUtilitiesMethodes.isMouseOver(mouseX, mouseY, sheepX - scale, baseY - scale, sheepX + scale, baseY + scale)) {
             JEIUtilitiesMethodes.addTooltip(tips, recipe.Id());
         }
-
         if (!tips.isEmpty()) {
-            g.renderComponentTooltip(Minecraft.getInstance().font, tips, (int) mouseX, (int) mouseY);
+            guiGraphics.renderComponentTooltip(Minecraft.getInstance().font, tips, (int) mouseX, (int) mouseY);
         }
+
+        String text = "Average Drops :";
+
+        if (recipe.DroppedItems() != null) {
+            for (SheepVariantData.DroppedItems drop : recipe.DroppedItems()) {
+                if ("minecraft:air".equals(drop.ItemId())) {
+                    text = "Drops nothing.";
+                    break;
+                }
+            }
+        }
+
+        guiGraphics.drawString(Minecraft.getInstance().font, text,
+                (getWidth() - Minecraft.getInstance().font.width(text)) / 2, 4, 0xFF404040, false);
         Lighting.setupForFlatItems();
     }
 }

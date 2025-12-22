@@ -12,9 +12,7 @@ import java.io.Reader;
 import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Stream;
 
 public class ConfigSheepTypeManager {
@@ -79,13 +77,23 @@ public class ConfigSheepTypeManager {
         for (SheepTypeData type : SHEEP_TYPES.values()) {
             for (SheepTypeData.TierData tier : type.SheepTier()) {
                 String id = type.Resource().toLowerCase() + "_tier_" + tier.Tier();
+
+                List<SheepVariantData.DroppedItems> variantDrops = new ArrayList<>();
+                if (tier.DroppedItems() != null) {
+                    for (SheepTypeData.TierData.DroppedItems drop : tier.DroppedItems()) {
+                        variantDrops.add(new SheepVariantData.DroppedItems(
+                                drop.ItemId(),
+                                drop.MinDrops(),
+                                drop.MaxDrops()
+                        ));
+                    }
+                }
+
                 SheepVariantData variant = new SheepVariantData(
                         id,
                         type.Resource(),
                         tier.Tier(),
-                        tier.DroppedItem(),
-                        tier.MinDrops(),
-                        tier.MaxDrops(),
+                        variantDrops,
                         type.EggColorBackground(),
                         type.EggColorSpotsNTitle(),
                         type.FoodItems(),

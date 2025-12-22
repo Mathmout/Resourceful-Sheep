@@ -71,39 +71,53 @@ public class SheepScanner extends Item {
 
         MutableComponent mainComponent = Component.literal("");
 
-        // Header.
+        // 1. Header
         MutableComponent header = Component.literal("=== Sheep Scanner Result ===").withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD);
         mainComponent.append(header).append("\n");
 
-        // Dropped Item.
-        MutableComponent line1 = Component.literal("Dropped Item : ").withStyle(ChatFormatting.BLUE)
-                .append(Component.literal(ModEvents.ItemIdToName(variant.DroppedItem())).withStyle(ChatFormatting.YELLOW));
-        mainComponent.append(line1).append("\n");
-
-        // Tier.
-        MutableComponent line2 = Component.literal("Tier : ").withStyle(ChatFormatting.RED)
+        // 2. Tier.
+        MutableComponent lineTier = Component.literal("Tier : ").withStyle(ChatFormatting.RED)
                 .append(Component.literal(String.valueOf(variant.Tier())).withStyle(ChatFormatting.LIGHT_PURPLE));
-        mainComponent.append(line2).append("\n");
+        mainComponent.append(lineTier).append("\n");
 
-        // Nombre.
-        MutableComponent line3;
-        if (variant.MinDrops() != variant.MaxDrops()) {
-            line3 = Component.literal("Amount : ").withStyle(ChatFormatting.DARK_GREEN)
-                    .append(Component.literal("From " + variant.MinDrops() + " to " + variant.MaxDrops()).withStyle(ChatFormatting.DARK_AQUA));
-        } else if (variant.MinDrops() == 0) {
-            line3 = Component.literal("Amount : ").withStyle(ChatFormatting.DARK_GREEN)
-                    .append(Component.literal("Nothing").withStyle(ChatFormatting.DARK_AQUA));
+        // 3. Drops.
+        mainComponent.append(Component.literal("Drops :").withStyle(ChatFormatting.BLUE)).append("\n");
+
+        List<SheepVariantData.DroppedItems> drops = variant.DroppedItems();
+
+        if (drops != null && !drops.isEmpty()) {
+            for (SheepVariantData.DroppedItems dropData : drops) {
+                if( dropData.ItemId().equals("minecraft:air")) {
+                    mainComponent.append(Component.literal(" - None").withStyle(ChatFormatting.GRAY)).append("\n");
+                }else {
+                    String itemName = ModEvents.ItemIdToName(dropData.ItemId());
+                    String amountString;
+                    if (dropData.MinDrops() == dropData.MaxDrops()) {
+                        amountString = String.valueOf(dropData.MinDrops());
+                    } else {
+                        amountString = dropData.MinDrops() + " to " + dropData.MaxDrops();
+                    }
+
+                    // Construction de la ligne : " - NomItem : Quantité"
+                    MutableComponent dropLine = Component.literal("- ").withStyle(ChatFormatting.DARK_GRAY)
+                            .append(Component.literal(itemName).withStyle(ChatFormatting.YELLOW))
+                            .append(Component.literal(" : ").withStyle(ChatFormatting.GRAY))
+                            .append(Component.literal(amountString).withStyle(ChatFormatting.DARK_AQUA));
+
+                    mainComponent.append(dropLine).append("\n");
+                }
+            }
         } else {
-            line3 = Component.literal("Amount : ").withStyle(ChatFormatting.DARK_GREEN)
-                    .append(Component.literal(String.valueOf(variant.MinDrops())).withStyle(ChatFormatting.DARK_AQUA));
+            mainComponent.append(Component.literal(" - None").withStyle(ChatFormatting.GRAY)).append("\n");
         }
-        // Couleur.
-        mainComponent.append(line3).append("\n");
+
+        // 4. Couleur
         DyeColor dyeColor = sheep.getColor();
         String colorName = dyeColor.getName().substring(0, 1).toUpperCase() + dyeColor.getName().substring(1);
-        MutableComponent line4 = Component.literal("Color : ").withStyle(ChatFormatting.GRAY)
+        MutableComponent lineColor = Component.literal("Color : ").withStyle(ChatFormatting.GRAY)
                 .append(Component.literal(ModEvents.StringToText(colorName)).withStyle(Style.EMPTY.withColor(dyeColor.getTextColor())));
-        mainComponent.append(line4);
+        mainComponent.append(lineColor);
+
         return mainComponent;
     }
 

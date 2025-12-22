@@ -82,22 +82,22 @@ public class SheepMutationCategory implements IRecipeCategory<SheepMutation> {
         g.drawString(Minecraft.getInstance().font, "+", plusX, baseY, 0xFF404040, false);
         g.drawString(Minecraft.getInstance().font, "=", eqX, baseY, 0xFF404040, false);
 
-        JEIUtilitiesMethodes.drawSheep(g, recipe.MomId(), momX, baseY + scale, scale);
-        JEIUtilitiesMethodes.drawSheep(g, recipe.DadId(), dadX, baseY + scale, scale);
-        JEIUtilitiesMethodes.drawSheep(g, recipe.ChildId(), childX, baseY + scale, scale);
+        JEIUtilitiesMethodes.drawSheep(g, recipe.MomId(), momX, baseY + 3 * scale / 4, scale);
+        JEIUtilitiesMethodes.drawSheep(g, recipe.DadId(), dadX, baseY + 3 * scale / 4, scale);
+        JEIUtilitiesMethodes.drawSheep(g, recipe.ChildId(), childX, baseY + 3 * scale / 4, scale);
 
         g.drawString(Minecraft.getInstance().font, "Chance of success : " + recipe.Chance() + " %",
                 ((childX + momX) - Minecraft.getInstance().font.width("Chance of success : " + recipe.Chance() + " %")) / 2,
-                baseY - scale, 0xFF404040, false);
+                4, 0xFF404040, false);
 
         List<Component> tips = new ArrayList<>();
-        if (JEIUtilitiesMethodes.isMouseOver(mouseX, mouseY, momX - 18, baseY - 10, momX + 18, baseY + 28))
+        if (JEIUtilitiesMethodes.isMouseOver(mouseX, mouseY, momX - scale, baseY - scale, momX + scale, baseY + scale))
             JEIUtilitiesMethodes.addTooltip(tips, recipe.MomId());
 
-        if (JEIUtilitiesMethodes.isMouseOver(mouseX, mouseY, dadX - 18, baseY - 10, dadX + 18, baseY + 28))
+        if (JEIUtilitiesMethodes.isMouseOver(mouseX, mouseY, dadX - scale, baseY - scale, dadX + scale, baseY + scale))
             JEIUtilitiesMethodes.addTooltip(tips, recipe.DadId());
 
-        if (JEIUtilitiesMethodes.isMouseOver(mouseX, mouseY, childX - 18, baseY - 10, childX + 18, baseY + 28))
+        if (JEIUtilitiesMethodes.isMouseOver(mouseX, mouseY, childX - scale, baseY - scale, childX + scale, baseY + scale))
             JEIUtilitiesMethodes.addTooltip(tips, recipe.ChildId());
 
         if (!tips.isEmpty()) g.renderComponentTooltip(Minecraft.getInstance().font, tips, (int) mouseX, (int) mouseY);

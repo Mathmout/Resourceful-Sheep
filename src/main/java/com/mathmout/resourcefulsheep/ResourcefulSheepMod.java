@@ -30,7 +30,6 @@ public class ResourcefulSheepMod {
     // Define mod id in a common place for everything to reference
     public static final String MOD_ID = "resourceful_sheep";
 
-
     public ResourcefulSheepMod(IEventBus modEventBus, ModContainer modContainer) {
 
         NeoForge.EVENT_BUS.register(this);

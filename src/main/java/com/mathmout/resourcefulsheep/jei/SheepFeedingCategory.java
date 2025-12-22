@@ -67,9 +67,7 @@ public class SheepFeedingCategory implements IRecipeCategory<SheepVariantData> {
     public void setRecipe(@NotNull IRecipeLayoutBuilder builder, @NotNull SheepVariantData recipe, @NotNull IFocusGroup focuses) {
 
         Item Egg = BuiltInRegistries.ITEM.get(ResourceLocation.fromNamespaceAndPath(ResourcefulSheepMod.MOD_ID, recipe.Id() + "_spawn_egg"));
-
         builder.addInvisibleIngredients(RecipeIngredientRole.INPUT).addItemStack(new ItemStack(Egg));
-        builder.addInvisibleIngredients(RecipeIngredientRole.OUTPUT).addItemStack(new ItemStack(Egg));
 
         int startX = 60;
         int startY = 18;
@@ -138,7 +136,8 @@ public class SheepFeedingCategory implements IRecipeCategory<SheepVariantData> {
         if (!tips.isEmpty()) {
             guiGraphics.renderComponentTooltip(Minecraft.getInstance().font, tips, (int) mouseX, (int) mouseY);
         }
-        guiGraphics.drawString(Minecraft.getInstance().font, "Feed with :", 60, 4, 0xFF404040, false);
+        guiGraphics.drawString(Minecraft.getInstance().font, "Feed with :",
+                (getWidth() - Minecraft.getInstance().font.width("Feed with :")) / 2, 4, 0xFF404040, false);
         Lighting.setupForFlatItems();
     }
 }
