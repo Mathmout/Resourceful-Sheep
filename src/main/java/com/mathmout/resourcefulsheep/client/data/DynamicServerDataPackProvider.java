@@ -19,9 +19,7 @@ import org.jetbrains.annotations.Nullable;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class DynamicServerDataPackProvider implements PackResources {
 
@@ -47,20 +45,50 @@ public class DynamicServerDataPackProvider implements PackResources {
             spawners.add(spawner);
 
             if (rule.Biomes().isEmpty()) {
-                biomeModifierJson.addProperty("type", "resourceful_sheep:add_spawn_if_sheep_present");
-                biomeModifierJson.add("spawners", spawners);
-            } else {
-                biomeModifierJson.addProperty("type", "neoforge:add_spawns");
-                JsonArray biomes = new JsonArray();
-                for (String biome : rule.Biomes()) {
-                    biomes.add(biome);
-                }
-                biomeModifierJson.add("biomes", biomes);
-                biomeModifierJson.add("spawners", spawners);
-            }
+                JsonObject json = new JsonObject();
+                json.addProperty("type", "resourceful_sheep:add_spawn_if_sheep_present");
+                json.add("spawners", spawners);
 
-            String path = "data/" + ResourcefulSheepMod.MOD_ID + "/neoforge/biome_modifier/" + rule.sheepId() + ".json";
-            resourceCache.put(path, GSON.toJson(biomeModifierJson).getBytes(StandardCharsets.UTF_8));
+                String path = "data/" + ResourcefulSheepMod.MOD_ID + "/neoforge/biome_modifier/" + rule.sheepId() + ".json";
+                resourceCache.put(path, GSON.toJson(json).getBytes(StandardCharsets.UTF_8));
+            }
+            else {
+                List<String> tags = new ArrayList<>();
+                List<String> biomeIds = new ArrayList<>();
+
+                for (String biome : rule.Biomes()) {
+                    if (biome.startsWith("#")) {
+                        tags.add(biome);
+                    } else if (!biome.isEmpty()) {
+                        biomeIds.add(biome);
+                    }
+                }
+                // Générer un fichier pour la liste des ID
+                if (!biomeIds.isEmpty()) {
+                    JsonObject json = new JsonObject();
+                    json.addProperty("type", "neoforge:add_spawns");
+
+                    JsonArray biomeList = new JsonArray();
+                    biomeIds.forEach(biomeList::add);
+
+                    json.add("biomes", biomeList);
+                    json.add("spawners", spawners);
+
+                    String path = "data/" + ResourcefulSheepMod.MOD_ID + "/neoforge/biome_modifier/" + rule.sheepId() + "_ids.json";
+                    resourceCache.put(path, GSON.toJson(json).getBytes(StandardCharsets.UTF_8));
+                }
+
+                // Générer un fichier pour chaque Tag
+                for (int i = 0; i < tags.size(); i++) {
+                    JsonObject json = new JsonObject();
+                    json.addProperty("type", "neoforge:add_spawns");
+                    json.addProperty("biomes", tags.get(i));
+                    json.add("spawners", spawners);
+
+                    String path = "data/" + ResourcefulSheepMod.MOD_ID + "/neoforge/biome_modifier/" + rule.sheepId() + "_tag_" + i + ".json";
+                    resourceCache.put(path, GSON.toJson(json).getBytes(StandardCharsets.UTF_8));
+                }
+            }
         }
     }
 

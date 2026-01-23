@@ -13,12 +13,20 @@ import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.registration.IRecipeCategoryRegistration;
 import mezz.jei.api.registration.IRecipeRegistration;
 import mezz.jei.api.runtime.IJeiRuntime;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.core.Holder;
+import net.minecraft.core.HolderSet;
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.level.biome.Biome;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+
+import java.util.*;
 
 @JeiPlugin
 public class JEIResourcefulSheepModPlugin implements IModPlugin {
@@ -56,15 +64,47 @@ public class JEIResourcefulSheepModPlugin implements IModPlugin {
         // Spawning Recipes
         List<SheepSpawningData> spawns = ConfigSheepSpawningManager.getSheepSpawning();
         List<SheepSpawningRecipeWrapper> wrappedSpawns = new ArrayList<>();
-        final int biomesPerPage = 5;
 
         for (SheepSpawningData spawnData : spawns) {
             if (spawnData.Biomes().isEmpty()) {
                 wrappedSpawns.add(new SheepSpawningRecipeWrapper(spawnData, List.of()));
             } else {
-                for (int i = 0; i < spawnData.Biomes().size(); i += biomesPerPage) {
-                    int end = Math.min(i + biomesPerPage, spawnData.Biomes().size());
-                    List<String> pageBiomes = spawnData.Biomes().subList(i, end);
+                Set<String> uniqueBiomes = new LinkedHashSet<>();
+                for (String biome : spawnData.Biomes()) {
+                    // TAG
+                    if (biome.startsWith("#")) {
+                        try {
+                            ClientLevel level = Minecraft.getInstance().level;
+                            if (level != null) {
+                                ResourceLocation tagLoc = ResourceLocation.tryParse(biome.substring(1));
+                                if (tagLoc != null) {
+                                    TagKey<Biome> tagKey = TagKey.create(Registries.BIOME, tagLoc);
+                                    Registry<Biome> biomeRegistry = level.registryAccess().registryOrThrow(Registries.BIOME);
+                                    Optional<HolderSet.Named<Biome>> tagWrapper = biomeRegistry.getTag(tagKey);
+                                    if (tagWrapper.isPresent()) {
+                                        for (Holder<Biome> biomeHolder : tagWrapper.get()) {
+                                            Optional<ResourceKey<Biome>> keyOpt = biomeHolder.unwrapKey();
+                                            keyOpt.ifPresent(k -> uniqueBiomes.add(k.location().toString()));
+                                        }
+                                    }
+                                }
+                            }
+                        } catch (Exception ignored) {
+
+                        }
+                        // ID
+                    } else {
+                        uniqueBiomes.add(biome);
+                    }
+                }
+                List<String> resolvedBiomes = new ArrayList<>(uniqueBiomes);
+                if (resolvedBiomes.isEmpty() && !spawnData.Biomes().isEmpty()) {
+                    resolvedBiomes.addAll(spawnData.Biomes());
+                }
+                final int biomesPerPage = 7;
+                for (int i = 0; i < resolvedBiomes.size(); i += biomesPerPage) {
+                    int end = Math.min(i + biomesPerPage, resolvedBiomes.size());
+                    List<String> pageBiomes = resolvedBiomes.subList(i, end);
                     wrappedSpawns.add(new SheepSpawningRecipeWrapper(spawnData, pageBiomes));
                 }
             }
@@ -81,7 +121,6 @@ public class JEIResourcefulSheepModPlugin implements IModPlugin {
         // Eating Recipes
         registration.addRecipes(EATING_TYPE, getWrappedEatingRecipes(variants));
     }
-
 
     private List<SheepEatingRecipeWrapper> getWrappedEatingRecipes(List<SheepVariantData> variants) {
         List<SheepEatingRecipeWrapper> wrappedRecipes = new ArrayList<>();

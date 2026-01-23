@@ -30,10 +30,6 @@ public class DynamicResourceProvider implements PackResources {
 
     public DynamicResourceProvider(PackLocationInfo locationInfo) {
         this.locationInfo = locationInfo;
-        generateResources();
-    }
-
-    private void generateResources() {
         generateLangFile();
         generateModelFiles();
     }
