@@ -6,7 +6,9 @@ import com.mathmout.resourcefulsheep.config.sheeptypes.ConfigSheepTypeManager;
 import com.mathmout.resourcefulsheep.entity.ModEntities;
 import com.mathmout.resourcefulsheep.entity.ResourcefulSheepEatBlockGoal;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.TagKey;
@@ -27,10 +29,7 @@ import net.minecraft.world.level.LevelReader;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Random;
+import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
 
@@ -132,19 +131,56 @@ public class ResourcefulSheepEntity extends Sheep {
 
         if (!world.isClientSide) {
             SheepVariantData variantData = getSheepVariantData();
-                if (variantData != null && variantData.DroppedItems() != null && !variantData.DroppedItems().isEmpty()) {
-                    Item droppedItem;
-                    for (SheepVariantData.DroppedItems dropData : variantData.DroppedItems()){
-                        droppedItem = BuiltInRegistries.ITEM.get(ResourceLocation.tryParse(dropData.ItemId()));
-                        if (droppedItem != Items.AIR) {
-                            int count = ThreadLocalRandom.current().nextInt(dropData.MinDrops(), dropData.MaxDrops() + 1);
-                            if (count > 0){
-                                drops.add(new ItemStack(droppedItem, count));
+
+            if (variantData != null && variantData.DroppedItems() != null && !variantData.DroppedItems().isEmpty()) {
+
+                for (SheepVariantData.DroppedItems dropData : variantData.DroppedItems()) {
+                    String rawId = dropData.ItemId();
+
+                    int count = ThreadLocalRandom.current().nextInt(dropData.MinDrops(), dropData.MaxDrops() + 1);
+
+                    if (count <= 0) continue;
+
+                    // TAG
+                    if (rawId.startsWith("#")) {
+                        try {
+                            ResourceLocation tagLoc = ResourceLocation.parse(rawId.substring(1));
+                            TagKey<Item> tagKey = TagKey.create(Registries.ITEM, tagLoc);
+
+                            // On récupère tous les items valides du tag
+                            var tagResult = BuiltInRegistries.ITEM.getTag(tagKey);
+
+                            if (tagResult.isPresent()) {
+                                List<Item> validItems = tagResult.get().stream()
+                                        .map(Holder::value)
+                                        .toList();
+                                if (!validItems.isEmpty()) {
+                                    Map<Item, Integer> itemsToDrop = new HashMap<>();
+
+                                    for (int i = 0; i < count; i++) {
+                                        Item randomItem = validItems.get(ThreadLocalRandom.current().nextInt(validItems.size()));
+                                        itemsToDrop.put(randomItem, itemsToDrop.getOrDefault(randomItem, 0) + 1);
+                                    }
+
+                                    for (Map.Entry<Item, Integer> entry : itemsToDrop.entrySet()) {
+                                        drops.add(new ItemStack(entry.getKey(), entry.getValue()));
+                                    }
+                                }
                             }
+                        } catch (Exception ignored) {
+
+                        }
+                    }
+                    // ID
+                    else {
+                        Item droppedItem = BuiltInRegistries.ITEM.get(ResourceLocation.tryParse(rawId));
+                        if (droppedItem != Items.AIR) {
+                            drops.add(new ItemStack(droppedItem, count));
                         }
                     }
                 }
             }
+        }
         return drops;
     }
 

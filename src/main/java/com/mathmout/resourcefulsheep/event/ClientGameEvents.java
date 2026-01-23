@@ -1,24 +1,38 @@
 package com.mathmout.resourcefulsheep.event;
 
 import com.mathmout.resourcefulsheep.ResourcefulSheepMod;
+import com.mathmout.resourcefulsheep.client.data.DynamicSheepTextureGenerator;
 import com.mathmout.resourcefulsheep.config.sheeptypes.ConfigSheepTypeManager;
 import com.mathmout.resourcefulsheep.entity.custom.SheepVariantData;
+import com.mathmout.resourcefulsheep.utils.TexteUtils;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.*;
+import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.SpawnEggItem;
+import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.TagsUpdatedEvent;
 import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
 
 import java.util.List;
 
-public class ModEvents {
+@EventBusSubscriber(modid = ResourcefulSheepMod.MOD_ID, value = Dist.CLIENT)
+public class ClientGameEvents {
+
+    @SubscribeEvent
+    public static void onTagsUpdated(TagsUpdatedEvent event) {
+        if (event.getUpdateCause() == TagsUpdatedEvent.UpdateCause.CLIENT_PACKET_RECEIVED) {
+            ResourceManager resourceManager = Minecraft.getInstance().getResourceManager();
+            new DynamicSheepTextureGenerator().generateAllTextures(resourceManager);
+        }
+    }
 
     // Add tooltip information to spawn eggs.
     @SubscribeEvent
@@ -39,7 +53,7 @@ public class ModEvents {
                 if (variant != null && variant.EggColorSpotsNTitle() != null) {
                     // 1. Titre Coloré
                     int nameColor = Integer.parseInt(variant.EggColorSpotsNTitle().substring(1), 16);
-                    String displayName = "§l" + ModEvents.StringToText(variant.Resource()) + " Resourceful Sheep Egg";
+                    String displayName = "§l" + TexteUtils.StringToText(variant.Resource()) + " Resourceful Sheep Egg";
 
                     if (!event.getToolTip().isEmpty()) {
                         event.getToolTip().set(0, Component.literal(displayName).withStyle(Style.EMPTY.withColor(nameColor)));
@@ -62,9 +76,8 @@ public class ModEvents {
                             if (drops != null && !drops.isEmpty() && !drops.getFirst().ItemId().equals("minecraft:air")) {
                                 for (SheepVariantData.DroppedItems dropData : drops) {
                                     // Nom de l'item
-                                    String itemName = ModEvents.ItemIdToName(dropData.ItemId());
-
-                                    // Quantité (ex: "5" ou "2-5")
+                                    String itemName = TexteUtils.getPrettyName(dropData.ItemId());
+                                    // Quantité
                                     String amount;
                                     if (dropData.MinDrops() == dropData.MaxDrops()) {
                                         amount = String.valueOf(dropData.MinDrops());
@@ -72,7 +85,6 @@ public class ModEvents {
                                         amount = dropData.MinDrops() + " to " + dropData.MaxDrops();
                                     }
 
-                                    // Ligne formatée : " - Cobblestone : 12-20"
                                     MutableComponent line = Component.literal(" - ").withStyle(ChatFormatting.GRAY)
                                             .append(Component.literal(itemName).withStyle(ChatFormatting.YELLOW))
                                             .append(Component.literal(" : ").withStyle(ChatFormatting.GRAY))
@@ -89,33 +101,4 @@ public class ModEvents {
             }
         }
     }
-
-    // Utility to convert an item ID to its display name.
-    public static String ItemIdToName(String itemId) {
-        ResourceLocation id = ResourceLocation.tryParse(itemId);
-        if (id == null) {
-            return itemId;
-        }
-        Item item = BuiltInRegistries.ITEM.get(id);
-        Component name = item.getDescription();
-        return name.getString();
-    }
-
-    // Utility to convert an item ID to readable text.
-    public static String StringToText(String itemId) {
-        String IdWithoutUnderscore = itemId.replace('_', ' ');
-        String[] words = IdWithoutUnderscore.split(" ");
-        StringBuilder result = new StringBuilder();
-        for (String word : words) {
-            if (!word.isEmpty()) {
-                result.append(Character.toUpperCase(word.charAt(0)));
-                if (word.length() > 1) {
-                    result.append(word.substring(1).toLowerCase());
-                }
-                result.append(" ");
-            }
-        }
-        return result.toString().trim();
-    }
-
 }

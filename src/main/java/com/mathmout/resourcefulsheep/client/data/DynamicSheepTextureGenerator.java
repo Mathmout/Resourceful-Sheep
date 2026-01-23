@@ -4,12 +4,18 @@ import com.mathmout.resourcefulsheep.ResourcefulSheepMod;
 import com.mathmout.resourcefulsheep.config.sheeptypes.ConfigSheepTypeManager;
 import com.mathmout.resourcefulsheep.config.sheeptypes.SheepTypeData;
 import com.mathmout.resourcefulsheep.entity.custom.SheepVariantData;
+import net.minecraft.client.Minecraft;
+import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -93,13 +99,20 @@ public class DynamicSheepTextureGenerator {
         // Map combinée pour stocker les couleurs.
         Map<Integer, Integer> combinedPalette = new HashMap<>();
 
-        // On boucle sur chaque item (block ou item) associé à ce type de mouton
         for (ResourceLocation itemKey : itemKeys) {
             BufferedImage sourceTexture = loadBufferedImage(resourceManager, itemKey);
-
             if (sourceTexture != null) {
-                Map<Integer, Integer> texturePalette = analyzeTexture(sourceTexture);
-                // On fusionne la palette de cet item dans la palette globale
+                int itemTint = -1;
+                try {
+                    Item item = BuiltInRegistries.ITEM.get(itemKey);
+                    if (item != Items.AIR) {
+                        itemTint = Minecraft.getInstance().getItemColors().getColor(new ItemStack(item), 0);
+                    }
+                } catch (Exception ignored) {
+
+                }
+                // On passe la teinte à l'analyseur
+                Map<Integer, Integer> texturePalette = analyzeTexture(sourceTexture, itemTint);
                 texturePalette.forEach((color, count) -> combinedPalette.merge(color, count, Integer::sum));
             }
         }
@@ -153,9 +166,32 @@ public class DynamicSheepTextureGenerator {
 
         if (variant.DroppedItems() != null) {
             for (SheepVariantData.DroppedItems dropData : variant.DroppedItems()) {
-                ResourceLocation loc = ResourceLocation.tryParse(dropData.ItemId());
-                if (loc != null) {
-                    uniqueItems.add(loc);
+                String rawId = dropData.ItemId();
+
+                //  TAG
+                if (rawId.startsWith("#")) {
+                    try {
+                        ResourceLocation tagLoc = ResourceLocation.parse(rawId.substring(1));
+                        TagKey<Item> tagKey = TagKey.create(Registries.ITEM, tagLoc);
+
+                        var tagResult = BuiltInRegistries.ITEM.getTag(tagKey);
+
+                        if (tagResult.isPresent()) {
+                            for (Holder<Item> itemHolder : tagResult.get()) {
+                                ResourceLocation itemLoc = BuiltInRegistries.ITEM.getKey(itemHolder.value());
+                                uniqueItems.add(itemLoc);
+                            }
+                        }
+                    } catch (Exception e) {
+                        LOGGER.warn("Invalid or empty tag found in sheep config texture generation: {}", rawId);
+                    }
+                }
+                // ITEM
+                else {
+                    ResourceLocation loc = ResourceLocation.tryParse(rawId);
+                    if (loc != null) {
+                        uniqueItems.add(loc);
+                    }
                 }
             }
         }
@@ -196,10 +232,18 @@ public class DynamicSheepTextureGenerator {
         }
     }
 
-    private Map<Integer, Integer> analyzeTexture(BufferedImage image) {
+    // Modifie la signature pour accepter tintColor
+    private Map<Integer, Integer> analyzeTexture(BufferedImage image, int tintColor) {
         Map<Integer, Integer> colorCounts = new HashMap<>();
         int width = image.getWidth();
         int height = image.getHeight();
+
+        // On décompose la couleur de teinte (Tint)
+        // Si tintColor est -1 (pas de teinte), on considère que c'est du blanc (pas de changement)
+        int tRed = (tintColor >> 16) & 0xFF;
+        int tGreen = (tintColor >> 8) & 0xFF;
+        int tBlue = (tintColor) & 0xFF;
+        boolean hasTint = (tintColor != -1 && tintColor != 0xFFFFFF);
 
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
@@ -208,12 +252,27 @@ public class DynamicSheepTextureGenerator {
 
                 // Ignore fully transparent pixels
                 if (alpha > 10) {
+                    // Si on a une teinte, on l'applique sur le pixel gris
+                    if (hasTint) {
+                        int r = (pixel >> 16) & 0xFF;
+                        int g = (pixel >> 8) & 0xFF;
+                        int b = (pixel) & 0xFF;
+
+                        // Formule de multiplication des couleurs (Blend Multiply)
+                        r = (r * tRed) / 255;
+                        g = (g * tGreen) / 255;
+                        b = (b * tBlue) / 255;
+
+                        // On recompose le pixel
+                        pixel = (alpha << 24) | (r << 16) | (g << 8) | b;
+                    }
                     colorCounts.merge(pixel, 1, Integer::sum);
                 }
             }
         }
         return colorCounts;
     }
+
 
     private int calculateTotalPixels(List<Rectangle> regions) {
         return regions.stream().mapToInt(r -> r.width * r.height).sum();

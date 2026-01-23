@@ -4,7 +4,7 @@ import com.mathmout.resourcefulsheep.config.sheeptypes.ConfigSheepTypeManager;
 import com.mathmout.resourcefulsheep.entity.ModEntities;
 import com.mathmout.resourcefulsheep.entity.custom.ResourcefulSheepEntity;
 import com.mathmout.resourcefulsheep.entity.custom.SheepVariantData;
-import com.mathmout.resourcefulsheep.event.ModEvents;
+import com.mathmout.resourcefulsheep.utils.TexteUtils;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.ChatFormatting;
@@ -61,7 +61,7 @@ public class JEIUtilitiesMethodes {
         SheepVariantData variant = ConfigSheepTypeManager.getSheepVariant().get(sheepId);
         if (variant == null) return;
 
-        String resourceText = ModEvents.StringToText(variant.Resource());
+        String resourceText = TexteUtils.StringToText(variant.Resource());
 
         MutableComponent lineRes = Component.literal("Resource : ").withStyle(ChatFormatting.BLUE)
                 .append(Component.literal(resourceText).withStyle(ChatFormatting.YELLOW));

@@ -15,9 +15,12 @@ import com.mojang.blaze3d.platform.Lighting;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -68,7 +71,7 @@ public class SheepDroppingCategory implements IRecipeCategory<SheepVariantData> 
         int startX = 60;
         int startY = 18;
         int slotSize = 18;
-        int columns = 7;
+        int columns = 5;
         List<SheepVariantData.DroppedItems> DroppedItemsData = recipe.DroppedItems();
 
         if (DroppedItemsData == null || DroppedItemsData.isEmpty()) {
@@ -78,32 +81,55 @@ public class SheepDroppingCategory implements IRecipeCategory<SheepVariantData> 
         int i = 0;
         for (SheepVariantData.DroppedItems droppedItems : DroppedItemsData) {
             List<ItemStack> stacksToAdd = new ArrayList<>();
+            String itemId = droppedItems.ItemId();
 
-            Item item = BuiltInRegistries.ITEM.get(ResourceLocation.parse(droppedItems.ItemId()));
-            if (item != Items.AIR) {
-                ItemStack stack = new ItemStack(item);
-                int average = (droppedItems.MinDrops() + droppedItems.MaxDrops()) / 2;
-                if (average == 0) average = 1;
-                stack.setCount(average);
-                stacksToAdd.add(stack);
+            int average = (droppedItems.MinDrops() + droppedItems.MaxDrops()) / 2;
+            if (average == 0) average = 1;
+
+            // TAG
+            if (itemId.startsWith("#")) {
+                try {
+                    ResourceLocation tagLoc = ResourceLocation.parse(itemId.substring(1));
+                    TagKey<Item> tagKey = TagKey.create(Registries.ITEM, tagLoc);
+
+                    var tagWrapper = BuiltInRegistries.ITEM.getTag(tagKey);
+
+                    if (tagWrapper.isPresent()) {
+                        for (Holder<Item> itemHolder : tagWrapper.get()) {
+                            ItemStack stack = new ItemStack(itemHolder.value());
+                            stack.setCount(average);
+                            stacksToAdd.add(stack);
+                        }
+                    }
+                } catch (Exception ignored) {
+
+                }
             }
-
-            // Slots.
+            // Item ID
+            else {
+                Item item = BuiltInRegistries.ITEM.get(ResourceLocation.parse(itemId));
+                if (item != Items.AIR) {
+                    ItemStack stack = new ItemStack(item);
+                    stack.setCount(average);
+                    stacksToAdd.add(stack);
+                }
+            }
+            // SLOT
             if (!stacksToAdd.isEmpty()) {
                 int x = startX + (i % columns) * slotSize;
                 int y = startY + (i / columns) * slotSize;
 
                 if (y + slotSize <= getHeight()) {
-                    if (droppedItems.MinDrops() == droppedItems.MaxDrops() && droppedItems.MinDrops() > 0) {
-                        builder.addSlot(RecipeIngredientRole.OUTPUT, x, y)
-                                .addItemStacks(stacksToAdd).addRichTooltipCallback((recipeSlotView, tooltip)
-                                        -> tooltip.add(Component.literal("Amount : " + droppedItems.MinDrops())
+                    var slot = builder.addSlot(RecipeIngredientRole.OUTPUT, x, y)
+                            .addItemStacks(stacksToAdd);
+
+                    if (droppedItems.MinDrops() == droppedItems.MaxDrops()) {
+                        slot.addRichTooltipCallback((recipeSlotView, tooltip) ->
+                                tooltip.add(Component.literal("Amount : " + droppedItems.MinDrops())
                                         .withStyle(ChatFormatting.DARK_AQUA)));
-                        i++;
                     } else {
-                        builder.addSlot(RecipeIngredientRole.OUTPUT, x, y)
-                                .addItemStacks(stacksToAdd).addRichTooltipCallback((recipeSlotView, tooltip)
-                                        -> tooltip.add(Component.literal("Amount : " + droppedItems.MinDrops() + " to " + droppedItems.MaxDrops())
+                        slot.addRichTooltipCallback((recipeSlotView, tooltip) ->
+                                tooltip.add(Component.literal("Amount : " + droppedItems.MinDrops() + " to " + droppedItems.MaxDrops())
                                         .withStyle(ChatFormatting.DARK_AQUA)));
                     }
                     i++;

@@ -1,6 +1,11 @@
-package com.mathmout.resourcefulsheep.client.data;
+package com.mathmout.resourcefulsheep.event;
 
 import com.mathmout.resourcefulsheep.ResourcefulSheepMod;
+import com.mathmout.resourcefulsheep.client.data.DynamicResourceProvider;
+import com.mathmout.resourcefulsheep.client.data.DynamicSheepTextureGenerator;
+import com.mathmout.resourcefulsheep.client.renderer.ResourcefulSheepRenderer;
+import com.mathmout.resourcefulsheep.entity.ModEntities;
+import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.packs.PackLocationInfo;
 import net.minecraft.server.packs.PackResources;
@@ -13,7 +18,10 @@ import net.minecraft.server.packs.resources.PreparableReloadListener;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.flag.FeatureFlagSet;
+import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.RegisterClientReloadListenersEvent;
 import net.neoforged.neoforge.event.AddPackFindersEvent;
 import org.jetbrains.annotations.NotNull;
@@ -25,16 +33,21 @@ import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 
-public class ClientEvents {
+@EventBusSubscriber(modid = ResourcefulSheepMod.MOD_ID, value = Dist.CLIENT)
+public class ClientModEvents {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ClientEvents.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ClientModEvents.class);
+
+    @SubscribeEvent
+    public static void onClientSetup(final FMLClientSetupEvent event) {
+        ModEntities.SHEEP_ENTITIES.forEach((id, entityType) ->
+                EntityRenderers.register(entityType.get(), ResourcefulSheepRenderer::new));
+    }
 
     @SubscribeEvent
     public static void onAddPackFinders(AddPackFindersEvent event) {
         if (event.getPackType() == PackType.CLIENT_RESOURCES) {
             event.addRepositorySource((packConsumer) -> packConsumer.accept(createDynamicClientPack()));
-        } else if (event.getPackType() == PackType.SERVER_DATA) {
-            event.addRepositorySource((packConsumer) -> packConsumer.accept(createDynamicServerPack()));
         }
     }
 
@@ -81,34 +94,6 @@ public class ClientEvents {
             @Override
             public @NotNull PackResources openFull(@NotNull PackLocationInfo info, Pack.@NotNull Metadata meta) {
                 return new DynamicResourceProvider(info);
-            }
-        };
-
-        return new Pack(
-                locationInfo,
-                resourcesSupplier,
-                new Pack.Metadata(locationInfo.title(), PackCompatibility.COMPATIBLE, FeatureFlagSet.of(), List.of()),
-                new PackSelectionConfig(true, Pack.Position.TOP, false)
-        );
-    }
-
-    private static Pack createDynamicServerPack() {
-        var locationInfo = new PackLocationInfo(
-                ResourcefulSheepMod.MOD_ID + "_dynamic_server",
-                Component.literal("Resourceful Sheep Dynamic Server Data"),
-                PackSource.BUILT_IN,
-                Optional.empty()
-        );
-
-        Pack.ResourcesSupplier resourcesSupplier = new Pack.ResourcesSupplier() {
-            @Override
-            public @NotNull PackResources openPrimary(@NotNull PackLocationInfo info) {
-                return new DynamicServerDataPackProvider(info);
-            }
-
-            @Override
-            public @NotNull PackResources openFull(@NotNull PackLocationInfo info, Pack.@NotNull Metadata meta) {
-                return new DynamicServerDataPackProvider(info);
             }
         };
 

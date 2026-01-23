@@ -136,7 +136,7 @@ public class SheepEatingCategory implements IRecipeCategory<SheepEatingRecipeWra
     public void draw(@NotNull SheepEatingRecipeWrapper recipe, @NotNull IRecipeSlotsView recipeSlotsView, @NotNull GuiGraphics guiGraphics, double mouseX, double mouseY) {
         int scale = 22;
         int baseY = getHeight() / 2;
-        int sheepX = getWidth() / 6;;
+        int sheepX = getWidth() / 6;
 
         // Dessiner le mouton
         JEIUtilitiesMethodes.drawSheep(guiGraphics, recipe.variant().Id(), sheepX, baseY + 3 * scale / 4, scale);

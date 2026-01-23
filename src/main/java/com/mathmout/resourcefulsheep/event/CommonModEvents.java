@@ -1,6 +1,7 @@
 package com.mathmout.resourcefulsheep.event;
 
 import com.mathmout.resourcefulsheep.ResourcefulSheepMod;
+import com.mathmout.resourcefulsheep.client.data.DynamicServerDataPackProvider;
 import com.mathmout.resourcefulsheep.config.spawning.ConfigSheepSpawningManager;
 import com.mathmout.resourcefulsheep.config.spawning.SheepSpawningData;
 import com.mathmout.resourcefulsheep.entity.ModEntities;
@@ -8,27 +9,41 @@ import com.mathmout.resourcefulsheep.entity.custom.ResourcefulSheepEntity;
 import com.mathmout.resourcefulsheep.worldgen.modifier.AddSpawnIfSheepPresentModifier;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.PackLocationInfo;
+import net.minecraft.server.packs.PackResources;
+import net.minecraft.server.packs.PackSelectionConfig;
+import net.minecraft.server.packs.PackType;
+import net.minecraft.server.packs.repository.Pack;
+import net.minecraft.server.packs.repository.PackCompatibility;
+import net.minecraft.server.packs.repository.PackSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.SpawnPlacementTypes;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.animal.Sheep;
+import net.minecraft.world.flag.FeatureFlagSet;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.phys.AABB;
 import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.AddPackFindersEvent;
 import net.neoforged.neoforge.event.entity.EntityAttributeCreationEvent;
 import net.neoforged.neoforge.event.entity.RegisterSpawnPlacementsEvent;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
 import net.neoforged.neoforge.registries.RegisterEvent;
+import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
 import java.util.Optional;
 
 import static net.minecraft.world.level.block.Blocks.BEDROCK;
 
-public class ModEventSetup {
+@EventBusSubscriber(modid = ResourcefulSheepMod.MOD_ID)
+public class CommonModEvents {
 
     @SubscribeEvent
     public static void onRegister(RegisterEvent event) {
@@ -44,7 +59,7 @@ public class ModEventSetup {
         ModEntities.SHEEP_ENTITIES.forEach((id, entityType) -> event.register(entityType.get(),
                 SpawnPlacementTypes.NO_RESTRICTIONS,
                 Heightmap.Types.MOTION_BLOCKING,
-                ModEventSetup::checkResourcefulSheepSpawnRules,
+                CommonModEvents::checkResourcefulSheepSpawnRules,
                 RegisterSpawnPlacementsEvent.Operation.REPLACE));
     }
 
@@ -82,5 +97,40 @@ public class ModEventSetup {
         ModEntities.SHEEP_ENTITIES.forEach((id, entityType) ->
                 event.put(entityType.get(), Sheep.createAttributes().build()));
 
+    }
+
+    @SubscribeEvent
+    public static void onAddPackFinders(AddPackFindersEvent event) {
+        if (event.getPackType() == PackType.SERVER_DATA) {
+            event.addRepositorySource((packConsumer) -> packConsumer.accept(createDynamicServerPack()));
+        }
+    }
+
+    private static Pack createDynamicServerPack() {
+        var locationInfo = new PackLocationInfo(
+                ResourcefulSheepMod.MOD_ID + "_dynamic_server",
+                Component.literal("Resourceful Sheep Dynamic Server Data"),
+                PackSource.BUILT_IN,
+                Optional.empty()
+        );
+
+        Pack.ResourcesSupplier resourcesSupplier = new Pack.ResourcesSupplier() {
+            @Override
+            public @NotNull PackResources openPrimary(@NotNull PackLocationInfo info) {
+                return new DynamicServerDataPackProvider(info);
+            }
+
+            @Override
+            public @NotNull PackResources openFull(@NotNull PackLocationInfo info, Pack.@NotNull Metadata meta) {
+                return new DynamicServerDataPackProvider(info);
+            }
+        };
+
+        return new Pack(
+                locationInfo,
+                resourcesSupplier,
+                new Pack.Metadata(locationInfo.title(), PackCompatibility.COMPATIBLE, FeatureFlagSet.of(), List.of()),
+                new PackSelectionConfig(true, Pack.Position.TOP, false)
+        );
     }
 }

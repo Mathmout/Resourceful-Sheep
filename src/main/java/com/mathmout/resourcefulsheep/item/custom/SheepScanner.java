@@ -3,7 +3,7 @@ package com.mathmout.resourcefulsheep.item.custom;
 import com.mathmout.resourcefulsheep.config.sheeptypes.ConfigSheepTypeManager;
 import com.mathmout.resourcefulsheep.entity.custom.ResourcefulSheepEntity;
 import com.mathmout.resourcefulsheep.entity.custom.SheepVariantData;
-import com.mathmout.resourcefulsheep.event.ModEvents;
+import com.mathmout.resourcefulsheep.utils.TexteUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
@@ -90,7 +90,7 @@ public class SheepScanner extends Item {
                 if( dropData.ItemId().equals("minecraft:air")) {
                     mainComponent.append(Component.literal(" - None").withStyle(ChatFormatting.GRAY)).append("\n");
                 }else {
-                    String itemName = ModEvents.ItemIdToName(dropData.ItemId());
+                    String itemName = TexteUtils.getPrettyName(dropData.ItemId());
                     String amountString;
                     if (dropData.MinDrops() == dropData.MaxDrops()) {
                         amountString = String.valueOf(dropData.MinDrops());
@@ -115,7 +115,7 @@ public class SheepScanner extends Item {
         DyeColor dyeColor = sheep.getColor();
         String colorName = dyeColor.getName().substring(0, 1).toUpperCase() + dyeColor.getName().substring(1);
         MutableComponent lineColor = Component.literal("Color : ").withStyle(ChatFormatting.GRAY)
-                .append(Component.literal(ModEvents.StringToText(colorName)).withStyle(Style.EMPTY.withColor(dyeColor.getTextColor())));
+                .append(Component.literal(TexteUtils.StringToText(colorName)).withStyle(Style.EMPTY.withColor(dyeColor.getTextColor())));
         mainComponent.append(lineColor);
 
         return mainComponent;
@@ -130,7 +130,7 @@ public class SheepScanner extends Item {
 
         // Description
         DyeColor dyeColor = sheep.getColor();
-        String colorName = ModEvents.StringToText(dyeColor.getName());
+        String colorName = TexteUtils.StringToText(dyeColor.getName());
         MutableComponent line2 = Component.literal("It's just a ").withStyle(ChatFormatting.GRAY)
                 .append(Component.literal(colorName).withStyle(Style.EMPTY.withColor(dyeColor.getTextColor())))
                 .append(Component.literal(" sheep.").withStyle(ChatFormatting.GRAY));

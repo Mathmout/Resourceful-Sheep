@@ -298,7 +298,7 @@ public class DefaultSheepTypes {
                         ))
                 )));
 
-        // Quartz -> MIXTE
+        // Quartz
         DefaultSheep.add(new SheepTypeData("quartz", "#EAE5DE", "#D4CCC5",
                 List.of("minecraft:nether_wart", "minecraft:wheat"),
                 true,
@@ -326,7 +326,7 @@ public class DefaultSheepTypes {
                         ))
                 )));
 
-        //
+        // Gold
         DefaultSheep.add(new SheepTypeData("gold", "#fdf55f", "#dc9613",
                 List.of(),
                 false,
@@ -365,7 +365,7 @@ public class DefaultSheepTypes {
                         ))
                 )));
 
-        // Emerald -> MIXTE
+        // Emerald
         DefaultSheep.add(new SheepTypeData("emerald", "#00A82B", "#008C23",
                 List.of(),
                 false,
@@ -452,7 +452,7 @@ public class DefaultSheepTypes {
                 )),
                 List.of(
                         new SheepTypeData.TierData(1, List.of(
-                                new SheepTypeData.TierData.DroppedItems("minecraft:air", 0, 0)  //0
+                                new SheepTypeData.TierData.DroppedItems("minecraft:nether_star", 0, 0)  //0
                         )),
                         new SheepTypeData.TierData(2, List.of(
                                 new SheepTypeData.TierData.DroppedItems("minecraft:nether_star", 0, 1)  //0.5

@@ -24,7 +24,7 @@ public class ResourcefulSheepEatBlockGoal extends EatBlockGoal {
     private int myEatAnimationTick;
 
     public ResourcefulSheepEatBlockGoal(ResourcefulSheepEntity sheep) {
-        super(sheep); // On satisfait le constructeur parent
+        super(sheep);
         this.sheep = sheep;
         this.level = sheep.level();
     }

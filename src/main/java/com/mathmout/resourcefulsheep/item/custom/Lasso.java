@@ -3,8 +3,8 @@ package com.mathmout.resourcefulsheep.item.custom;
 import com.mathmout.resourcefulsheep.ResourcefulSheepMod;
 import com.mathmout.resourcefulsheep.config.sheeptypes.ConfigSheepTypeManager;
 import com.mathmout.resourcefulsheep.entity.custom.SheepVariantData;
-import com.mathmout.resourcefulsheep.event.ModEvents;
 import com.mathmout.resourcefulsheep.item.ModDataComponents;
+import com.mathmout.resourcefulsheep.utils.TexteUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -124,7 +124,7 @@ public class Lasso extends Item {
         if (drops != null && !drops.isEmpty() && !drops.getFirst().ItemId().equals("minecraft:air")) {
             for (SheepVariantData.DroppedItems dropData : drops) {
 
-                String itemName = ModEvents.ItemIdToName(dropData.ItemId());
+                String itemName = TexteUtils.getPrettyName(dropData.ItemId());
 
                 tooltips.add(Component.literal(" - ").withStyle(ChatFormatting.GRAY)
                         .append(Component.literal(itemName).withStyle(ChatFormatting.YELLOW)));
@@ -151,7 +151,7 @@ public class Lasso extends Item {
         if (nbt.contains("Color", 1)) { // 1 is the ID for a Byte
             DyeColor dyeColor = DyeColor.byId(nbt.getByte("Color"));
             tooltips.add(Component.literal("Color: ").withStyle(ChatFormatting.GRAY)
-                    .append(Component.literal(ModEvents.StringToText(dyeColor.getName())).withStyle(Style.EMPTY.withColor(dyeColor.getTextColor()))));
+                    .append(Component.literal(TexteUtils.StringToText(dyeColor.getName())).withStyle(Style.EMPTY.withColor(dyeColor.getTextColor()))));
         }
 
         // Custom Name

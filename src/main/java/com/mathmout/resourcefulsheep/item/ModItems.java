@@ -4,10 +4,10 @@ import com.mathmout.resourcefulsheep.ResourcefulSheepMod;
 import com.mathmout.resourcefulsheep.config.sheeptypes.ConfigSheepTypeManager;
 import com.mathmout.resourcefulsheep.entity.ModEntities;
 import com.mathmout.resourcefulsheep.entity.custom.SheepVariantData;
-import com.mathmout.resourcefulsheep.event.ModEvents;
 import com.mathmout.resourcefulsheep.item.custom.CustomDeferredSpawnEggItem;
 import com.mathmout.resourcefulsheep.item.custom.Lasso;
 import com.mathmout.resourcefulsheep.item.custom.SheepScanner;
+import com.mathmout.resourcefulsheep.utils.TexteUtils;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.SpawnEggItem;
 import net.neoforged.bus.api.IEventBus;
@@ -35,7 +35,7 @@ public class ModItems {
                     Integer.parseInt(variant.EggColorBackground().substring(1), 16),
                     Integer.parseInt(variant.EggColorSpotsNTitle().substring(1), 16),
                     properties,
-                    "§l" + ModEvents.StringToText(variant.Resource()) + " Resourceful Sheep Egg",
+                    "§l" + TexteUtils.StringToText(variant.Resource()) + " Resourceful Sheep Egg",
                     Integer.parseInt(variant.EggColorSpotsNTitle().substring(1), 16)
                     ));
             SHEEP_SPAWN_EGGS.add(spawnEgg);
