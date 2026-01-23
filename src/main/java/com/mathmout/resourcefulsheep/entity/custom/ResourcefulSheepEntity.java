@@ -67,7 +67,7 @@ public class ResourcefulSheepEntity extends Sheep {
                 .filter(goal -> goal instanceof TemptGoal || goal instanceof EatBlockGoal)
                 .toList();
         goalsToRemove.forEach(this.goalSelector::removeGoal);
-        
+
         ResourcefulSheepEatBlockGoal eatBlockGoal = new ResourcefulSheepEatBlockGoal(this);
         this.goalSelector.addGoal(5, eatBlockGoal);
         this.goalSelector.addGoal(3, new TemptGoal(this, 1.1, this::isFood, false));
