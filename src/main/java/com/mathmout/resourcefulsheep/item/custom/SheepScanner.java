@@ -27,11 +27,12 @@ import java.util.Map;
 import java.util.UUID;
 
 public class SheepScanner extends Item {
+
     private static final Map<UUID, Long> lastScanTime = new HashMap<>();
     private static final long SCAN_COOLDOWN = 1000;
 
     public SheepScanner(Properties properties) {
-        super(properties);
+        super(properties.stacksTo(1));
     }
 
     @Override

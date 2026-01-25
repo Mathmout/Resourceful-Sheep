@@ -25,6 +25,9 @@ public class ModCreativeTabs {
                     .displayItems((itemDisplayParameters, output) -> {
                         output.accept(ModItems.LASSO.get());
                         output.accept(ModItems.SHEEP_SCANNER.get());
+                        output.accept(ModItems.IRON_SYRINGE.get());
+                        output.accept(ModItems.DIAMOND_SYRINGE.get());
+                        output.accept(ModItems.NETHERITE_SYRINGE.get());
                         for (DeferredItem<? extends SpawnEggItem> egg : SHEEP_SPAWN_EGGS) {
                             output.accept(egg.get());
                         }

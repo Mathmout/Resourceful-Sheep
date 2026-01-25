@@ -262,7 +262,9 @@ public class DefaultSheepTypes {
                         "minecraft:crimson_fungus", "minecraft:air",
                         "minecraft:crimson_roots", "minecraft:air",
                         "minecraft:warped_fungus","minecraft:air",
-                        "minecraft:warped_roots", "minecraft:air"
+                        "minecraft:warped_roots", "minecraft:air",
+                        "minecraft:short_grass", "minecraft:air",
+                        "minecraft:fern", "minecraft:air"
                 )),
                 List.of(
                         new SheepTypeData.TierData(1, List.of(
@@ -310,7 +312,9 @@ public class DefaultSheepTypes {
                         "minecraft:crimson_fungus", "minecraft:air",
                         "minecraft:crimson_roots", "minecraft:air",
                         "minecraft:warped_fungus","minecraft:air",
-                        "minecraft:warped_roots", "minecraft:air"
+                        "minecraft:warped_roots", "minecraft:air",
+                        "minecraft:short_grass", "minecraft:air",
+                        "minecraft:fern", "minecraft:air"
                 )),
                 List.of(
                         new SheepTypeData.TierData(1, List.of(
@@ -422,8 +426,10 @@ public class DefaultSheepTypes {
                         "minecraft:crimson_fungus", "minecraft:air",
                         "minecraft:crimson_roots", "minecraft:air",
                         "minecraft:warped_fungus","minecraft:air",
-                        "minecraft:warped_roots", "minecraft:air"
-                )),
+                        "minecraft:warped_roots", "minecraft:air",
+                        "minecraft:short_grass", "minecraft:air",
+                        "minecraft:fern", "minecraft:air"
+                        )),
                 List.of(
                         new SheepTypeData.TierData(1, List.of(
                                 new SheepTypeData.TierData.DroppedItems("minecraft:netherite_ingot", 1, 2)  //1.5

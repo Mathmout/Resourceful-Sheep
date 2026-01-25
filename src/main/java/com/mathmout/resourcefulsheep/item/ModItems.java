@@ -7,6 +7,7 @@ import com.mathmout.resourcefulsheep.entity.custom.SheepVariantData;
 import com.mathmout.resourcefulsheep.item.custom.CustomDeferredSpawnEggItem;
 import com.mathmout.resourcefulsheep.item.custom.Lasso;
 import com.mathmout.resourcefulsheep.item.custom.SheepScanner;
+import com.mathmout.resourcefulsheep.item.custom.Syringe;
 import com.mathmout.resourcefulsheep.utils.TexteUtils;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.SpawnEggItem;
@@ -24,8 +25,20 @@ public class ModItems {
 
     public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(ResourcefulSheepMod.MOD_ID);
 
-    public static final DeferredItem<Item> LASSO = ITEMS.register("lasso", () -> new Lasso(new Item.Properties().stacksTo(1)));
-    public static final DeferredItem<Item> SHEEP_SCANNER = ITEMS.register("sheep_scanner", () -> new SheepScanner(new Item.Properties().stacksTo(1)));
+    public static final DeferredItem<Item> LASSO = ITEMS.register("lasso",
+            () -> new Lasso(new Item.Properties()));
+
+    public static final DeferredItem<Item> SHEEP_SCANNER = ITEMS.register("sheep_scanner",
+            () -> new SheepScanner(new Item.Properties()));
+
+    public static final DeferredItem<Item> IRON_SYRINGE = ITEMS.register("iron_syringe",
+            () -> new Syringe(new Item.Properties(), Syringe.SyringeTiers.IRON));
+
+    public static final DeferredItem<Item> DIAMOND_SYRINGE = ITEMS.register("diamond_syringe",
+            () -> new Syringe(new Item.Properties(), Syringe.SyringeTiers.DIAMOND));
+
+    public static final DeferredItem<Item> NETHERITE_SYRINGE = ITEMS.register("netherite_syringe",
+            () -> new Syringe(new Item.Properties(), Syringe.SyringeTiers.NETHERITE));
 
     public static void registerVariantSpawnEggs() {
         for (SheepVariantData variant : ConfigSheepTypeManager.getSheepVariant().values()) {
@@ -65,7 +78,6 @@ public class ModItems {
             }
         });
     }
-
 
     public static void register(IEventBus eventBus) {
         ITEMS.register(eventBus);

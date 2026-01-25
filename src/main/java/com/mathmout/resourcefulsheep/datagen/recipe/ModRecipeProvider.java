@@ -1,10 +1,14 @@
 package com.mathmout.resourcefulsheep.datagen.recipe;
 
+import com.mathmout.resourcefulsheep.ResourcefulSheepMod;
 import com.mathmout.resourcefulsheep.item.ModItems;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.*;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.neoforged.neoforge.common.Tags;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.CompletableFuture;
@@ -39,5 +43,54 @@ public class ModRecipeProvider extends RecipeProvider {
                 .define('I', Items.SLIME_BLOCK)
                 .unlockedBy("has_string", has(Items.STRING))
                 .save(pRecipeOutput);
+
+        // Recipe for Iron Syringe.
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.IRON_SYRINGE.get())
+                .pattern("I  ")
+                .pattern(" G ")
+                .pattern("  P")
+                .define('P', Items.PISTON)
+                .define('G', Tags.Items.GLASS_BLOCKS)
+                .define('I', Items.IRON_INGOT)
+                .unlockedBy("has_iron_ingot", has(Items.IRON_INGOT))
+                .save(pRecipeOutput);
+
+        // Recipe for Diamond Syringe.
+        SmithingTransformRecipeBuilder.smithing(
+                        Ingredient.of(Items.NETHERITE_UPGRADE_SMITHING_TEMPLATE),
+                        Ingredient.of(ModItems.IRON_SYRINGE.get()),
+                        Ingredient.of(Items.DIAMOND_BLOCK),
+                        RecipeCategory.MISC,
+                        ModItems.DIAMOND_SYRINGE.get())
+                .unlocks("has_iron_syringe", has(ModItems.IRON_SYRINGE.get()))
+                .save(pRecipeOutput, ResourceLocation.fromNamespaceAndPath(ResourcefulSheepMod.MOD_ID, "diamond_syringe_smithing"));
+
+        // Recipe for Netherite Syringe.
+        SmithingTransformRecipeBuilder.smithing(
+                        Ingredient.of(Items.NETHERITE_UPGRADE_SMITHING_TEMPLATE),
+                        Ingredient.of(ModItems.DIAMOND_SYRINGE.get()),
+                        Ingredient.of(Items.NETHERITE_INGOT),
+                        RecipeCategory.MISC,
+                        ModItems.NETHERITE_SYRINGE.get())
+                .unlocks("has_diamond_syringe", has(ModItems.DIAMOND_SYRINGE.get()))
+                .save(pRecipeOutput, ResourceLocation.fromNamespaceAndPath(ResourcefulSheepMod.MOD_ID, "netherite_syringe_smithing"));
+
+        // Iron Syringe Clearing
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ModItems.IRON_SYRINGE.get())
+                .requires(ModItems.IRON_SYRINGE.get())
+                .unlockedBy("has_iron_syringe", has(ModItems.IRON_SYRINGE.get()))
+                .save(pRecipeOutput, ResourceLocation.fromNamespaceAndPath(ResourcefulSheepMod.MOD_ID, "iron_syringe_clearing"));
+
+        // Diamond Syringe Clearing
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ModItems.DIAMOND_SYRINGE.get())
+                .requires(ModItems.DIAMOND_SYRINGE.get())
+                .unlockedBy("has_diamond_syringe", has(ModItems.DIAMOND_SYRINGE.get()))
+                .save(pRecipeOutput, ResourceLocation.fromNamespaceAndPath(ResourcefulSheepMod.MOD_ID, "diamond_syringe_clearing"));
+
+        // Netherite Syringe Clearing
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ModItems.NETHERITE_SYRINGE.get())
+                .requires(ModItems.NETHERITE_SYRINGE.get())
+                .unlockedBy("has_netherite_syringe", has(ModItems.NETHERITE_SYRINGE.get()))
+                .save(pRecipeOutput, ResourceLocation.fromNamespaceAndPath(ResourcefulSheepMod.MOD_ID, "netherite_syringe_clearing"));
     }
 }

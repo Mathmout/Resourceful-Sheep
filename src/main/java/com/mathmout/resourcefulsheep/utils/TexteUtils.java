@@ -2,8 +2,8 @@ package com.mathmout.resourcefulsheep.utils;
 
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.Items;
 
 public class TexteUtils {
 
@@ -42,12 +42,19 @@ public class TexteUtils {
         else {
             ResourceLocation loc = ResourceLocation.tryParse(Id);
             if (loc != null) {
-                Item item = BuiltInRegistries.ITEM.get(loc);
-                if (item != Items.AIR || Id.equals("minecraft:air")) {
+                // ITEM
+                if (BuiltInRegistries.ITEM.containsKey(loc)) {
+                    Item item = BuiltInRegistries.ITEM.get(loc);
                     return item.getDescription().getString();
                 }
+                // ENTITY
+                if (BuiltInRegistries.ENTITY_TYPE.containsKey(loc)) {
+                    EntityType<?> entityType = BuiltInRegistries.ENTITY_TYPE.get(loc);
+                    return entityType.getDescription().getString();
+                }
             }
+        }
             return StringToText(Id);
         }
     }
-}
+

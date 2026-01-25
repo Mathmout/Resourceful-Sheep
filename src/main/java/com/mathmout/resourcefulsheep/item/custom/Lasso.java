@@ -7,6 +7,7 @@ import com.mathmout.resourcefulsheep.item.ModDataComponents;
 import com.mathmout.resourcefulsheep.utils.TexteUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -37,7 +38,7 @@ public class Lasso extends Item {
     public static final String TAG_ENTITY_ID = "id";
 
     public Lasso(Properties properties) {
-        super(properties);
+        super(properties.stacksTo(1));
     }
 
     @Override
@@ -75,7 +76,7 @@ public class Lasso extends Item {
             Optional<EntityType<?>> entityType = EntityType.by(entityTag);
             if (entityType.isPresent()) {
                 EntityType.loadEntityRecursive(entityTag, context.getLevel(), (entity) -> {
-                    var pos = context.getClickedPos().relative(context.getClickedFace());
+                    BlockPos pos = context.getClickedPos().relative(context.getClickedFace());
                     entity.setPos(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5);
                     context.getLevel().addFreshEntity(entity);
                     return entity;

@@ -34,7 +34,6 @@ public class DynamicServerDataPackProvider implements PackResources {
 
     private void generateResources() {
         for (SheepSpawningData rule : ConfigSheepSpawningManager.getSheepSpawning()) {
-            JsonObject biomeModifierJson = new JsonObject();
             JsonObject spawner = new JsonObject();
             spawner.addProperty("type", ResourcefulSheepMod.MOD_ID + ":" + rule.sheepId());
             spawner.addProperty("weight", 8);
@@ -59,7 +58,7 @@ public class DynamicServerDataPackProvider implements PackResources {
                 for (String biome : rule.Biomes()) {
                     if (biome.startsWith("#")) {
                         tags.add(biome);
-                    } else if (!biome.isEmpty()) {
+                    } else {
                         biomeIds.add(biome);
                     }
                 }
