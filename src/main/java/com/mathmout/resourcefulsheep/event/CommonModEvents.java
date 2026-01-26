@@ -40,7 +40,6 @@ import net.neoforged.neoforge.registries.NeoForgeRegistries;
 import net.neoforged.neoforge.registries.RegisterEvent;
 import org.jetbrains.annotations.NotNull;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -51,7 +50,7 @@ import static net.minecraft.world.level.block.Blocks.BEDROCK;
 public class CommonModEvents {
 
     @SubscribeEvent
-    public static void onCommonSetup(final FMLCommonSetupEvent event) {
+    public static void ModifyTemplateIcons(FMLCommonSetupEvent event) {
         SmithingTemplateItem netheriteTemplate = (SmithingTemplateItem) Items.NETHERITE_UPGRADE_SMITHING_TEMPLATE.asItem();
         List<ResourceLocation> currentIcons = netheriteTemplate.baseSlotEmptyIcons;
         List<ResourceLocation> newIcons = new ArrayList<>(currentIcons);

@@ -6,6 +6,8 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.AgeableMob;
@@ -60,6 +62,7 @@ public class Syringe extends Item {
             // On applique la modification sur l'ItemStack
             ItemStack filledStack = stack.copy();
             filledStack.set(ModDataComponents.SYRINGE_CONTENT.get(), tag);
+            player.level().playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.BOTTLE_FILL, SoundSource.PLAYERS, 1.0F, 1.0F);
             player.setItemInHand(usedHand, filledStack);
         }
         return InteractionResult.sidedSuccess(player.level().isClientSide);
@@ -117,6 +120,7 @@ public class Syringe extends Item {
                         .append(Component.literal(" and"))
                         .append(Component.literal(" Bosses").withStyle(ChatFormatting.BOLD)));
             }
+            tooltipComponents.add(Component.literal("Usage coming soon...").withStyle(ChatFormatting.DARK_RED));
         }
         super.appendHoverText(stack, context, tooltipComponents, tooltipFlag);
     }

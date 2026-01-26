@@ -60,8 +60,8 @@ public class DynamicResourceProvider implements PackResources {
         langJson.addProperty("item.resourceful_sheep.smithing_template.diamond_upgrade.applies_to", "Iron Equipment");
         langJson.addProperty("item.resourceful_sheep.smithing_template.diamond_upgrade.ingredients", "Diamond");
         langJson.addProperty("upgrade.resourceful_sheep.diamond_upgrade", "Diamond Upgrade");
-        langJson.addProperty("item.resourceful_sheep.smithing_template.diamond_upgrade.base_slot_description", "Add an iron syringe");
-        langJson.addProperty("item.resourceful_sheep.smithing_template.diamond_upgrade.additions_slot_description", "Add a diamond block");
+        langJson.addProperty("item.resourceful_sheep.smithing_template.diamond_upgrade.base_slot_description", "Add iron syringe");
+        langJson.addProperty("item.resourceful_sheep.smithing_template.diamond_upgrade.additions_slot_description", "Add diamond block");
         langJson.addProperty("item.resourceful_sheep.diamond_upgrade_smithing_template", "Smithing Template");
 
         // Traductions dynamiques.
