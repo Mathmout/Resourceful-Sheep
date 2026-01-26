@@ -25,11 +25,14 @@ import net.minecraft.world.entity.SpawnPlacementTypes;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.animal.Sheep;
 import net.minecraft.world.flag.FeatureFlagSet;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.SmithingTemplateItem;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.phys.AABB;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.event.AddPackFindersEvent;
 import net.neoforged.neoforge.event.entity.EntityAttributeCreationEvent;
 import net.neoforged.neoforge.event.entity.RegisterSpawnPlacementsEvent;
@@ -37,6 +40,8 @@ import net.neoforged.neoforge.registries.NeoForgeRegistries;
 import net.neoforged.neoforge.registries.RegisterEvent;
 import org.jetbrains.annotations.NotNull;
 
+import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -44,6 +49,15 @@ import static net.minecraft.world.level.block.Blocks.BEDROCK;
 
 @EventBusSubscriber(modid = ResourcefulSheepMod.MOD_ID)
 public class CommonModEvents {
+
+    @SubscribeEvent
+    public static void onCommonSetup(final FMLCommonSetupEvent event) {
+        SmithingTemplateItem netheriteTemplate = (SmithingTemplateItem) Items.NETHERITE_UPGRADE_SMITHING_TEMPLATE.asItem();
+        List<ResourceLocation> currentIcons = netheriteTemplate.baseSlotEmptyIcons;
+        List<ResourceLocation> newIcons = new ArrayList<>(currentIcons);
+        newIcons.add(ResourceLocation.fromNamespaceAndPath(ResourcefulSheepMod.MOD_ID, "item/empty_slot_syringe"));
+        netheriteTemplate.baseSlotEmptyIcons = newIcons;
+    }
 
     @SubscribeEvent
     public static void onRegister(RegisterEvent event) {

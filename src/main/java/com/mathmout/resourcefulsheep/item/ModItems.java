@@ -9,7 +9,12 @@ import com.mathmout.resourcefulsheep.item.custom.Lasso;
 import com.mathmout.resourcefulsheep.item.custom.SheepScanner;
 import com.mathmout.resourcefulsheep.item.custom.Syringe;
 import com.mathmout.resourcefulsheep.utils.TexteUtils;
+import net.minecraft.ChatFormatting;
+import net.minecraft.Util;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.SmithingTemplateItem;
 import net.minecraft.world.item.SpawnEggItem;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredItem;
@@ -39,6 +44,44 @@ public class ModItems {
 
     public static final DeferredItem<Item> NETHERITE_SYRINGE = ITEMS.register("netherite_syringe",
             () -> new Syringe(new Item.Properties(), Syringe.SyringeTiers.NETHERITE));
+
+    public static final DeferredItem<Item> DIAMOND_UPGRADE_SMITHING_TEMPLATE = ITEMS.register("diamond_upgrade_smithing_template",
+            () -> new SmithingTemplateItem(
+                    // 1. "Applies to:" (Ce sur quoi on l'utilise)
+                    Component.translatable(Util.makeDescriptionId("item",
+                            ResourceLocation.fromNamespaceAndPath(
+                                    ResourcefulSheepMod.MOD_ID,
+                                    "smithing_template.diamond_upgrade.applies_to")))
+                            .withStyle(ChatFormatting.BLUE),
+
+                    // 2. "Ingredients:" (Ce qu'on ajoute)
+                    Component.translatable(Util.makeDescriptionId("item",
+                            ResourceLocation.fromNamespaceAndPath(ResourcefulSheepMod.MOD_ID,
+                                    "smithing_template.diamond_upgrade.ingredients")))
+                            .withStyle(ChatFormatting.BLUE),
+
+                    // 3. Titre de l'upgrade (ex: "Diamond Upgrade")
+                    Component.translatable(Util.makeDescriptionId("upgrade",
+                            ResourceLocation.fromNamespaceAndPath(ResourcefulSheepMod.MOD_ID,
+                                    "diamond_upgrade")))
+                            .withStyle(ChatFormatting.GRAY),
+
+                    // 4. Description slot gauche (Base)
+                    Component.translatable(Util.makeDescriptionId("item",
+                            ResourceLocation.fromNamespaceAndPath(ResourcefulSheepMod.MOD_ID,
+                                    "smithing_template.diamond_upgrade.base_slot_description"))),
+
+                    // 5. Description slot droite (Addition)
+                    Component.translatable(Util.makeDescriptionId("item",
+                            ResourceLocation.fromNamespaceAndPath(ResourcefulSheepMod.MOD_ID,
+                                    "smithing_template.diamond_upgrade.additions_slot_description"))),
+
+                    // 6. Icônes fantômes slot gauche (On réutilise l'icône d'épée vide vanilla par exemple, ou ta seringue)
+                    List.of(ResourceLocation.fromNamespaceAndPath(ResourcefulSheepMod.MOD_ID,"item/empty_slot_syringe")),
+
+                    // 7. Icônes fantômes slot droite (Diamant)
+                    List.of(ResourceLocation.fromNamespaceAndPath(ResourcefulSheepMod.MOD_ID,"item/empty_slot_block"))
+            ));
 
     public static void registerVariantSpawnEggs() {
         for (SheepVariantData variant : ConfigSheepTypeManager.getSheepVariant().values()) {

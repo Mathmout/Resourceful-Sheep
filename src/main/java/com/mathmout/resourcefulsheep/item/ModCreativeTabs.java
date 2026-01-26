@@ -28,6 +28,7 @@ public class ModCreativeTabs {
                         output.accept(ModItems.IRON_SYRINGE.get());
                         output.accept(ModItems.DIAMOND_SYRINGE.get());
                         output.accept(ModItems.NETHERITE_SYRINGE.get());
+                        output.accept(ModItems.DIAMOND_UPGRADE_SMITHING_TEMPLATE.get());
                         for (DeferredItem<? extends SpawnEggItem> egg : SHEEP_SPAWN_EGGS) {
                             output.accept(egg.get());
                         }

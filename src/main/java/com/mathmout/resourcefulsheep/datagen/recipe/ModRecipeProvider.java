@@ -57,7 +57,7 @@ public class ModRecipeProvider extends RecipeProvider {
 
         // Recipe for Diamond Syringe.
         SmithingTransformRecipeBuilder.smithing(
-                        Ingredient.of(Items.NETHERITE_UPGRADE_SMITHING_TEMPLATE),
+                        Ingredient.of(ModItems.DIAMOND_UPGRADE_SMITHING_TEMPLATE),
                         Ingredient.of(ModItems.IRON_SYRINGE.get()),
                         Ingredient.of(Items.DIAMOND_BLOCK),
                         RecipeCategory.MISC,
@@ -92,5 +92,16 @@ public class ModRecipeProvider extends RecipeProvider {
                 .requires(ModItems.NETHERITE_SYRINGE.get())
                 .unlockedBy("has_netherite_syringe", has(ModItems.NETHERITE_SYRINGE.get()))
                 .save(pRecipeOutput, ResourceLocation.fromNamespaceAndPath(ResourcefulSheepMod.MOD_ID, "netherite_syringe_clearing"));
+
+        // Recette de duplication du Template
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.DIAMOND_UPGRADE_SMITHING_TEMPLATE.get(), 2)
+                .pattern("IDI")
+                .pattern("ISI")
+                .pattern("III")
+                .define('I', Items.IRON_INGOT)
+                .define('D', Items.DIAMOND)
+                .define('S', ModItems.DIAMOND_UPGRADE_SMITHING_TEMPLATE.get())
+            .unlockedBy("has_template", has(ModItems.DIAMOND_UPGRADE_SMITHING_TEMPLATE.get()))
+            .save(pRecipeOutput, ResourceLocation.fromNamespaceAndPath(ResourcefulSheepMod.MOD_ID, "diamond_upgrade_template_duplication"));
     }
 }

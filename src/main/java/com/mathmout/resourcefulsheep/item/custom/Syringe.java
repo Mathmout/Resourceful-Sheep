@@ -8,9 +8,18 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.AgeableMob;
+import net.minecraft.world.entity.FlyingMob;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.animal.Animal;
-import net.minecraft.world.entity.monster.Enemy;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.ambient.AmbientCreature;
+import net.minecraft.world.entity.animal.AbstractGolem;
+import net.minecraft.world.entity.animal.WaterAnimal;
+import net.minecraft.world.entity.animal.allay.Allay;
+import net.minecraft.world.entity.boss.wither.WitherBoss;
+import net.minecraft.world.entity.monster.Monster;
+import net.minecraft.world.entity.monster.Slime;
+import net.minecraft.world.entity.monster.warden.Warden;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -58,9 +67,23 @@ public class Syringe extends Item {
 
     private boolean isValidTarget(LivingEntity target) {
         return switch (tier) {
-            case IRON -> target instanceof Animal;
-            case DIAMOND -> target instanceof Animal || target instanceof Enemy;
-            case NETHERITE -> true;
+            case IRON -> target instanceof AgeableMob ||
+                         target instanceof Allay ||
+                         target instanceof AmbientCreature ||
+                         target instanceof WaterAnimal;
+
+            case DIAMOND -> (target instanceof AgeableMob ||
+                            target instanceof Allay ||
+                            target instanceof AmbientCreature ||
+                            target instanceof WaterAnimal ||
+                            target instanceof FlyingMob ||
+                            target instanceof Monster ||
+                            target instanceof Slime ||
+                            target instanceof AbstractGolem) &&
+                            !(target instanceof WitherBoss) &&
+                            !(target instanceof Warden);
+
+            case NETHERITE -> target instanceof Mob;
         };
     }
 

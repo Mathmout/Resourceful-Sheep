@@ -1,0 +1,12 @@
+{
+  "sources": [
+    {
+      "type": "single",
+      "resource": "resourceful_sheep:item/empty_slot_syringe"
+    },
+    {
+      "type": "single",
+      "resource": "resourceful_sheep:item/empty_slot_block"
+    }
+  ]
+}

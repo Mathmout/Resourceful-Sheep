@@ -39,17 +39,30 @@ public class DynamicResourceProvider implements PackResources {
 
         // Traductions statics.
 
+        // Items
         langJson.addProperty("item." + ResourcefulSheepMod.MOD_ID + ".lasso", "Lasso");
         langJson.addProperty("item." + ResourcefulSheepMod.MOD_ID + ".sheep_scanner", "Sheep Scanner");
         langJson.addProperty("item." + ResourcefulSheepMod.MOD_ID + ".iron_syringe", "Iron Syringe");
         langJson.addProperty("item." + ResourcefulSheepMod.MOD_ID + ".diamond_syringe", "Diamond Syringe");
         langJson.addProperty("item." + ResourcefulSheepMod.MOD_ID + ".netherite_syringe", "Netherite Syringe");
+
+        // Créatif menu
         langJson.addProperty("creativetab." + ResourcefulSheepMod.MOD_ID, "Resourceful Sheep");
+
+        // JEI
         langJson.addProperty("recipe." + ResourcefulSheepMod.MOD_ID + ".sheep_mutations", "Sheep Mutations");
         langJson.addProperty("recipe." + ResourcefulSheepMod.MOD_ID + ".sheep_spawning", "Sheep Spawning");
         langJson.addProperty("recipe." + ResourcefulSheepMod.MOD_ID + ".sheep_dropping", "Sheep Dropping");
         langJson.addProperty("recipe." + ResourcefulSheepMod.MOD_ID + ".sheep_feeding", "Sheep Feeding");
         langJson.addProperty("recipe." + ResourcefulSheepMod.MOD_ID + ".sheep_eating", "Sheep Eating");
+
+        // Smithing Template
+        langJson.addProperty("item.resourceful_sheep.smithing_template.diamond_upgrade.applies_to", "Iron Equipment");
+        langJson.addProperty("item.resourceful_sheep.smithing_template.diamond_upgrade.ingredients", "Diamond");
+        langJson.addProperty("upgrade.resourceful_sheep.diamond_upgrade", "Diamond Upgrade");
+        langJson.addProperty("item.resourceful_sheep.smithing_template.diamond_upgrade.base_slot_description", "Add an iron syringe");
+        langJson.addProperty("item.resourceful_sheep.smithing_template.diamond_upgrade.additions_slot_description", "Add a diamond block");
+        langJson.addProperty("item.resourceful_sheep.diamond_upgrade_smithing_template", "Smithing Template");
 
         // Traductions dynamiques.
 

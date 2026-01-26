@@ -14,6 +14,7 @@ tasks.named('wrapper', Wrapper).configure {
     distributionType = Wrapper.DistributionType.BIN
 }
 
+
 version = mod_version
 group = mod_group_id
 
@@ -210,4 +211,14 @@ sourceSets {
             srcDirs 'src/main/java'
         }
     }
+}
+
+// Fix pour l'erreur de build "generateModMetadata"
+tasks.named('createMinecraftArtifacts') {
+    dependsOn 'generateModMetadata'
+}
+
+// Par sécurité, on l'ajoute aussi pour le jar principal
+tasks.named('jar') {
+    dependsOn 'generateModMetadata'
 }
