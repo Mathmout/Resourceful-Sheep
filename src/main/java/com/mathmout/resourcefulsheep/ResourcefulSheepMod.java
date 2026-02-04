@@ -1,5 +1,7 @@
 package com.mathmout.resourcefulsheep;
 
+import com.mathmout.resourcefulsheep.block.ModBlocks;
+import com.mathmout.resourcefulsheep.block.entity.ModBlockEntities;
 import com.mathmout.resourcefulsheep.config.mutations.ConfigSheepMutationManager;
 import com.mathmout.resourcefulsheep.config.sheeptypes.ConfigSheepTypeManager;
 import com.mathmout.resourcefulsheep.config.spawning.ConfigSheepSpawningManager;
@@ -9,6 +11,7 @@ import com.mathmout.resourcefulsheep.item.ModCreativeTabs;
 import com.mathmout.resourcefulsheep.item.ModDataComponents;
 import com.mathmout.resourcefulsheep.item.ModItems;
 
+import com.mathmout.resourcefulsheep.screen.ModMenuTypes;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
@@ -40,6 +43,15 @@ public class ResourcefulSheepMod {
 
         // Data Gen
         modEventBus.addListener(DataGenerators::gatherData);
+
+        // Block Entities
+        ModBlockEntities.register(modEventBus);
+
+        // Blocks
+        ModBlocks.register(modEventBus);
+
+        // Menu
+        ModMenuTypes.register(modEventBus);
 
         // Config
         modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);

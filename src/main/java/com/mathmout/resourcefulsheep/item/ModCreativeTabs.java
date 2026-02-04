@@ -1,6 +1,7 @@
 package com.mathmout.resourcefulsheep.item;
 
 import com.mathmout.resourcefulsheep.ResourcefulSheepMod;
+import com.mathmout.resourcefulsheep.block.ModBlocks;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.CreativeModeTab;
@@ -29,6 +30,7 @@ public class ModCreativeTabs {
                         output.accept(ModItems.DIAMOND_SYRINGE.get());
                         output.accept(ModItems.NETHERITE_SYRINGE.get());
                         output.accept(ModItems.DIAMOND_UPGRADE_SMITHING_TEMPLATE.get());
+                        output.accept(ModBlocks.DNA_SEQUENCER.get());
                         for (DeferredItem<? extends SpawnEggItem> egg : SHEEP_SPAWN_EGGS) {
                             output.accept(egg.get());
                         }

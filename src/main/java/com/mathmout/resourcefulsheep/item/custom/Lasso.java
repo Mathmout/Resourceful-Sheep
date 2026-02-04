@@ -35,8 +35,6 @@ import java.util.Optional;
 
 public class Lasso extends Item {
 
-    public static final String TAG_ENTITY_ID = "id";
-
     public Lasso(Properties properties) {
         super(properties.stacksTo(1));
     }
@@ -49,11 +47,11 @@ public class Lasso extends Item {
                 CompoundTag entityTag = new CompoundTag();
                 sheep.saveWithoutId(entityTag);
 
-                entityTag.putString(TAG_ENTITY_ID, BuiltInRegistries.ENTITY_TYPE.getKey(sheep.getType()).toString());
+                entityTag.putString("id", BuiltInRegistries.ENTITY_TYPE.getKey(sheep.getType()).toString());
                 fullLasso.set(ModDataComponents.CAPTURED_ENTITY.get(), entityTag);
 
                 sheep.discard();
-                player.level().playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.LEASH_KNOT_PLACE, SoundSource.PLAYERS, 0.5F, 1.5F);
+                player.level().playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.LEASH_KNOT_PLACE, SoundSource.PLAYERS, 1.0F, 1.0F);
 
                 player.setItemInHand(usedHand, fullLasso);
                 return InteractionResult.SUCCESS;
@@ -95,7 +93,7 @@ public class Lasso extends Item {
         CompoundTag entityTag = stack.get(ModDataComponents.CAPTURED_ENTITY.get());
 
         if (entityTag != null) {
-            ResourceLocation entityId = ResourceLocation.tryParse(entityTag.getString(TAG_ENTITY_ID));
+            ResourceLocation entityId = ResourceLocation.tryParse(entityTag.getString("id"));
 
             if (entityId != null) {
                 if (Screen.hasShiftDown()) {

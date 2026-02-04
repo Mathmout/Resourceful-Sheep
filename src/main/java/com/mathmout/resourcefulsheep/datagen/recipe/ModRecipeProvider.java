@@ -1,6 +1,7 @@
 package com.mathmout.resourcefulsheep.datagen.recipe;
 
 import com.mathmout.resourcefulsheep.ResourcefulSheepMod;
+import com.mathmout.resourcefulsheep.block.ModBlocks;
 import com.mathmout.resourcefulsheep.item.ModItems;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
@@ -93,7 +94,7 @@ public class ModRecipeProvider extends RecipeProvider {
                 .unlockedBy("has_netherite_syringe", has(ModItems.NETHERITE_SYRINGE.get()))
                 .save(pRecipeOutput, ResourceLocation.fromNamespaceAndPath(ResourcefulSheepMod.MOD_ID, "netherite_syringe_clearing"));
 
-        // Recette de duplication du Template
+        // Template duplication recipe
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.DIAMOND_UPGRADE_SMITHING_TEMPLATE.get(), 2)
                 .pattern("IDI")
                 .pattern("ISI")
@@ -103,5 +104,24 @@ public class ModRecipeProvider extends RecipeProvider {
                 .define('S', ModItems.DIAMOND_UPGRADE_SMITHING_TEMPLATE.get())
             .unlockedBy("has_template", has(ModItems.DIAMOND_UPGRADE_SMITHING_TEMPLATE.get()))
             .save(pRecipeOutput, ResourceLocation.fromNamespaceAndPath(ResourcefulSheepMod.MOD_ID, "diamond_upgrade_template_duplication"));
+
+        // DNA Sequencer Clearing
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ModBlocks.DNA_SEQUENCER.get())
+                .requires(ModBlocks.DNA_SEQUENCER.get())
+                .unlockedBy("has_netherite_syringe", has(ModBlocks.DNA_SEQUENCER.get()))
+                .save(pRecipeOutput, ResourceLocation.fromNamespaceAndPath(ResourcefulSheepMod.MOD_ID, "dna_sequencer_clearing"));
+
+        // DNA Sequencer recipe
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.DNA_SEQUENCER.get())
+                .pattern("IDI")
+                .pattern("BRB")
+                .pattern("III")
+                .define('I', Items.IRON_INGOT)
+                .define('D', Items.DIAMOND)
+                .define('B', Items.GLASS_BOTTLE)
+                .define('R', Items.REDSTONE_BLOCK)
+            .unlockedBy("has_template", has(ModItems.DIAMOND_UPGRADE_SMITHING_TEMPLATE.get()))
+            .save(pRecipeOutput, ResourceLocation.fromNamespaceAndPath(ResourcefulSheepMod.MOD_ID, "dna_sequencer_recipe"));
+
     }
 }

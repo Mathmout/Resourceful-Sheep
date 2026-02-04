@@ -47,39 +47,39 @@ public class ModItems {
 
     public static final DeferredItem<Item> DIAMOND_UPGRADE_SMITHING_TEMPLATE = ITEMS.register("diamond_upgrade_smithing_template",
             () -> new SmithingTemplateItem(
-                    // 1. "Applies to:" (Ce sur quoi on l'utilise)
+                    // Applies to
                     Component.translatable(Util.makeDescriptionId("item",
                             ResourceLocation.fromNamespaceAndPath(
                                     ResourcefulSheepMod.MOD_ID,
                                     "smithing_template.diamond_upgrade.applies_to")))
                             .withStyle(ChatFormatting.BLUE),
 
-                    // 2. "Ingredients:" (Ce qu'on ajoute)
+                    // Ingredients
                     Component.translatable(Util.makeDescriptionId("item",
                             ResourceLocation.fromNamespaceAndPath(ResourcefulSheepMod.MOD_ID,
                                     "smithing_template.diamond_upgrade.ingredients")))
                             .withStyle(ChatFormatting.BLUE),
 
-                    // 3. Titre de l'upgrade (ex: "Diamond Upgrade")
+                    // Nom de l'upgrade
                     Component.translatable(Util.makeDescriptionId("upgrade",
                             ResourceLocation.fromNamespaceAndPath(ResourcefulSheepMod.MOD_ID,
                                     "diamond_upgrade")))
                             .withStyle(ChatFormatting.GRAY),
 
-                    // 4. Description slot gauche (Base)
+                    // Description slot gauche
                     Component.translatable(Util.makeDescriptionId("item",
                             ResourceLocation.fromNamespaceAndPath(ResourcefulSheepMod.MOD_ID,
                                     "smithing_template.diamond_upgrade.base_slot_description"))),
 
-                    // 5. Description slot droite (Addition)
+                    // Description slot droite
                     Component.translatable(Util.makeDescriptionId("item",
                             ResourceLocation.fromNamespaceAndPath(ResourcefulSheepMod.MOD_ID,
                                     "smithing_template.diamond_upgrade.additions_slot_description"))),
 
-                    // 6. Icônes fantômes slot gauche (On réutilise l'icône d'épée vide vanilla par exemple, ou ta seringue)
+                    // Icônes fantômes slot gauche
                     List.of(ResourceLocation.fromNamespaceAndPath(ResourcefulSheepMod.MOD_ID,"item/empty_slot_syringe")),
 
-                    // 7. Icônes fantômes slot droite (Diamant)
+                    // Icônes fantômes slot droite
                     List.of(ResourceLocation.fromNamespaceAndPath(ResourcefulSheepMod.MOD_ID,"item/empty_slot_block"))
             ));
 
@@ -87,7 +87,7 @@ public class ModItems {
         for (SheepVariantData variant : ConfigSheepTypeManager.getSheepVariant().values()) {
             DeferredItem<SpawnEggItem> spawnEgg = ITEMS.registerItem(
             variant.Id() + "_spawn_egg", (Function<Item.Properties, ? extends SpawnEggItem>)
-            properties -> new CustomDeferredSpawnEggItem( ModEntities.SHEEP_ENTITIES.get(variant.Id()),
+            properties -> new CustomDeferredSpawnEggItem(ModEntities.SHEEP_ENTITIES.get(variant.Id()),
                     Integer.parseInt(variant.EggColorBackground().substring(1), 16),
                     Integer.parseInt(variant.EggColorSpotsNTitle().substring(1), 16),
                     properties,
@@ -126,4 +126,3 @@ public class ModItems {
         ITEMS.register(eventBus);
     }
 }
-

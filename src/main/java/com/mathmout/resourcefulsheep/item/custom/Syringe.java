@@ -20,6 +20,7 @@ import net.minecraft.world.entity.animal.WaterAnimal;
 import net.minecraft.world.entity.animal.allay.Allay;
 import net.minecraft.world.entity.boss.wither.WitherBoss;
 import net.minecraft.world.entity.monster.Monster;
+import net.minecraft.world.entity.monster.Shulker;
 import net.minecraft.world.entity.monster.Slime;
 import net.minecraft.world.entity.monster.warden.Warden;
 import net.minecraft.world.entity.player.Player;
@@ -53,6 +54,7 @@ public class Syringe extends Item {
 
         // Prélèvement de l'ADN
         if (!player.level().isClientSide) {
+
             String entityResourceLocation = BuiltInRegistries.ENTITY_TYPE.getKey(interactionTarget.getType()).toString();
 
             // On crée le tag
@@ -64,16 +66,19 @@ public class Syringe extends Item {
             filledStack.set(ModDataComponents.SYRINGE_CONTENT.get(), tag);
             player.level().playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.BOTTLE_FILL, SoundSource.PLAYERS, 1.0F, 1.0F);
             player.setItemInHand(usedHand, filledStack);
+            return InteractionResult.SUCCESS;
         }
-        return InteractionResult.sidedSuccess(player.level().isClientSide);
+        return InteractionResult.PASS;
     }
 
     private boolean isValidTarget(LivingEntity target) {
-        return switch (tier) {
-            case IRON -> target instanceof AgeableMob ||
+        return switch (this.tier) {
+            case IRON -> (target instanceof AgeableMob ||
                          target instanceof Allay ||
                          target instanceof AmbientCreature ||
-                         target instanceof WaterAnimal;
+                         target instanceof WaterAnimal ||
+                         target instanceof AbstractGolem) &&
+                         !(target instanceof Shulker);
 
             case DIAMOND -> (target instanceof AgeableMob ||
                             target instanceof Allay ||
@@ -97,8 +102,8 @@ public class Syringe extends Item {
             CompoundTag tag = stack.get(ModDataComponents.SYRINGE_CONTENT.get());
             if (tag != null && tag.contains("id")){
                 String entityId = tag.getString("id");
-                tooltipComponents.add(Component.literal("Contains DNA : ").withStyle(ChatFormatting.BLUE)
-                    .append(Component.literal(TexteUtils.getPrettyName(entityId)).withStyle(ChatFormatting.YELLOW)));
+                tooltipComponents.add(Component.literal("Contains DNA : ").withStyle(ChatFormatting.GREEN)
+                    .append(Component.literal(TexteUtils.getPrettyName(entityId)).withStyle(ChatFormatting.GRAY)));
             }
         }
         // Empty
@@ -120,7 +125,6 @@ public class Syringe extends Item {
                         .append(Component.literal(" and"))
                         .append(Component.literal(" Bosses").withStyle(ChatFormatting.BOLD)));
             }
-            tooltipComponents.add(Component.literal("Usage coming soon...").withStyle(ChatFormatting.DARK_RED));
         }
         super.appendHoverText(stack, context, tooltipComponents, tooltipFlag);
     }

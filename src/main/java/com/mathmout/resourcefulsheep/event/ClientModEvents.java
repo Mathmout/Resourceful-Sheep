@@ -5,6 +5,8 @@ import com.mathmout.resourcefulsheep.client.data.DynamicResourceProvider;
 import com.mathmout.resourcefulsheep.client.data.DynamicSheepTextureGenerator;
 import com.mathmout.resourcefulsheep.client.renderer.ResourcefulSheepRenderer;
 import com.mathmout.resourcefulsheep.entity.ModEntities;
+import com.mathmout.resourcefulsheep.screen.DNASequencerScreen;
+import com.mathmout.resourcefulsheep.screen.ModMenuTypes;
 import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.packs.PackLocationInfo;
@@ -23,6 +25,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.RegisterClientReloadListenersEvent;
+import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 import net.neoforged.neoforge.event.AddPackFindersEvent;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -37,6 +40,11 @@ import java.util.concurrent.Executor;
 public class ClientModEvents {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ClientModEvents.class);
+
+    @SubscribeEvent
+    public static void registerScreens(RegisterMenuScreensEvent event) {
+        event.register(ModMenuTypes.DNA_SEQUENCER_MENU.get(), DNASequencerScreen::new);
+    }
 
     @SubscribeEvent
     public static void onClientSetup(final FMLClientSetupEvent event) {

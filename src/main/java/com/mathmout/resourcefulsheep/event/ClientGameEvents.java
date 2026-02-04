@@ -38,7 +38,6 @@ public class ClientGameEvents {
     @SubscribeEvent
     public static void onItemTooltip(ItemTooltipEvent event) {
         Item item = event.getItemStack().getItem();
-        boolean isShiftKeyDown = Screen.hasShiftDown();
 
         if (item instanceof SpawnEggItem) {
             String itemId = BuiltInRegistries.ITEM.getKey(item).toString();
@@ -58,7 +57,7 @@ public class ClientGameEvents {
                     if (!event.getToolTip().isEmpty()) {
                         event.getToolTip().set(0, Component.literal(displayName).withStyle(Style.EMPTY.withColor(nameColor)));
 
-                        if (!isShiftKeyDown) {
+                        if (!Screen.hasShiftDown()) {
                             event.getToolTip().add(Component.literal("Hold SHIFT for details.")
                                     .withStyle(ChatFormatting.ITALIC)
                                     .withStyle(ChatFormatting.GRAY));

@@ -1,6 +1,7 @@
 package com.mathmout.resourcefulsheep.event;
 
 import com.mathmout.resourcefulsheep.ResourcefulSheepMod;
+import com.mathmout.resourcefulsheep.block.entity.ModBlockEntities;
 import com.mathmout.resourcefulsheep.client.data.DynamicServerDataPackProvider;
 import com.mathmout.resourcefulsheep.config.spawning.ConfigSheepSpawningManager;
 import com.mathmout.resourcefulsheep.config.spawning.SheepSpawningData;
@@ -33,6 +34,8 @@ import net.minecraft.world.phys.AABB;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.event.AddPackFindersEvent;
 import net.neoforged.neoforge.event.entity.EntityAttributeCreationEvent;
 import net.neoforged.neoforge.event.entity.RegisterSpawnPlacementsEvent;
@@ -48,6 +51,23 @@ import static net.minecraft.world.level.block.Blocks.BEDROCK;
 
 @EventBusSubscriber(modid = ResourcefulSheepMod.MOD_ID)
 public class CommonModEvents {
+
+    @SubscribeEvent
+    public static void registerCapabilities(RegisterCapabilitiesEvent event) {
+        // Enregistrer l'Inventaire (ItemHandler)
+        event.registerBlockEntity(
+                Capabilities.ItemHandler.BLOCK, // Le type de capability
+                ModBlockEntities.DNA_SEQUENCER_BLOCK_ENTITY.get(), // Le BlockEntity
+                (blockEntity, side) -> blockEntity.itemHandler // La variable à renvoyer
+        );
+
+        // Enregistrer l'Énergie (EnergyStorage)
+        event.registerBlockEntity(
+                Capabilities.EnergyStorage.BLOCK,
+                ModBlockEntities.DNA_SEQUENCER_BLOCK_ENTITY.get(),
+                (block_entity, side) -> block_entity.energyStorage
+        );
+    }
 
     @SubscribeEvent
     public static void ModifyTemplateIcons(FMLCommonSetupEvent event) {

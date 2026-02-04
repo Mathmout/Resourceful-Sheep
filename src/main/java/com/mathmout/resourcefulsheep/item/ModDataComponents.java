@@ -1,7 +1,6 @@
 package com.mathmout.resourcefulsheep.item;
 
 import com.mathmout.resourcefulsheep.ResourcefulSheepMod;
-import com.mojang.serialization.Codec;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
@@ -23,6 +22,13 @@ public class ModDataComponents {
 
     // Syringe
     public static final Supplier<DataComponentType<CompoundTag>> SYRINGE_CONTENT = DATA_COMPONENTS.register("syringe_content", () ->
+            DataComponentType.<CompoundTag>builder()
+                    .persistent(CompoundTag.CODEC)
+                    .networkSynchronized(ByteBufCodecs.COMPOUND_TAG)
+                    .build());
+
+    // DNA Sequencer
+    public static final Supplier<DataComponentType<CompoundTag>> SEQUENCER_DATA = DATA_COMPONENTS.register("sequencer_data", () ->
             DataComponentType.<CompoundTag>builder()
                     .persistent(CompoundTag.CODEC)
                     .networkSynchronized(ByteBufCodecs.COMPOUND_TAG)
