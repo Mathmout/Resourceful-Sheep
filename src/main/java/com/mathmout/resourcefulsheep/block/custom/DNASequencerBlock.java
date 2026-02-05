@@ -59,7 +59,7 @@ public class DNASequencerBlock extends BaseEntityBlock {
 
     @Override
     public @NotNull RenderShape getRenderShape(@NotNull BlockState state) {
-        return RenderShape.MODEL; // Important pour que le bloc ne soit pas invisible
+        return RenderShape.MODEL;
     }
 
     @Override
@@ -133,11 +133,15 @@ public class DNASequencerBlock extends BaseEntityBlock {
                         for (Tag tag : nbtList) {
                             sortedIds.add(tag.getAsString());
                         }
-                        Collections.sort(sortedIds);
 
-                        for (String id : sortedIds) {
+                        int maxDisplayed = 22;
+                        Collections.sort(sortedIds);
+                        for (int i = 0; i < maxDisplayed; i++) {
                             tooltipComponents.add(Component.literal(" - ").withStyle(ChatFormatting.GRAY)
-                                    .append(Component.literal(TexteUtils.getPrettyName(id)).withStyle(ChatFormatting.GRAY)));
+                                    .append(Component.literal(TexteUtils.getPrettyName(sortedIds.get(i))).withStyle(ChatFormatting.GRAY)));
+                        }
+                        if (sortedIds.size() > maxDisplayed) {
+                            tooltipComponents.add(Component.literal("And " + (sortedIds.size() - maxDisplayed) + " more...").withStyle(ChatFormatting.GRAY));
                         }
                     }
                     else {

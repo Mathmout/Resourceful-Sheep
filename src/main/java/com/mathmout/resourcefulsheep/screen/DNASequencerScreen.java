@@ -14,6 +14,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.animal.Squid;
 import net.minecraft.world.entity.player.Inventory;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Quaternionf;
@@ -249,6 +250,8 @@ public class DNASequencerScreen extends AbstractContainerScreen<DNASequencerMenu
             targetPixelSize = 45;
         }else if (entity.getType() == EntityType.GHAST) {
             targetPixelSize = 12;
+        }else if (entity instanceof Squid) {
+            targetPixelSize = 10;
         }
 
         float maxDim = Math.max(height, width);

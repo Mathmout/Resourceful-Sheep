@@ -34,6 +34,13 @@ public class ModDataComponents {
                     .networkSynchronized(ByteBufCodecs.COMPOUND_TAG)
                     .build());
 
+    // Sheep Scanner
+    public static final Supplier<DataComponentType<CompoundTag>> SHEEP_SCANNER_DATA = DATA_COMPONENTS.register("sheep_scanner_data", () ->
+            DataComponentType.<CompoundTag>builder()
+                    .persistent(CompoundTag.CODEC)
+                    .networkSynchronized(ByteBufCodecs.COMPOUND_TAG)
+                    .build());
+
     public static void register(IEventBus eventBus) {
         DATA_COMPONENTS.register(eventBus);
     }

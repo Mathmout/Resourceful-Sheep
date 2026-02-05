@@ -8,6 +8,8 @@ import com.mathmout.resourcefulsheep.config.spawning.SheepSpawningData;
 import com.mathmout.resourcefulsheep.entity.ModEntities;
 import com.mathmout.resourcefulsheep.entity.custom.ResourcefulSheepEntity;
 import com.mathmout.resourcefulsheep.item.ModDataComponents;
+import com.mathmout.resourcefulsheep.item.ModItems;
+import com.mathmout.resourcefulsheep.item.custom.SheepScannerEnergyStorage;
 import com.mathmout.resourcefulsheep.item.custom.Syringe;
 import com.mathmout.resourcefulsheep.worldgen.modifier.AddSpawnIfSheepPresentModifier;
 import net.minecraft.core.BlockPos;
@@ -59,22 +61,15 @@ public class CommonModEvents {
     @SubscribeEvent
     public static void onEntityInteract(PlayerInteractEvent.EntityInteract event) {
         ItemStack stack = event.getItemStack();
-        // Vérification de base
         if (!(stack.getItem() instanceof Syringe syringe)) return;
         if (stack.has(ModDataComponents.SYRINGE_CONTENT.get())) return; // Déjà pleine
 
         Entity target = event.getTarget();
 
-        // 1. Si on clique sur un truc "non vivant" (comme une partie de boss)
         if (!(target instanceof LivingEntity)) {
-
-            // On cherche le "Papa" (Le vrai Boss)
             LivingEntity parent = findParentEntity(target);
-
             if (parent != null) {
-                // On redirige le clic sur le Papa
                 InteractionResult result = syringe.tryExtractDna(stack, event.getEntity(), parent, event.getHand());
-
                 if (result.consumesAction()) {
                     event.setCanceled(true);
                     event.setCancellationResult(result);
@@ -107,6 +102,12 @@ public class CommonModEvents {
                 Capabilities.EnergyStorage.BLOCK,
                 ModBlockEntities.DNA_SEQUENCER_BLOCK_ENTITY.get(),
                 (block_entity, side) -> block_entity.energyStorage
+        );
+
+        event.registerItem(
+                Capabilities.EnergyStorage.ITEM,
+                (itemStack, context) -> new SheepScannerEnergyStorage(itemStack), // On instancie notre wrapper
+                ModItems.SHEEP_SCANNER.get()
         );
     }
 

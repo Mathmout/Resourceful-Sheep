@@ -3,13 +3,16 @@ package com.mathmout.resourcefulsheep.item.custom;
 import com.mathmout.resourcefulsheep.config.sheeptypes.ConfigSheepTypeManager;
 import com.mathmout.resourcefulsheep.entity.custom.ResourcefulSheepEntity;
 import com.mathmout.resourcefulsheep.entity.custom.SheepVariantData;
+import com.mathmout.resourcefulsheep.item.ModDataComponents;
 import com.mathmout.resourcefulsheep.utils.TexteUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
@@ -21,15 +24,13 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.UUID;
 
 public class SheepScanner extends Item {
 
-    private static final Map<UUID, Long> lastScanTime = new HashMap<>();
-    private static final long SCAN_COOLDOWN = 1000;
+    public static final int ENERGY_CAPACITY = 20_000;
+    public static final int ENERGY_CONSUMPTION = 2000;
+    public static final int MAX_ENERGY_TRANSFER = 100;
 
     public SheepScanner(Properties properties) {
         super(properties.stacksTo(1));
@@ -38,16 +39,14 @@ public class SheepScanner extends Item {
     @Override
     public @NotNull InteractionResult interactLivingEntity(@NotNull ItemStack pStack, @NotNull Player pPlayer,
                                                            @NotNull LivingEntity pInteractionTarget, @NotNull InteractionHand pHand) {
-        if (pInteractionTarget instanceof Sheep sheep) { // Broad check for any sheep
+        if (pInteractionTarget instanceof Sheep sheep) {
+
+            int currentEnergy = getStoredEnergy(pStack);
+            if (currentEnergy < ENERGY_CONSUMPTION) {
+                return InteractionResult.FAIL;
+            }
+
             if (pPlayer.level().isClientSide) {
-                long currentTime = System.currentTimeMillis();
-                long lastTime = lastScanTime.getOrDefault(pPlayer.getUUID(), 0L);
-
-                if (currentTime - lastTime < SCAN_COOLDOWN) {
-                    return InteractionResult.SUCCESS; // Cooldown active, do nothing.
-                }
-                lastScanTime.put(pPlayer.getUUID(), currentTime);
-
                 Component message;
                 if (sheep instanceof ResourcefulSheepEntity resourcefulSheep) {
                     message = buildSheepInfoComponent(resourcefulSheep);
@@ -56,11 +55,16 @@ public class SheepScanner extends Item {
                 }
                 pPlayer.sendSystemMessage(message);
             }
+
+            if (!pPlayer.level().isClientSide) {
+                setStoredEnergy(pStack, currentEnergy - ENERGY_CONSUMPTION);
+            }
+            pPlayer.getCooldowns().addCooldown(this, 20);
+
             pPlayer.playSound(SoundEvents.UI_BUTTON_CLICK.value(), 1.0F, 1.0F);
             return InteractionResult.SUCCESS;
         }
-        return InteractionResult.PASS;
-    }
+        return InteractionResult.PASS;    }
 
     private Component buildSheepInfoComponent(ResourcefulSheepEntity sheep) {
         String variantId = BuiltInRegistries.ENTITY_TYPE.getKey(sheep.getType()).getPath();
@@ -141,7 +145,50 @@ public class SheepScanner extends Item {
 
     @Override
     public void appendHoverText(@NotNull ItemStack stack, Item.@NotNull TooltipContext context, List<Component> tooltipComponents, @NotNull TooltipFlag tooltipFlag) {
+
+        tooltipComponents.add(Component.literal("Energy : ").withStyle(ChatFormatting.GREEN)
+                .append(Component.literal(getStoredEnergy(stack) + "/" + ENERGY_CAPACITY + " FE").withStyle(ChatFormatting.GRAY)));
+
         tooltipComponents.add(Component.literal("Right click on a sheep to scan it.").withStyle(ChatFormatting.GRAY));
         super.appendHoverText(stack, context, tooltipComponents, tooltipFlag);
     }
+
+    // Energy
+
+    @Override
+    public boolean isBarVisible(@NotNull ItemStack stack) {
+        return true;
+    }
+
+    @Override
+    public int getBarWidth(@NotNull ItemStack stack) {
+        return Math.round(13.0F * (float) getStoredEnergy(stack) / ENERGY_CAPACITY);
+    }
+
+    @Override
+    public int getBarColor(@NotNull ItemStack stack) {
+        float energyPourcentage = (float) getStoredEnergy(stack) / ENERGY_CAPACITY;
+        return Mth.hsvToRgb(energyPourcentage / 3, 1, 1);    }
+
+    public int getStoredEnergy(ItemStack stack) {
+        if (stack.has(ModDataComponents.SHEEP_SCANNER_DATA.get())) {
+            CompoundTag tag = stack.get(ModDataComponents.SHEEP_SCANNER_DATA.get());
+                if (tag != null && tag.contains("Energy")) {
+                return tag.getInt("Energy");
+            }
+        }
+        return 0;
+    }
+
+    public void setStoredEnergy(ItemStack stack, int energy) {
+        int clampedEnergy = Mth.clamp(energy, 0, ENERGY_CAPACITY);
+
+        // Récupère le tag existant ou on en crée un vide
+        CompoundTag tag = stack.getOrDefault(ModDataComponents.SHEEP_SCANNER_DATA.get(), new CompoundTag()).copy();
+
+        // On modifie la valeur
+        tag.putInt("Energy", clampedEnergy);
+
+        // On sauvegarde le tag dans le composant
+        stack.set(ModDataComponents.SHEEP_SCANNER_DATA.get(), tag);    }
 }
