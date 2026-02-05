@@ -7,6 +7,8 @@ import com.mathmout.resourcefulsheep.config.spawning.ConfigSheepSpawningManager;
 import com.mathmout.resourcefulsheep.config.spawning.SheepSpawningData;
 import com.mathmout.resourcefulsheep.entity.ModEntities;
 import com.mathmout.resourcefulsheep.entity.custom.ResourcefulSheepEntity;
+import com.mathmout.resourcefulsheep.item.ModDataComponents;
+import com.mathmout.resourcefulsheep.item.custom.Syringe;
 import com.mathmout.resourcefulsheep.worldgen.modifier.AddSpawnIfSheepPresentModifier;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -20,12 +22,12 @@ import net.minecraft.server.packs.repository.Pack;
 import net.minecraft.server.packs.repository.PackCompatibility;
 import net.minecraft.server.packs.repository.PackSource;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.MobSpawnType;
-import net.minecraft.world.entity.SpawnPlacementTypes;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.animal.Sheep;
 import net.minecraft.world.flag.FeatureFlagSet;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.SmithingTemplateItem;
 import net.minecraft.world.level.ServerLevelAccessor;
@@ -36,9 +38,11 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
+import net.neoforged.neoforge.entity.PartEntity;
 import net.neoforged.neoforge.event.AddPackFindersEvent;
 import net.neoforged.neoforge.event.entity.EntityAttributeCreationEvent;
 import net.neoforged.neoforge.event.entity.RegisterSpawnPlacementsEvent;
+import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
 import net.neoforged.neoforge.registries.RegisterEvent;
 import org.jetbrains.annotations.NotNull;
@@ -51,6 +55,43 @@ import static net.minecraft.world.level.block.Blocks.BEDROCK;
 
 @EventBusSubscriber(modid = ResourcefulSheepMod.MOD_ID)
 public class CommonModEvents {
+
+    @SubscribeEvent
+    public static void onEntityInteract(PlayerInteractEvent.EntityInteract event) {
+        ItemStack stack = event.getItemStack();
+        // Vérification de base
+        if (!(stack.getItem() instanceof Syringe syringe)) return;
+        if (stack.has(ModDataComponents.SYRINGE_CONTENT.get())) return; // Déjà pleine
+
+        Entity target = event.getTarget();
+
+        // 1. Si on clique sur un truc "non vivant" (comme une partie de boss)
+        if (!(target instanceof LivingEntity)) {
+
+            // On cherche le "Papa" (Le vrai Boss)
+            LivingEntity parent = findParentEntity(target);
+
+            if (parent != null) {
+                // On redirige le clic sur le Papa
+                InteractionResult result = syringe.tryExtractDna(stack, event.getEntity(), parent, event.getHand());
+
+                if (result.consumesAction()) {
+                    event.setCanceled(true);
+                    event.setCancellationResult(result);
+                }
+            }
+        }
+    }
+
+    private static LivingEntity findParentEntity(Entity target) {
+        if (target instanceof PartEntity<?> partEntity) {
+            Entity parent = partEntity.getParent();
+            if (parent instanceof LivingEntity livingParent) {
+                return livingParent;
+            }
+        }
+        return null;
+    }
 
     @SubscribeEvent
     public static void registerCapabilities(RegisterCapabilitiesEvent event) {

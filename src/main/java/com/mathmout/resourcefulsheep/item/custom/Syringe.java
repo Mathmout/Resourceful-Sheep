@@ -48,7 +48,10 @@ public class Syringe extends Item {
 
     @Override
     public @NotNull InteractionResult interactLivingEntity(@NotNull ItemStack stack, @NotNull Player player, @NotNull LivingEntity interactionTarget, @NotNull InteractionHand usedHand) {
+        return tryExtractDna(stack, player, interactionTarget, usedHand);
+    }
 
+    public InteractionResult tryExtractDna(ItemStack stack, Player player, LivingEntity interactionTarget, InteractionHand usedHand){
         if (stack.has(ModDataComponents.SYRINGE_CONTENT.get()) || !isValidTarget(interactionTarget))
             return InteractionResult.FAIL;
 
