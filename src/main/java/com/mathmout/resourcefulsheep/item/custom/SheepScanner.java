@@ -1,5 +1,6 @@
 package com.mathmout.resourcefulsheep.item.custom;
 
+import com.mathmout.resourcefulsheep.Config;
 import com.mathmout.resourcefulsheep.config.sheeptypes.ConfigSheepTypeManager;
 import com.mathmout.resourcefulsheep.entity.custom.ResourcefulSheepEntity;
 import com.mathmout.resourcefulsheep.entity.custom.SheepVariantData;
@@ -28,10 +29,6 @@ import java.util.List;
 
 public class SheepScanner extends Item {
 
-    public static final int ENERGY_CAPACITY = 20_000;
-    public static final int ENERGY_CONSUMPTION = 2000;
-    public static final int MAX_ENERGY_TRANSFER = 100;
-
     public SheepScanner(Properties properties) {
         super(properties.stacksTo(1));
     }
@@ -42,7 +39,7 @@ public class SheepScanner extends Item {
         if (pInteractionTarget instanceof Sheep sheep) {
 
             int currentEnergy = getStoredEnergy(pStack);
-            if (currentEnergy < ENERGY_CONSUMPTION) {
+            if (currentEnergy < Config.SHEEP_SCANNER_CONSUMPTION.get()) {
                 return InteractionResult.FAIL;
             }
 
@@ -57,7 +54,7 @@ public class SheepScanner extends Item {
             }
 
             if (!pPlayer.level().isClientSide) {
-                setStoredEnergy(pStack, currentEnergy - ENERGY_CONSUMPTION);
+                setStoredEnergy(pStack, currentEnergy - Config.SHEEP_SCANNER_CONSUMPTION.get());
             }
             pPlayer.getCooldowns().addCooldown(this, 20);
 
@@ -147,7 +144,7 @@ public class SheepScanner extends Item {
     public void appendHoverText(@NotNull ItemStack stack, Item.@NotNull TooltipContext context, List<Component> tooltipComponents, @NotNull TooltipFlag tooltipFlag) {
 
         tooltipComponents.add(Component.literal("Energy : ").withStyle(ChatFormatting.GREEN)
-                .append(Component.literal(getStoredEnergy(stack) + "/" + ENERGY_CAPACITY + " FE").withStyle(ChatFormatting.GRAY)));
+                .append(Component.literal(getStoredEnergy(stack) + "/" + Config.SHEEP_SCANNER_CAPACITY.get() + " FE").withStyle(ChatFormatting.GRAY)));
 
         tooltipComponents.add(Component.literal("Right click on a sheep to scan it.").withStyle(ChatFormatting.GRAY));
         super.appendHoverText(stack, context, tooltipComponents, tooltipFlag);
@@ -157,17 +154,17 @@ public class SheepScanner extends Item {
 
     @Override
     public boolean isBarVisible(@NotNull ItemStack stack) {
-        return true;
+        return Config.SHEEP_SCANNER_CONSUMPTION.get() > 0;
     }
 
     @Override
     public int getBarWidth(@NotNull ItemStack stack) {
-        return Math.round(13.0F * (float) getStoredEnergy(stack) / ENERGY_CAPACITY);
+        return Math.round(13.0F * (float) getStoredEnergy(stack) / Config.SHEEP_SCANNER_CAPACITY.get());
     }
 
     @Override
     public int getBarColor(@NotNull ItemStack stack) {
-        float energyPourcentage = (float) getStoredEnergy(stack) / ENERGY_CAPACITY;
+        float energyPourcentage = (float) getStoredEnergy(stack) / Config.SHEEP_SCANNER_CAPACITY.get();
         return Mth.hsvToRgb(energyPourcentage / 3, 1, 1);    }
 
     public int getStoredEnergy(ItemStack stack) {
@@ -181,7 +178,7 @@ public class SheepScanner extends Item {
     }
 
     public void setStoredEnergy(ItemStack stack, int energy) {
-        int clampedEnergy = Mth.clamp(energy, 0, ENERGY_CAPACITY);
+        int clampedEnergy = Mth.clamp(energy, 0, Config.SHEEP_SCANNER_CAPACITY.get());
 
         // Récupère le tag existant ou on en crée un vide
         CompoundTag tag = stack.getOrDefault(ModDataComponents.SHEEP_SCANNER_DATA.get(), new CompoundTag()).copy();

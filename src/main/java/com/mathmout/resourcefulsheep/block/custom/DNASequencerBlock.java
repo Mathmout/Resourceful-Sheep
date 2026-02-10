@@ -8,6 +8,7 @@ import com.mojang.serialization.MapCodec;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
@@ -20,9 +21,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.BaseEntityBlock;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.RenderShape;
+import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -45,6 +44,7 @@ public class DNASequencerBlock extends BaseEntityBlock {
 
     public DNASequencerBlock(Properties properties) {
         super(properties);
+        this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH));
     }
 
     @Override
@@ -118,6 +118,16 @@ public class DNASequencerBlock extends BaseEntityBlock {
     }
 
     @Override
+    public @NotNull BlockState rotate(BlockState state, Rotation rotation) {
+        return state.setValue(FACING, rotation.rotate(state.getValue(FACING)));
+    }
+
+    @Override
+    protected @NotNull BlockState mirror(BlockState state, Mirror mirror) {
+        return state.rotate(mirror.getRotation(state.getValue(FACING)));
+    }
+
+    @Override
     public void appendHoverText(@NotNull ItemStack stack, Item.@NotNull TooltipContext context, @NotNull List<Component> tooltipComponents, @NotNull TooltipFlag tooltipFlag) {
         if (stack.has(ModDataComponents.SEQUENCER_DATA.get())) {
             CompoundTag data = stack.get(ModDataComponents.SEQUENCER_DATA.get());
@@ -136,7 +146,7 @@ public class DNASequencerBlock extends BaseEntityBlock {
 
                         int maxDisplayed = 22;
                         Collections.sort(sortedIds);
-                        for (int i = 0; i < maxDisplayed; i++) {
+                        for (int i = 0; i < Math.min(maxDisplayed, sortedIds.size()); i++) {
                             tooltipComponents.add(Component.literal(" - ").withStyle(ChatFormatting.GRAY)
                                     .append(Component.literal(TexteUtils.getPrettyName(sortedIds.get(i))).withStyle(ChatFormatting.GRAY)));
                         }

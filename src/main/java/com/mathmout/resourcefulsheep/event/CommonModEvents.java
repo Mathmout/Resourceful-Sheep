@@ -62,7 +62,7 @@ public class CommonModEvents {
     public static void onEntityInteract(PlayerInteractEvent.EntityInteract event) {
         ItemStack stack = event.getItemStack();
         if (!(stack.getItem() instanceof Syringe syringe)) return;
-        if (stack.has(ModDataComponents.SYRINGE_CONTENT.get())) return; // Déjà pleine
+        if (stack.has(ModDataComponents.SYRINGE_CONTENT.get())) return;
 
         Entity target = event.getTarget();
 

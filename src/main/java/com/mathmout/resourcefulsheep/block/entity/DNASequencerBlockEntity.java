@@ -1,5 +1,6 @@
 package com.mathmout.resourcefulsheep.block.entity;
 
+import com.mathmout.resourcefulsheep.Config;
 import com.mathmout.resourcefulsheep.item.ModDataComponents;
 import com.mathmout.resourcefulsheep.item.custom.Syringe;
 import com.mathmout.resourcefulsheep.screen.DNASequencerMenu;
@@ -32,14 +33,9 @@ import java.util.List;
 
 public class DNASequencerBlockEntity extends BlockEntity implements MenuProvider {
 
-    public static final int ENERGY_CAPACITY = 500_000;
-    public static final int ENERGY_CONSUMPTION = 1000;
-    public static final int ENERGY_TRANSFER = 2000;
-    public static final int ANALYZE_TIME = 100;
-
     private final List<String> storedDna = new ArrayList<>();
     private int progress = 0;
-    private int maxProgress = ANALYZE_TIME;
+    private int maxProgress = Config.DNA_SEQUENCER_ANALYZE_TIME.get();
 
     // Inventory
     public final ItemStackHandler itemHandler = new ItemStackHandler(2) {
@@ -60,7 +56,7 @@ public class DNASequencerBlockEntity extends BlockEntity implements MenuProvider
     };
 
     // Energy
-    public final ModEnergyStorage energyStorage = new ModEnergyStorage(ENERGY_CAPACITY, ENERGY_TRANSFER){
+    public final ModEnergyStorage energyStorage = new ModEnergyStorage(Config.DNA_SEQUENCER_CAPACITY.get(), Config.DNA_SEQUENCER_CONSUMPTION.get()){
         @Override
         public void onEnergyChanged() {
             setChanged();
@@ -112,7 +108,7 @@ public class DNASequencerBlockEntity extends BlockEntity implements MenuProvider
         if (level.isClientSide) return;
 
         if (hasEnergy() && hasRecipe()) {
-            this.energyStorage.consumeEnergy(ENERGY_CONSUMPTION);
+            this.energyStorage.consumeEnergy(Config.DNA_SEQUENCER_CONSUMPTION.get());
             this.progress++;
             setChanged();
 
@@ -129,7 +125,7 @@ public class DNASequencerBlockEntity extends BlockEntity implements MenuProvider
     }
 
     private boolean hasEnergy() {
-        return this.energyStorage.getEnergyStored() >= ENERGY_CONSUMPTION;
+        return this.energyStorage.getEnergyStored() >= Config.DNA_SEQUENCER_CONSUMPTION.get();
     }
 
     private boolean hasRecipe() {

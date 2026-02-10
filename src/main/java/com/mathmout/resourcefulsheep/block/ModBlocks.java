@@ -6,7 +6,6 @@ import com.mathmout.resourcefulsheep.item.ModItems;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredBlock;
@@ -18,7 +17,12 @@ public class ModBlocks {
     public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(ResourcefulSheepMod.MOD_ID);
 
     public static final DeferredBlock<Block> DNA_SEQUENCER = registerBlock("dna_sequencer",
-            () -> new DNASequencerBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BLOCK).strength(4f).requiresCorrectToolForDrops()));
+            () -> new DNASequencerBlock(
+                    BlockBehaviour.Properties.of() // propriété vierge
+                            .strength(4f) // Solidité
+                            .requiresCorrectToolForDrops()
+                            .noOcclusion() // Empêche le X-Ray
+            ));
 
     private static <T extends Block> DeferredBlock<T> registerBlock(String name, Supplier<T> block) {
         DeferredBlock<T> toReturn = BLOCKS.register(name, block);

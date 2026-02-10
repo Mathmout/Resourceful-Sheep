@@ -1,5 +1,6 @@
 package com.mathmout.resourcefulsheep.item.custom;
 
+import com.mathmout.resourcefulsheep.Config;
 import com.mathmout.resourcefulsheep.item.ModDataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
@@ -18,7 +19,7 @@ public class SheepScannerEnergyStorage implements IEnergyStorage {
         int stored = getEnergyStored();
         int capacity = getMaxEnergyStored();
 
-        int energyReceived = Math.min(capacity - stored, Math.min(maxReceive, SheepScanner.MAX_ENERGY_TRANSFER));
+        int energyReceived = Math.min(capacity - stored, Math.min(maxReceive, Config.SHEEP_SCANNER_MAX_TRANSFER.get()));
 
         if (!simulate && energyReceived > 0) {
             setEnergy(stored + energyReceived);
@@ -40,7 +41,7 @@ public class SheepScannerEnergyStorage implements IEnergyStorage {
 
     @Override
     public int getMaxEnergyStored() {
-        return SheepScanner.ENERGY_CAPACITY;
+        return Config.SHEEP_SCANNER_CAPACITY.get();
     }
 
     @Override

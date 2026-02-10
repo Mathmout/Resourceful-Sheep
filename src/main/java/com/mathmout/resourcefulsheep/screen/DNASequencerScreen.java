@@ -1,6 +1,9 @@
 package com.mathmout.resourcefulsheep.screen;
 
 import com.mathmout.resourcefulsheep.ResourcefulSheepMod;
+import com.mathmout.resourcefulsheep.entity.custom.ResourcefulSheepEntity;
+import com.mathmout.resourcefulsheep.utils.TexteUtils;
+import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
@@ -85,7 +88,7 @@ public class DNASequencerScreen extends AbstractContainerScreen<DNASequencerMenu
         int max = menu.getMaxEnergy();
         if (max > 0) {
             int barHeight = 60;
-            int scaledHeight = (int) (((float) stored / max) * barHeight);
+            int scaledHeight = Math.min((int) (((float) stored / max) * barHeight), barHeight);
             int yOffset = barHeight - scaledHeight;
             guiGraphics.blit(WIDGETS, x + 153, y + 13 + yOffset, 0, 19 + yOffset, 11, scaledHeight);
         }
@@ -145,14 +148,13 @@ public class DNASequencerScreen extends AbstractContainerScreen<DNASequencerMenu
             LivingEntity e1 = getCachedEntity(id1);
             LivingEntity e2 = getCachedEntity(id2);
 
-            String name1 = (e1 != null) ? e1.getName().getString() : id1;
-            String name2 = (e2 != null) ? e2.getName().getString() : id2;
+            String name1 = getDisplayName(id1, e1);
+            String name2 = getDisplayName(id2, e2);
 
             return name1.compareToIgnoreCase(name2);
         });
 
         guiGraphics.enableScissor(panelX, panelY, panelX + CARD_WIDTH, panelY + VISIBLE_HEIGHT);
-
         guiGraphics.pose().pushPose();
         guiGraphics.pose().translate(0, - scrollOffset, 0);
 
@@ -167,7 +169,6 @@ public class DNASequencerScreen extends AbstractContainerScreen<DNASequencerMenu
                 float height = entity.getBbHeight();
 
                 float scale = getScale(height, width, entity);
-
                 float scaledHeight = height * scale;
 
                 float entityY = currentY + (CARD_HEIGHT + scaledHeight) / 2;
@@ -193,38 +194,77 @@ public class DNASequencerScreen extends AbstractContainerScreen<DNASequencerMenu
                 guiGraphics.pose().popPose();
 
                 // Affichage nom
-                String fullName = entity.getName().getString();
-                String[] words = fullName.split(" ");
+                String displayName = getDisplayName(entityId, entity);
+
+                float maxLineWidth = (CARD_WIDTH / 2.0f) - 8;
+                float preferredScale = 0.75f;
+                float availableWidthForFont = maxLineWidth / preferredScale;
+
+                String[] words = displayName.split(" ");
+                List<String> lines = new ArrayList<>();
+                StringBuilder currentLine = new StringBuilder();
+
+                for (String word : words) {
+                    if (!currentLine.isEmpty()) {
+                        if (font.width(currentLine + " " + word) <= availableWidthForFont) {
+                            currentLine.append(" ").append(word);
+                        } else {
+                            lines.add(currentLine.toString());
+                            currentLine = new StringBuilder(word);
+                        }
+                    } else {
+                        currentLine.append(word);
+                    }
+                }
+                if (!currentLine.isEmpty()) lines.add(currentLine.toString());
+
+                int maxTextWidth = 0;
+                for (String line : lines) {
+                    maxTextWidth = Math.max(maxTextWidth, font.width(line));
+                }
+
+                float finalScale = preferredScale;
+                if (maxTextWidth * preferredScale > maxLineWidth) {
+                    finalScale = maxLineWidth / maxTextWidth;
+                }
 
                 float textCenterX = panelX + (CARD_WIDTH * 0.75f);
-                float textBaseY = currentY + (CARD_HEIGHT / 2.0f) - 4;
-                int textColor = 0xFFFFFF;
+                float lineHeight = 10.0f;
+                float totalBlockHeight = lines.size() * lineHeight * finalScale;
+                float startY = (currentY + (CARD_HEIGHT / 2.0f)) - (totalBlockHeight / 2.0f);
 
                 guiGraphics.pose().pushPose();
+                guiGraphics.pose().scale(finalScale, finalScale, 1.0f);
 
-                if (words.length > 1) { // Multi lignes
-                    float multiLineScale = 0.6f;
-                    guiGraphics.pose().scale(multiLineScale, multiLineScale, 1.0f);
-                    float startY = (textBaseY / multiLineScale) - (words.length * 4);
+                for (int i = 0; i < lines.size(); i++) {
+                    String line = lines.get(i);
+                    int lineWidth = font.width(line);
 
-                    for (int i = 0; i < words.length; i++) {
-                        String word = words[i];
-                        int wordWidth = font.width(word);
-                        guiGraphics.drawString(font, word, (textCenterX / multiLineScale) - (wordWidth / 2.0f), startY + (i * 10), textColor, false);
-                    }
-                } else { // Mono ligne
-                    int wordWidth = font.width(fullName);
-                    float maxAvailableWidth = (CARD_WIDTH / 2.0f) - 8;
-                    float singleScale = (wordWidth * 0.7f > maxAvailableWidth) ? (maxAvailableWidth / wordWidth) : 0.7f;
+                    float drawX = (textCenterX / finalScale) - (lineWidth / 2.0f);
+                    float drawY = (startY / finalScale) + (i * lineHeight);
 
-                    guiGraphics.pose().scale(singleScale, singleScale, 1.0f);
-                    guiGraphics.drawString(font, fullName, (textCenterX / singleScale) - (wordWidth / 2.0f), textBaseY / singleScale, textColor, false);
+                    guiGraphics.drawString(font, line, drawX, drawY, 0xFFFFFF, false);
                 }
                 guiGraphics.pose().popPose();
                 currentY += CARD_HEIGHT + 2;
             }
-        }        guiGraphics.pose().popPose();
+        }
+        guiGraphics.pose().popPose();
         guiGraphics.disableScissor();
+        Lighting.setupFor3DItems();
+    }
+
+    private String getDisplayName(String entityId, LivingEntity entity) {
+        if (entity == null) return entityId;
+        if (entity instanceof ResourcefulSheepEntity) {
+            try {
+                String path = entityId.contains(":") ? entityId.split(":")[1] : entityId;
+                return TexteUtils.StringToText(path).replace("Tier", "Sheep Tier");
+            } catch (Exception e) {
+                return entity.getName().getString();
+            }
+        }
+        return entity.getName().getString();
     }
 
     private static float getScale(float height, float width, LivingEntity entity) {
@@ -294,5 +334,10 @@ public class DNASequencerScreen extends AbstractContainerScreen<DNASequencerMenu
             }
         }
         return null;
+    }
+
+    @Override
+    protected boolean hasClickedOutside(double mouseX, double mouseY, int guiLeft, int guiTop, int mouseButton) {
+        return mouseX < guiLeft - 83 || mouseY < guiTop || mouseX >= guiLeft + this.imageWidth || mouseY >= guiTop + this.imageHeight;
     }
 }
