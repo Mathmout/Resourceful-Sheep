@@ -3,6 +3,7 @@ package com.mathmout.resourcefulsheep.config.spawning;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.neoforged.fml.loading.FMLPaths;
 import org.slf4j.Logger;
@@ -89,5 +90,25 @@ public class ConfigSheepSpawningManager {
 
     public static Optional<SheepSpawningData> getSpawningDataFor(EntityType<?> entityType) {
         return Optional.ofNullable(sheepSpawningMap.get(BuiltInRegistries.ENTITY_TYPE.getKey(entityType).getPath()));
+    }
+
+    public static void validateConfig() {
+        LOGGER.info("Validating Sheep Spawning Config...");
+        for (SheepSpawningData data : SHEEP_SPAWNING) {
+
+            if (!BuiltInRegistries.ENTITY_TYPE.containsKey(ResourceLocation.parse("resourceful_sheep:" + data.sheepId()))) {
+                LOGGER.warn("Config Warning [SheepSpawning]: Sheep ID '{}' not found in Entity Registry.", data.sheepId());
+            }
+
+            if (data.Biomes() != null) {
+                for (String biomeId : data.Biomes()) {
+                    biomeId = biomeId.startsWith("#") ? biomeId.substring(1) : biomeId;
+                    if (ResourceLocation.tryParse(biomeId) == null) {
+                        LOGGER.warn("Config Warning [SheepSpawning]: Invalid Biome ID or Tag format '{}' for '{}'.", biomeId, data.sheepId());
+                    }
+                }
+            }
+        }
+        LOGGER.info("Sheep Spawning Config Validation Complete.");
     }
 }

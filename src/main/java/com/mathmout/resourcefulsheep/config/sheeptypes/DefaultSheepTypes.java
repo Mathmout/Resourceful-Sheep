@@ -17,13 +17,13 @@ public class DefaultSheepTypes {
                 new HashMap<>(Map.of()),
                 List.of(
                         new SheepTypeData.TierData(1, List.of(
-                                new SheepTypeData.TierData.DroppedItems("minecraft:cobblestone", 12, 20)
+                                new SheepTypeData.TierData.DroppedItem("minecraft:cobblestone", 12, 20)
                         )),
                         new SheepTypeData.TierData(2, List.of(
-                                new SheepTypeData.TierData.DroppedItems("minecraft:cobblestone", 20, 32)
+                                new SheepTypeData.TierData.DroppedItem("minecraft:cobblestone", 20, 32)
                         )),
                         new SheepTypeData.TierData(3, List.of(
-                                new SheepTypeData.TierData.DroppedItems("minecraft:cobblestone", 32, 48)
+                                new SheepTypeData.TierData.DroppedItem("minecraft:cobblestone", 32, 48)
                         ))
                 )));
 
@@ -35,13 +35,13 @@ public class DefaultSheepTypes {
                 new HashMap<>(Map.of()),
                 List.of(
                         new SheepTypeData.TierData(1, List.of(
-                                new SheepTypeData.TierData.DroppedItems("minecraft:stone", 10, 18)
+                                new SheepTypeData.TierData.DroppedItem("minecraft:stone", 10, 18)
                         )),
                         new SheepTypeData.TierData(2, List.of(
-                                new SheepTypeData.TierData.DroppedItems("minecraft:stone", 18, 28)
+                                new SheepTypeData.TierData.DroppedItem("minecraft:stone", 18, 28)
                         )),
                         new SheepTypeData.TierData(3, List.of(
-                                new SheepTypeData.TierData.DroppedItems("minecraft:stone", 28, 32)
+                                new SheepTypeData.TierData.DroppedItem("minecraft:stone", 28, 32)
                         ))
                 )));
 
@@ -53,13 +53,13 @@ public class DefaultSheepTypes {
                 new HashMap<>(Map.of()),
                 List.of(
                         new SheepTypeData.TierData(1, List.of(
-                                new SheepTypeData.TierData.DroppedItems("minecraft:sand", 16, 24)
+                                new SheepTypeData.TierData.DroppedItem("minecraft:sand", 16, 24)
                         )),
                         new SheepTypeData.TierData(2, List.of(
-                                new SheepTypeData.TierData.DroppedItems("minecraft:sand", 24, 36)
+                                new SheepTypeData.TierData.DroppedItem("minecraft:sand", 24, 36)
                         )),
                         new SheepTypeData.TierData(3, List.of(
-                                new SheepTypeData.TierData.DroppedItems("minecraft:sand", 36, 50)
+                                new SheepTypeData.TierData.DroppedItem("minecraft:sand", 36, 50)
                         ))
                 )));
 
@@ -71,13 +71,13 @@ public class DefaultSheepTypes {
                 new HashMap<>(Map.of()),
                 List.of(
                         new SheepTypeData.TierData(1, List.of(
-                                new SheepTypeData.TierData.DroppedItems("minecraft:dripstone_block", 8, 14)
+                                new SheepTypeData.TierData.DroppedItem("minecraft:dripstone_block", 8, 14)
                         )),
                         new SheepTypeData.TierData(2, List.of(
-                                new SheepTypeData.TierData.DroppedItems("minecraft:dripstone_block", 14, 22)
+                                new SheepTypeData.TierData.DroppedItem("minecraft:dripstone_block", 14, 22)
                         )),
                         new SheepTypeData.TierData(3, List.of(
-                                new SheepTypeData.TierData.DroppedItems("minecraft:dripstone_block", 22, 34)
+                                new SheepTypeData.TierData.DroppedItem("minecraft:dripstone_block", 22, 34)
                         ))
                 )));
 
@@ -89,13 +89,13 @@ public class DefaultSheepTypes {
                 new HashMap<>(Map.of()),
                 List.of(
                         new SheepTypeData.TierData(1, List.of(
-                                new SheepTypeData.TierData.DroppedItems("minecraft:granite", 10, 16)
+                                new SheepTypeData.TierData.DroppedItem("minecraft:granite", 10, 16)
                         )),
                         new SheepTypeData.TierData(2, List.of(
-                                new SheepTypeData.TierData.DroppedItems("minecraft:granite", 16, 24)
+                                new SheepTypeData.TierData.DroppedItem("minecraft:granite", 16, 24)
                         )),
                         new SheepTypeData.TierData(3, List.of(
-                                new SheepTypeData.TierData.DroppedItems("minecraft:granite", 24, 35)
+                                new SheepTypeData.TierData.DroppedItem("minecraft:granite", 24, 35)
                         ))
                 )));
 
@@ -107,13 +107,13 @@ public class DefaultSheepTypes {
                 new HashMap<>(Map.of()),
                 List.of(
                         new SheepTypeData.TierData(1, List.of(
-                                new SheepTypeData.TierData.DroppedItems("minecraft:diorite", 10, 16)
+                                new SheepTypeData.TierData.DroppedItem("minecraft:diorite", 10, 16)
                         )),
                         new SheepTypeData.TierData(2, List.of(
-                                new SheepTypeData.TierData.DroppedItems("minecraft:diorite", 16, 24)
+                                new SheepTypeData.TierData.DroppedItem("minecraft:diorite", 16, 24)
                         )),
                         new SheepTypeData.TierData(3, List.of(
-                                new SheepTypeData.TierData.DroppedItems("minecraft:diorite", 24, 33)
+                                new SheepTypeData.TierData.DroppedItem("minecraft:diorite", 24, 33)
                         ))
                 )));
 
@@ -125,13 +125,13 @@ public class DefaultSheepTypes {
                 new HashMap<>(Map.of()),
                 List.of(
                         new SheepTypeData.TierData(1, List.of(
-                                new SheepTypeData.TierData.DroppedItems("minecraft:andesite", 10, 16)
+                                new SheepTypeData.TierData.DroppedItem("minecraft:andesite", 10, 16)
                         )),
                         new SheepTypeData.TierData(2, List.of(
-                                new SheepTypeData.TierData.DroppedItems("minecraft:andesite", 16, 24)
+                                new SheepTypeData.TierData.DroppedItem("minecraft:andesite", 16, 24)
                         )),
                         new SheepTypeData.TierData(3, List.of(
-                                new SheepTypeData.TierData.DroppedItems("minecraft:andesite", 24, 32)
+                                new SheepTypeData.TierData.DroppedItem("minecraft:andesite", 24, 32)
                         ))
                 )));
 
@@ -150,13 +150,13 @@ public class DefaultSheepTypes {
                 )),
                 List.of(
                         new SheepTypeData.TierData(1, List.of(
-                                new SheepTypeData.TierData.DroppedItems("minecraft:netherrack", 12, 20)
+                                new SheepTypeData.TierData.DroppedItem("minecraft:netherrack", 12, 20)
                         )),
                         new SheepTypeData.TierData(2, List.of(
-                                new SheepTypeData.TierData.DroppedItems("minecraft:netherrack", 20, 30)
+                                new SheepTypeData.TierData.DroppedItem("minecraft:netherrack", 20, 30)
                         )),
                         new SheepTypeData.TierData(3, List.of(
-                                new SheepTypeData.TierData.DroppedItems("minecraft:netherrack", 30, 42)
+                                new SheepTypeData.TierData.DroppedItem("minecraft:netherrack", 30, 42)
                         ))
                 )));
 
@@ -175,13 +175,13 @@ public class DefaultSheepTypes {
                 )),
                 List.of(
                         new SheepTypeData.TierData(1, List.of(
-                                new SheepTypeData.TierData.DroppedItems("minecraft:soul_sand", 10, 18)
+                                new SheepTypeData.TierData.DroppedItem("minecraft:soul_sand", 10, 18)
                         )),
                         new SheepTypeData.TierData(2, List.of(
-                                new SheepTypeData.TierData.DroppedItems("minecraft:soul_sand", 18, 28)
+                                new SheepTypeData.TierData.DroppedItem("minecraft:soul_sand", 18, 28)
                         )),
                         new SheepTypeData.TierData(3, List.of(
-                                new SheepTypeData.TierData.DroppedItems("minecraft:soul_sand", 28, 40)
+                                new SheepTypeData.TierData.DroppedItem("minecraft:soul_sand", 28, 40)
                         ))
                 )));
 
@@ -194,17 +194,17 @@ public class DefaultSheepTypes {
                 List.of(
                         // Tier 1 : Beaucoup de charbon
                         new SheepTypeData.TierData(1, List.of(
-                                new SheepTypeData.TierData.DroppedItems("minecraft:coal", 8, 16) // 12
+                                new SheepTypeData.TierData.DroppedItem("minecraft:coal", 8, 16) // 12
                         )),
                         // Tier 2 : Charbon + Petite chance de Bloc
                         new SheepTypeData.TierData(2, List.of(
-                                new SheepTypeData.TierData.DroppedItems("minecraft:coal", 10, 20),   // 15 + 9 = 24
-                                new SheepTypeData.TierData.DroppedItems("minecraft:coal_block", 0, 2)
+                                new SheepTypeData.TierData.DroppedItem("minecraft:coal", 10, 20),   // 15 + 9 = 24
+                                new SheepTypeData.TierData.DroppedItem("minecraft:coal_block", 0, 2)
                         )),
                         // Tier 3 : Surtout des blocs
                         new SheepTypeData.TierData(3, List.of(
-                                new SheepTypeData.TierData.DroppedItems("minecraft:coal", 15, 22),  //71
-                                new SheepTypeData.TierData.DroppedItems("minecraft:coal_block", 3, 7)
+                                new SheepTypeData.TierData.DroppedItem("minecraft:coal", 15, 22),  //71
+                                new SheepTypeData.TierData.DroppedItem("minecraft:coal_block", 3, 7)
                         ))
                 )));
 
@@ -216,17 +216,17 @@ public class DefaultSheepTypes {
                 new HashMap<>(Map.of()),
                 List.of(
                         new SheepTypeData.TierData(1, List.of(
-                                new SheepTypeData.TierData.DroppedItems("minecraft:iron_nugget", 19, 28),
-                                new SheepTypeData.TierData.DroppedItems("minecraft:iron_ingot", 1, 3)   //5.7
+                                new SheepTypeData.TierData.DroppedItem("minecraft:iron_nugget", 19, 28),
+                                new SheepTypeData.TierData.DroppedItem("minecraft:iron_ingot", 1, 3)   //5.7
                         )),
                         new SheepTypeData.TierData(2, List.of(
-                                new SheepTypeData.TierData.DroppedItems("minecraft:iron_nugget", 16, 24), // 10.2
-                                new SheepTypeData.TierData.DroppedItems("minecraft:iron_ingot", 2, 5),
-                                new SheepTypeData.TierData.DroppedItems("minecraft:iron_block", 0, 1)
+                                new SheepTypeData.TierData.DroppedItem("minecraft:iron_nugget", 16, 24), // 10.2
+                                new SheepTypeData.TierData.DroppedItem("minecraft:iron_ingot", 2, 5),
+                                new SheepTypeData.TierData.DroppedItem("minecraft:iron_block", 0, 1)
                         )),
                         new SheepTypeData.TierData(3, List.of(
-                                new SheepTypeData.TierData.DroppedItems("minecraft:iron_ingot", 5, 15), // 41.5
-                                new SheepTypeData.TierData.DroppedItems("minecraft:iron_block", 1, 3)
+                                new SheepTypeData.TierData.DroppedItem("minecraft:iron_ingot", 5, 15), // 41.5
+                                new SheepTypeData.TierData.DroppedItem("minecraft:iron_block", 1, 3)
                         ))
                 )));
 
@@ -238,15 +238,15 @@ public class DefaultSheepTypes {
                 new HashMap<>(Map.of()),
                 List.of(
                         new SheepTypeData.TierData(1, List.of(
-                                new SheepTypeData.TierData.DroppedItems("minecraft:copper_ingot", 3, 8)   //6
+                                new SheepTypeData.TierData.DroppedItem("minecraft:copper_ingot", 3, 8)   //6
                         )),
                         new SheepTypeData.TierData(2, List.of(
-                                new SheepTypeData.TierData.DroppedItems("minecraft:copper_ingot", 7, 12),   // 32
-                                new SheepTypeData.TierData.DroppedItems("minecraft:copper_block", 1, 4)
+                                new SheepTypeData.TierData.DroppedItem("minecraft:copper_ingot", 7, 12),   // 32
+                                new SheepTypeData.TierData.DroppedItem("minecraft:copper_block", 1, 4)
                         )),
                         new SheepTypeData.TierData(3, List.of(
-                                new SheepTypeData.TierData.DroppedItems("minecraft:copper_ingot", 5, 10), // 57
-                                new SheepTypeData.TierData.DroppedItems("minecraft:copper_block", 3, 8)
+                                new SheepTypeData.TierData.DroppedItem("minecraft:copper_ingot", 5, 10), // 57
+                                new SheepTypeData.TierData.DroppedItem("minecraft:copper_block", 3, 8)
                         ))
                 )));
 
@@ -268,15 +268,15 @@ public class DefaultSheepTypes {
                 )),
                 List.of(
                         new SheepTypeData.TierData(1, List.of(
-                                new SheepTypeData.TierData.DroppedItems("minecraft:redstone", 10, 20) //15
+                                new SheepTypeData.TierData.DroppedItem("minecraft:redstone", 10, 20) //15
                         )),
                         new SheepTypeData.TierData(2, List.of(
-                                new SheepTypeData.TierData.DroppedItems("minecraft:redstone", 14, 23),  // 32
-                                new SheepTypeData.TierData.DroppedItems("minecraft:redstone_block", 1, 2)
+                                new SheepTypeData.TierData.DroppedItem("minecraft:redstone", 14, 23),  // 32
+                                new SheepTypeData.TierData.DroppedItem("minecraft:redstone_block", 1, 2)
                         )),
                         new SheepTypeData.TierData(3, List.of(
-                                new  SheepTypeData.TierData.DroppedItems("minecraft:redstone", 11, 15),
-                                new SheepTypeData.TierData.DroppedItems("minecraft:redstone_block", 4, 8)   //67
+                                new SheepTypeData.TierData.DroppedItem("minecraft:redstone", 11, 15),
+                                new SheepTypeData.TierData.DroppedItem("minecraft:redstone_block", 4, 8)   //67
                         ))
                 )));
 
@@ -288,15 +288,15 @@ public class DefaultSheepTypes {
                 new HashMap<>(Map.of()),
                 List.of(
                         new SheepTypeData.TierData(1, List.of(
-                                new SheepTypeData.TierData.DroppedItems("minecraft:lapis_lazuli", 8, 16)    //12
+                                new SheepTypeData.TierData.DroppedItem("minecraft:lapis_lazuli", 8, 16)    //12
                         )),
                         new SheepTypeData.TierData(2, List.of(
-                                new SheepTypeData.TierData.DroppedItems("minecraft:lapis_lazuli", 16, 24),  //38
-                                new SheepTypeData.TierData.DroppedItems("minecraft:lapis_block", 1, 3)
+                                new SheepTypeData.TierData.DroppedItem("minecraft:lapis_lazuli", 16, 24),  //38
+                                new SheepTypeData.TierData.DroppedItem("minecraft:lapis_block", 1, 3)
                         )),
                         new SheepTypeData.TierData(3, List.of(
-                                new SheepTypeData.TierData.DroppedItems("minecraft:lapis_lazuli", 12, 17),  //64
-                                new SheepTypeData.TierData.DroppedItems("minecraft:lapis_block", 4, 7)
+                                new SheepTypeData.TierData.DroppedItem("minecraft:lapis_lazuli", 12, 17),  //64
+                                new SheepTypeData.TierData.DroppedItem("minecraft:lapis_block", 4, 7)
                         ))
                 )));
 
@@ -318,15 +318,15 @@ public class DefaultSheepTypes {
                 )),
                 List.of(
                         new SheepTypeData.TierData(1, List.of(
-                                new SheepTypeData.TierData.DroppedItems("minecraft:quartz", 10, 18)     //14
+                                new SheepTypeData.TierData.DroppedItem("minecraft:quartz", 10, 18)     //14
                         )),
                         new SheepTypeData.TierData(2, List.of(
-                                new SheepTypeData.TierData.DroppedItems("minecraft:quartz", 7, 15),    //27
-                                new SheepTypeData.TierData.DroppedItems("minecraft:quartz_block", 3, 5)
+                                new SheepTypeData.TierData.DroppedItem("minecraft:quartz", 7, 15),    //27
+                                new SheepTypeData.TierData.DroppedItem("minecraft:quartz_block", 3, 5)
                         )),
                         new SheepTypeData.TierData(3, List.of(
-                                new SheepTypeData.TierData.DroppedItems("minecraft:quartz", 4, 11),    //51.5
-                                new SheepTypeData.TierData.DroppedItems("minecraft:quartz_block", 8, 14)
+                                new SheepTypeData.TierData.DroppedItem("minecraft:quartz", 4, 11),    //51.5
+                                new SheepTypeData.TierData.DroppedItem("minecraft:quartz_block", 8, 14)
                         ))
                 )));
 
@@ -338,15 +338,15 @@ public class DefaultSheepTypes {
                 new HashMap<>(Map.of()),
                 List.of(
                         new SheepTypeData.TierData(1, List.of(
-                                new SheepTypeData.TierData.DroppedItems("minecraft:gold_nugget", 12, 24)
+                                new SheepTypeData.TierData.DroppedItem("minecraft:gold_nugget", 12, 24)
                         )),
                         new SheepTypeData.TierData(2, List.of(
-                                new SheepTypeData.TierData.DroppedItems("minecraft:gold_ingot", 4, 10),
-                                new SheepTypeData.TierData.DroppedItems("minecraft:gold_nugget", 5, 15)
+                                new SheepTypeData.TierData.DroppedItem("minecraft:gold_ingot", 4, 10),
+                                new SheepTypeData.TierData.DroppedItem("minecraft:gold_nugget", 5, 15)
                         )),
                         new SheepTypeData.TierData(3, List.of(
-                                new SheepTypeData.TierData.DroppedItems("minecraft:gold_block", 2, 5),
-                                new SheepTypeData.TierData.DroppedItems("minecraft:gold_ingot", 2, 6)
+                                new SheepTypeData.TierData.DroppedItem("minecraft:gold_block", 2, 5),
+                                new SheepTypeData.TierData.DroppedItem("minecraft:gold_ingot", 2, 6)
                         ))
                 )));
 
@@ -358,14 +358,14 @@ public class DefaultSheepTypes {
                 new HashMap<>(Map.of()),
                 List.of(
                         new SheepTypeData.TierData(1, List.of(
-                                new SheepTypeData.TierData.DroppedItems("minecraft:diamond", 1, 4)         //2.5
+                                new SheepTypeData.TierData.DroppedItem("minecraft:diamond", 1, 4)         //2.5
                         )),
                         new SheepTypeData.TierData(2, List.of(
-                                new SheepTypeData.TierData.DroppedItems("minecraft:diamond", 4, 8)         //6
+                                new SheepTypeData.TierData.DroppedItem("minecraft:diamond", 4, 8)         //6
                         )),
                         new SheepTypeData.TierData(3, List.of(
-                                new SheepTypeData.TierData.DroppedItems("minecraft:diamond", 1, 3),        //15.5
-                                new SheepTypeData.TierData.DroppedItems("minecraft:diamond_block", 1, 2)
+                                new SheepTypeData.TierData.DroppedItem("minecraft:diamond", 1, 3),        //15.5
+                                new SheepTypeData.TierData.DroppedItem("minecraft:diamond_block", 1, 2)
                         ))
                 )));
 
@@ -377,15 +377,15 @@ public class DefaultSheepTypes {
                 new HashMap<>(Map.of()),
                 List.of(
                         new SheepTypeData.TierData(1, List.of(
-                                new SheepTypeData.TierData.DroppedItems("minecraft:emerald", 3, 6)          //4.5
+                                new SheepTypeData.TierData.DroppedItem("minecraft:emerald", 3, 6)          //4.5
                         )),
                         new SheepTypeData.TierData(2, List.of(
-                                new SheepTypeData.TierData.DroppedItems("minecraft:emerald", 2, 5),         //8
-                                new SheepTypeData.TierData.DroppedItems("minecraft:emerald_block", 0, 1)
+                                new SheepTypeData.TierData.DroppedItem("minecraft:emerald", 2, 5),         //8
+                                new SheepTypeData.TierData.DroppedItem("minecraft:emerald_block", 0, 1)
                         )),
                         new SheepTypeData.TierData(3, List.of(
-                                new SheepTypeData.TierData.DroppedItems("minecraft:emerald", 1, 3),         //20
-                                new SheepTypeData.TierData.DroppedItems("minecraft:emerald_block", 1, 3)
+                                new SheepTypeData.TierData.DroppedItem("minecraft:emerald", 1, 3),         //20
+                                new SheepTypeData.TierData.DroppedItem("minecraft:emerald_block", 1, 3)
                         ))
                 )));
 
@@ -404,13 +404,13 @@ public class DefaultSheepTypes {
                 )),
                 List.of(
                         new SheepTypeData.TierData(1, List.of(
-                                new SheepTypeData.TierData.DroppedItems("minecraft:netherite_scrap", 0, 2)  //1
+                                new SheepTypeData.TierData.DroppedItem("minecraft:netherite_scrap", 0, 2)  //1
                         )),
                         new SheepTypeData.TierData(2, List.of(
-                                new SheepTypeData.TierData.DroppedItems("minecraft:netherite_scrap", 3, 7)  //5
+                                new SheepTypeData.TierData.DroppedItem("minecraft:netherite_scrap", 3, 7)  //5
                         )),
                         new SheepTypeData.TierData(3, List.of(
-                                new SheepTypeData.TierData.DroppedItems("minecraft:netherite_scrap", 8, 11) //9.5
+                                new SheepTypeData.TierData.DroppedItem("minecraft:netherite_scrap", 8, 11) //9.5
                         ))
                 )));
 
@@ -432,14 +432,14 @@ public class DefaultSheepTypes {
                         )),
                 List.of(
                         new SheepTypeData.TierData(1, List.of(
-                                new SheepTypeData.TierData.DroppedItems("minecraft:netherite_ingot", 1, 2)  //1.5
+                                new SheepTypeData.TierData.DroppedItem("minecraft:netherite_ingot", 1, 2)  //1.5
                         )),
                         new SheepTypeData.TierData(2, List.of(
-                                new SheepTypeData.TierData.DroppedItems("minecraft:netherite_ingot", 2, 4)  //3
+                                new SheepTypeData.TierData.DroppedItem("minecraft:netherite_ingot", 2, 4)  //3
                         )),
                         new SheepTypeData.TierData(3, List.of(
-                                new SheepTypeData.TierData.DroppedItems("minecraft:netherite_block", 1, 2), //6
-                                new SheepTypeData.TierData.DroppedItems("minecraft:netherite_ingot", 0, 1)
+                                new SheepTypeData.TierData.DroppedItem("minecraft:netherite_block", 1, 2), //6
+                                new SheepTypeData.TierData.DroppedItem("minecraft:netherite_ingot", 0, 1)
                         ))
                 )));
 
@@ -458,13 +458,13 @@ public class DefaultSheepTypes {
                 )),
                 List.of(
                         new SheepTypeData.TierData(1, List.of(
-                                new SheepTypeData.TierData.DroppedItems("minecraft:nether_star", 0, 0)  //0
+                                new SheepTypeData.TierData.DroppedItem("minecraft:nether_star", 0, 0)  //0
                         )),
                         new SheepTypeData.TierData(2, List.of(
-                                new SheepTypeData.TierData.DroppedItems("minecraft:nether_star", 0, 1)  //0.5
+                                new SheepTypeData.TierData.DroppedItem("minecraft:nether_star", 0, 1)  //0.5
                         )),
                         new SheepTypeData.TierData(3, List.of(
-                                new SheepTypeData.TierData.DroppedItems("minecraft:nether_star", 1, 2)  //1.5
+                                new SheepTypeData.TierData.DroppedItem("minecraft:nether_star", 1, 2)  //1.5
                         ))
                 )));
 

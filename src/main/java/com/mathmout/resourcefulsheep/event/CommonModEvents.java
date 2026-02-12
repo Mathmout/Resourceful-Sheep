@@ -3,6 +3,9 @@ package com.mathmout.resourcefulsheep.event;
 import com.mathmout.resourcefulsheep.ResourcefulSheepMod;
 import com.mathmout.resourcefulsheep.block.entity.ModBlockEntities;
 import com.mathmout.resourcefulsheep.client.data.DynamicServerDataPackProvider;
+import com.mathmout.resourcefulsheep.config.dnacrossbreeding.ConfigDNACrossbreedingManager;
+import com.mathmout.resourcefulsheep.config.mutations.ConfigSheepMutationManager;
+import com.mathmout.resourcefulsheep.config.sheeptypes.ConfigSheepTypeManager;
 import com.mathmout.resourcefulsheep.config.spawning.ConfigSheepSpawningManager;
 import com.mathmout.resourcefulsheep.config.spawning.SheepSpawningData;
 import com.mathmout.resourcefulsheep.entity.ModEntities;
@@ -57,6 +60,14 @@ import static net.minecraft.world.level.block.Blocks.BEDROCK;
 
 @EventBusSubscriber(modid = ResourcefulSheepMod.MOD_ID)
 public class CommonModEvents {
+
+    @SubscribeEvent
+    public static void commonSetup(final FMLCommonSetupEvent event) {
+            ConfigSheepTypeManager.validateConfig();
+            ConfigSheepMutationManager.validateConfig();
+            ConfigDNACrossbreedingManager.validateConfig();
+            ConfigSheepSpawningManager.validateConfig();
+    }
 
     @SubscribeEvent
     public static void onEntityInteract(PlayerInteractEvent.EntityInteract event) {

@@ -2,6 +2,7 @@ package com.mathmout.resourcefulsheep;
 
 import com.mathmout.resourcefulsheep.block.ModBlocks;
 import com.mathmout.resourcefulsheep.block.entity.ModBlockEntities;
+import com.mathmout.resourcefulsheep.config.dnacrossbreeding.ConfigDNACrossbreedingManager;
 import com.mathmout.resourcefulsheep.config.mutations.ConfigSheepMutationManager;
 import com.mathmout.resourcefulsheep.config.sheeptypes.ConfigSheepTypeManager;
 import com.mathmout.resourcefulsheep.config.spawning.ConfigSheepSpawningManager;
@@ -28,6 +29,7 @@ public class ResourcefulSheepMod {
         ConfigSheepTypeManager.init();
         ConfigSheepMutationManager.init();
         ConfigSheepSpawningManager.init();
+        ConfigDNACrossbreedingManager.init();
 
         // Registries
         ModEntities.registerVariantEntity();

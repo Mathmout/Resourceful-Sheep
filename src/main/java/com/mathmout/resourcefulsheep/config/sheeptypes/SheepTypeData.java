@@ -15,11 +15,11 @@ public record SheepTypeData(
 
     public record TierData(
             int Tier,
-            List<DroppedItems> DroppedItems) {
+            List<DroppedItem> DroppedItems) {
 
-        public record DroppedItems(String ItemId,
-                                   int MinDrops,
-                                   int MaxDrops) {
+        public record DroppedItem(String ItemId,
+                                  int MinDrops,
+                                  int MaxDrops) {
         }
     }
 }

@@ -2,6 +2,8 @@ package com.mathmout.resourcefulsheep.config.mutations;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceLocation;
 import net.neoforged.fml.loading.FMLPaths;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,6 +18,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 public class ConfigSheepMutationManager {
+
     public static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     public static final Path CONFIG_DIR = FMLPaths.CONFIGDIR.get().resolve("resourceful_sheep/sheep_mutations");
     private static final List<SheepMutation> SHEEP_MUTATIONS = new ArrayList<>();
@@ -76,5 +79,24 @@ public class ConfigSheepMutationManager {
 
     public static List<SheepMutation> getSheepMutations() {
         return SHEEP_MUTATIONS;
+    }
+
+    public static void validateConfig() {
+        LOGGER.info("Validating Sheep Mutations...");
+        for (SheepMutation mutation : SHEEP_MUTATIONS) {
+            // Maman
+            if (!BuiltInRegistries.ENTITY_TYPE.containsKey(ResourceLocation.parse("resourceful_sheep:" + mutation.MomId()))) {
+                LOGGER.warn("Config Warning [SheepMutation]: MomId '{}' not found in Entity Registry.", mutation.MomId());
+            }
+            // Papa
+            if (!BuiltInRegistries.ENTITY_TYPE.containsKey(ResourceLocation.parse("resourceful_sheep:" + mutation.DadId()))) {
+                LOGGER.warn("Config Warning [SheepMutation]: DadId '{}' not found in Entity Registry.", mutation.DadId());
+            }
+            // Enfant
+            if (!BuiltInRegistries.ENTITY_TYPE.containsKey(ResourceLocation.parse("resourceful_sheep:" + mutation.ChildId()))) {
+                LOGGER.warn("Config Warning [SheepMutation]: ChildId '{}' not found in Entity Registry.", mutation.ChildId());
+            }
+        }
+        LOGGER.info("Sheep Mutations Config Validation Complete.");
     }
 }
