@@ -5,6 +5,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.mathmout.resourcefulsheep.ResourcefulSheepMod;
+import com.mathmout.resourcefulsheep.config.sheeptypes.ConfigSheepTypeManager;
 import com.mathmout.resourcefulsheep.config.spawning.ConfigSheepSpawningManager;
 import com.mathmout.resourcefulsheep.config.spawning.SheepSpawningData;
 import net.minecraft.resources.ResourceLocation;
@@ -30,6 +31,21 @@ public class DynamicServerDataPackProvider implements PackResources {
     public DynamicServerDataPackProvider(PackLocationInfo locationInfo) {
         this.locationInfo = locationInfo;
         generateResources();
+        generateSheepTag();
+    }
+
+    private void generateSheepTag() {
+        JsonObject root = new JsonObject();
+        root.addProperty("replace", false); // false pour pas écraser
+
+        JsonArray values = new JsonArray();
+        for (String variantId : ConfigSheepTypeManager.getSheepVariant().keySet()) {
+            String fullEntityId = ResourcefulSheepMod.MOD_ID + ":" + variantId;
+            values.add(fullEntityId);
+        }
+        root.add("values", values);
+        String path = "data/" + ResourcefulSheepMod.MOD_ID + "/tags/entity_type/sheep.json";
+        resourceCache.put(path, GSON.toJson(root).getBytes(StandardCharsets.UTF_8));
     }
 
     private void generateResources() {

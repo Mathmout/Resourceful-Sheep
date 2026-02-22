@@ -45,6 +45,7 @@ public class DynamicResourceProvider implements PackResources {
         langJson.addProperty("item." + ResourcefulSheepMod.MOD_ID + ".iron_syringe", "Iron Syringe");
         langJson.addProperty("item." + ResourcefulSheepMod.MOD_ID + ".diamond_syringe", "Diamond Syringe");
         langJson.addProperty("item." + ResourcefulSheepMod.MOD_ID + ".netherite_syringe", "Netherite Syringe");
+        langJson.addProperty("item." + ResourcefulSheepMod.MOD_ID + ".suspicious_spawn_egg", "Suspicious Spawn Egg");
 
         // Créatif menu
         langJson.addProperty("creativetab." + ResourcefulSheepMod.MOD_ID, "Resourceful Sheep");
@@ -65,8 +66,8 @@ public class DynamicResourceProvider implements PackResources {
         langJson.addProperty("item." + ResourcefulSheepMod.MOD_ID + ".diamond_upgrade_smithing_template", "Smithing Template");
         
         // Block
-
         langJson.addProperty("block." + ResourcefulSheepMod.MOD_ID + ".dna_sequencer", "DNA Sequencer");
+        langJson.addProperty("block." + ResourcefulSheepMod.MOD_ID + ".dna_splicer", "DNA Splicer");
 
         // Traductions dynamiques.
 

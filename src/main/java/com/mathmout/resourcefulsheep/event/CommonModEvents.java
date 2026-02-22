@@ -101,6 +101,7 @@ public class CommonModEvents {
 
     @SubscribeEvent
     public static void registerCapabilities(RegisterCapabilitiesEvent event) {
+        // DNA Sequencer
         // Enregistrer l'Inventaire (ItemHandler)
         event.registerBlockEntity(
                 Capabilities.ItemHandler.BLOCK, // Le type de capability
@@ -115,6 +116,23 @@ public class CommonModEvents {
                 (block_entity, side) -> block_entity.energyStorage
         );
 
+        // DNA Splicer
+        // Enregistrer l'Inventaire (ItemHandler)
+        event.registerBlockEntity(
+                Capabilities.ItemHandler.BLOCK, // Le type de capability
+                ModBlockEntities.DNA_SPLICER_BLOCK_ENTITY.get(), // Le BlockEntity
+                (blockEntity, side) -> blockEntity.itemHandler // La variable à renvoyer
+        );
+
+        // Enregistrer l'Énergie (EnergyStorage)
+        event.registerBlockEntity(
+                Capabilities.EnergyStorage.BLOCK,
+                ModBlockEntities.DNA_SPLICER_BLOCK_ENTITY.get(),
+                (block_entity, side) -> block_entity.energyStorage
+        );
+
+        // Sheep Scanner
+        // Energy
         event.registerItem(
                 Capabilities.EnergyStorage.ITEM,
                 (itemStack, context) -> new SheepScannerEnergyStorage(itemStack), // On instancie notre wrapper

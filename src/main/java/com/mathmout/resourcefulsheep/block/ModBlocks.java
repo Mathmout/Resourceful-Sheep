@@ -2,6 +2,7 @@ package com.mathmout.resourcefulsheep.block;
 
 import com.mathmout.resourcefulsheep.ResourcefulSheepMod;
 import com.mathmout.resourcefulsheep.block.custom.DNASequencerBlock;
+import com.mathmout.resourcefulsheep.block.custom.DNASplicerBlock;
 import com.mathmout.resourcefulsheep.item.ModItems;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
@@ -18,6 +19,14 @@ public class ModBlocks {
 
     public static final DeferredBlock<Block> DNA_SEQUENCER = registerBlock("dna_sequencer",
             () -> new DNASequencerBlock(
+                    BlockBehaviour.Properties.of() // propriété vierge
+                            .strength(4f) // Solidité
+                            .requiresCorrectToolForDrops()
+                            .noOcclusion() // Empêche le X-Ray
+            ));
+
+    public static final DeferredBlock<Block> DNA_SPLICER = registerBlock("dna_splicer",
+            () -> new DNASplicerBlock(
                     BlockBehaviour.Properties.of() // propriété vierge
                             .strength(4f) // Solidité
                             .requiresCorrectToolForDrops()

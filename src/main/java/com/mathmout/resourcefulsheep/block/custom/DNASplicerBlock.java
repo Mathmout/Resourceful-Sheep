@@ -1,17 +1,14 @@
 package com.mathmout.resourcefulsheep.block.custom;
 
-import com.mathmout.resourcefulsheep.block.entity.DNASequencerBlockEntity;
+import com.mathmout.resourcefulsheep.block.entity.DNASplicerBlockEntity;
 import com.mathmout.resourcefulsheep.block.entity.ModBlockEntities;
 import com.mathmout.resourcefulsheep.item.ModDataComponents;
-import com.mathmout.resourcefulsheep.utils.TexteUtils;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
@@ -33,16 +30,15 @@ import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
-public class DNASequencerBlock extends BaseEntityBlock {
+public class DNASplicerBlock extends BaseEntityBlock {
+
     public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
 
-    public static final MapCodec<DNASequencerBlock> CODEC = simpleCodec(DNASequencerBlock::new);
+    public static final MapCodec<DNASplicerBlock> CODEC = simpleCodec(DNASplicerBlock::new);
 
-    public DNASequencerBlock(Properties properties) {
+    public DNASplicerBlock(Properties properties) {
         super(properties);
         this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH));
     }
@@ -53,33 +49,32 @@ public class DNASequencerBlock extends BaseEntityBlock {
     }
 
     @Override
-    public @Nullable BlockEntity newBlockEntity(@NotNull BlockPos pos, @NotNull BlockState state) {
-        return new DNASequencerBlockEntity(pos, state);
+    public @Nullable BlockEntity newBlockEntity(@NotNull BlockPos blockPos, @NotNull BlockState blockState) {
+        return new DNASplicerBlockEntity(blockPos, blockState);
     }
 
     @Override
-    public @NotNull RenderShape getRenderShape(@NotNull BlockState state) {
+    protected @NotNull RenderShape getRenderShape(@NotNull BlockState state) {
         return RenderShape.MODEL;
     }
 
     @Override
-    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, @NotNull BlockState state, @NotNull BlockEntityType<T> blockEntityType) {
+    public @Nullable <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, @NotNull BlockState state, @NotNull BlockEntityType<T> blockEntityType) {
         if (level.isClientSide()) return null;
 
-        return createTickerHelper(blockEntityType, ModBlockEntities.DNA_SEQUENCER_BLOCK_ENTITY.get(),
+        return createTickerHelper(blockEntityType, ModBlockEntities.DNA_SPLICER_BLOCK_ENTITY.get(),
                 (pLevel, pPos, pState, pBlockEntity) -> pBlockEntity.tick(pLevel));
     }
 
     // Partie Interaction
-
     @Override
     public @NotNull BlockState playerWillDestroy(@NotNull Level level, @NotNull BlockPos pos, @NotNull BlockState state, @NotNull Player player) {
         if (!level.isClientSide && !player.isCreative()) {
             BlockEntity blockEntity = level.getBlockEntity(pos);
 
-            if (blockEntity instanceof DNASequencerBlockEntity sequencer) {
+            if (blockEntity instanceof DNASplicerBlockEntity splicer) {
                 ItemStack itemStack = new ItemStack(this);
-                sequencer.saveToItem(itemStack, level.registryAccess());
+                splicer.saveToItem(itemStack, level.registryAccess());
                 popResource(level, pos, itemStack);
             }
         }
@@ -89,8 +84,8 @@ public class DNASequencerBlock extends BaseEntityBlock {
     @Override
     public void setPlacedBy(Level level, @NotNull BlockPos pos, @NotNull BlockState state, @Nullable LivingEntity placer, @NotNull ItemStack stack) {
         BlockEntity blockEntity = level.getBlockEntity(pos);
-        if (blockEntity instanceof DNASequencerBlockEntity sequencer) {
-            sequencer.loadFromItem(stack, level.registryAccess());
+        if (blockEntity instanceof DNASplicerBlockEntity splicer) {
+            splicer.loadFromItem(stack, level.registryAccess());
         }
         super.setPlacedBy(level, pos, state, placer, stack);
     }
@@ -99,8 +94,8 @@ public class DNASequencerBlock extends BaseEntityBlock {
     protected @NotNull InteractionResult useWithoutItem(@NotNull BlockState state, Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull BlockHitResult hitResult) {
         if (!level.isClientSide()) {
             BlockEntity blockEntity = level.getBlockEntity(pos);
-            if (blockEntity instanceof DNASequencerBlockEntity) {
-                player.openMenu((DNASequencerBlockEntity) blockEntity, pos);
+            if (blockEntity instanceof DNASplicerBlockEntity) {
+                player.openMenu((DNASplicerBlockEntity) blockEntity, pos);
             }
         }
         return InteractionResult.sidedSuccess(level.isClientSide());
@@ -129,45 +124,20 @@ public class DNASequencerBlock extends BaseEntityBlock {
 
     @Override
     public void appendHoverText(@NotNull ItemStack stack, Item.@NotNull TooltipContext context, @NotNull List<Component> tooltipComponents, @NotNull TooltipFlag tooltipFlag) {
-        if (stack.has(ModDataComponents.SEQUENCER_DATA.get())) {
-            CompoundTag data = stack.get(ModDataComponents.SEQUENCER_DATA.get());
-
-            if (data != null && data.contains("dna_list", 9)) {
-                ListTag nbtList = data.getList("dna_list", 8); // 8 = Type String
-
-                if (!nbtList.isEmpty()) {
+        if (stack.has(ModDataComponents.SPLICER_DATA.get())){
+            CompoundTag data = stack.get(ModDataComponents.SPLICER_DATA.get());
+                if (data != null) {
                     if (Screen.hasShiftDown()) {
-                        tooltipComponents.add(Component.literal("Stored DNA Sequences :").withStyle(ChatFormatting.GREEN));
-
-                        List<String> sortedIds = new ArrayList<>();
-                        for (Tag tag : nbtList) {
-                            sortedIds.add(tag.getAsString());
-                        }
-
-                        int maxDisplayed = 22;
-                        Collections.sort(sortedIds);
-                        for (int i = 0; i < Math.min(maxDisplayed, sortedIds.size()); i++) {
-                            tooltipComponents.add(Component.literal(" - ").withStyle(ChatFormatting.GRAY)
-                                    .append(Component.literal(TexteUtils.getPrettyName(sortedIds.get(i))).withStyle(ChatFormatting.GRAY)));
-                        }
-                        if (sortedIds.size() > maxDisplayed) {
-                            tooltipComponents.add(Component.literal("And " + (sortedIds.size() - maxDisplayed) + " more...").withStyle(ChatFormatting.GRAY));
-                        }
-                    }
-                    else {
+                        tooltipComponents.add(Component.literal("Data :").withStyle(ChatFormatting.GREEN));
+                    } else {
                         tooltipComponents.add(Component.literal("Hold SHIFT for details.")
                                 .withStyle(ChatFormatting.GRAY)
                                 .withStyle(ChatFormatting.ITALIC));
                     }
-                } else {
-                    tooltipComponents.add(Component.literal("Allows you to store and analyze DNA sequences.")
-                            .withStyle(ChatFormatting.GRAY));
                 }
-            }
         } else {
-            tooltipComponents.add(Component.literal("Allows you to store and analyze DNA sequences.")
+            tooltipComponents.add(Component.literal("Allows you to do something cool with DNA...")
                     .withStyle(ChatFormatting.GRAY));
         }
-        super.appendHoverText(stack, context, tooltipComponents, tooltipFlag);
     }
 }

@@ -4,10 +4,7 @@ import com.mathmout.resourcefulsheep.ResourcefulSheepMod;
 import com.mathmout.resourcefulsheep.config.sheeptypes.ConfigSheepTypeManager;
 import com.mathmout.resourcefulsheep.entity.ModEntities;
 import com.mathmout.resourcefulsheep.entity.custom.SheepVariantData;
-import com.mathmout.resourcefulsheep.item.custom.CustomDeferredSpawnEggItem;
-import com.mathmout.resourcefulsheep.item.custom.Lasso;
-import com.mathmout.resourcefulsheep.item.custom.SheepScanner;
-import com.mathmout.resourcefulsheep.item.custom.Syringe;
+import com.mathmout.resourcefulsheep.item.custom.*;
 import com.mathmout.resourcefulsheep.utils.TexteUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
@@ -44,6 +41,9 @@ public class ModItems {
 
     public static final DeferredItem<Item> NETHERITE_SYRINGE = ITEMS.register("netherite_syringe",
             () -> new Syringe(new Item.Properties(), Syringe.SyringeTiers.NETHERITE));
+
+    public static final DeferredItem<Item> SUSPICIOUS_SPAWN_EGG = ITEMS.register("suspicious_spawn_egg",
+            () -> new SuspiciousSpawnEgg(new Item.Properties()));
 
     public static final DeferredItem<Item> DIAMOND_UPGRADE_SMITHING_TEMPLATE = ITEMS.register("diamond_upgrade_smithing_template",
             () -> new SmithingTemplateItem(

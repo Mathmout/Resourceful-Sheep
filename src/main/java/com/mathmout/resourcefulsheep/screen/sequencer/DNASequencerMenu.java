@@ -1,9 +1,10 @@
-package com.mathmout.resourcefulsheep.screen;
+package com.mathmout.resourcefulsheep.screen.sequencer;
 
 import com.mathmout.resourcefulsheep.block.ModBlocks;
 import com.mathmout.resourcefulsheep.block.entity.DNASequencerBlockEntity;
 import com.mathmout.resourcefulsheep.item.ModDataComponents;
 import com.mathmout.resourcefulsheep.item.custom.Syringe;
+import com.mathmout.resourcefulsheep.screen.ModMenuTypes;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -14,6 +15,8 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.items.SlotItemHandler;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 public class DNASequencerMenu extends AbstractContainerMenu {
 
@@ -54,8 +57,7 @@ public class DNASequencerMenu extends AbstractContainerMenu {
     public int getScaledProgress() {
         int progress = this.data.get(0);
         int maxProgress = this.data.get(1);  // Max Progress
-        int progressArrowSize = 26; // Taille de la flèche en pixels sur ta texture
-
+        int progressArrowSize = 22; // Taille de la flèche en pixels sur la texture
         return maxProgress != 0 && progress != 0 ? progress * progressArrowSize / maxProgress : 0;
     }
 
@@ -75,43 +77,37 @@ public class DNASequencerMenu extends AbstractContainerMenu {
         ItemStack sourceStack = sourceSlot.getItem();
         ItemStack copyOfSourceStack = sourceStack.copy();
 
-        // Définition des bornes (C'est plus propre que des chiffres magiques partout)
         int MACHINE_SLOTS = 2; // Slot 0 et 1
         int INV_START = 2;     // Premier slot de l'inventaire joueur
         int HOTBAR_START = 29; // Premier slot de la hotbar (2 + 27)
         int TOTAL_SLOTS = 38;  // Tout (2 + 27 + 9)
 
-        // 1. Si on clique dans la MACHINE (Slot 0 ou 1) -> On renvoie vers le JOUEUR
+        // Si on clique dans la MACHINE (Slot 0 ou 1) → On renvoie vers le JOUEUR
         if (index < MACHINE_SLOTS) {
-            // Le 'true' à la fin veut dire "commence par la fin" (remplit la hotbar en premier)
-            if (!moveItemStackTo(sourceStack, INV_START, TOTAL_SLOTS, true)) {
+            // Le true à la fin veut dire "commence par la fin" (remplit la hotbar en premier)
+            if (!moveItemStackTo(sourceStack, INV_START, TOTAL_SLOTS, false)) {
                 return ItemStack.EMPTY;
             }
         }
-        // 2. Si on clique dans l'inventaire du JOUEUR
+        // Si on clique dans l'inventaire du JOUEUR
         else {
-            // A. C'est une seringue ? → On tente de la mettre dans l'INPUT de la machine (Slot 0)
+            // Si c'est une Syringe, on met dans l'INPUT de la machine (Slot 0)
             if (sourceStack.getItem() instanceof Syringe) {
                 if (sourceStack.has(ModDataComponents.SYRINGE_CONTENT.get())) {
-                    // Si ça réussit, on s'arrête là. Sinon, on continue vers le rangement classique.
-                    if (!moveItemStackTo(sourceStack, 0, 1, false)) {
-                        // Si le slot machine est plein, ne retourne pas tout de suite !
-                        // Laisse le code continuer pour qu'il range l'item dans la hotbar/inventaire
-                    } else {
-                        // Si ça a marché (transféré dans la machine), on a fini
-                        return ItemStack.EMPTY; // Petite astuce : retourner empty ici évite les bugs de duplication visuelle
+                    if (moveItemStackTo(sourceStack, 0, 1, false)) {
+                        return ItemStack.EMPTY;
                     }
                 }
             }
 
-            // B. Rangement Classique (Inventaire <-> Hotbar)
-            // Si on est dans l'inventaire principal -> Vers la Hotbar
+            // Rangement Classique (Inventaire ←→ Hotbar)
+            // Si on est dans l'inventaire principal → Vers la Hotbar
             if (index < HOTBAR_START) {
                 if (!moveItemStackTo(sourceStack, HOTBAR_START, TOTAL_SLOTS, false)) {
                     return ItemStack.EMPTY;
                 }
             }
-            // Si on est dans la Hotbar -> Vers l'inventaire principal
+            // Si on est dans la Hotbar → Vers l'inventaire principal
             else {
                 if (!moveItemStackTo(sourceStack, INV_START, HOTBAR_START, false)) {
                     return ItemStack.EMPTY;
@@ -154,7 +150,7 @@ public class DNASequencerMenu extends AbstractContainerMenu {
         }
     }
 
-    public DNASequencerBlockEntity getBlockEntity() {
-        return this.blockEntity;
+    public List<String> getStoredDna() {
+        return this.blockEntity.getStoredDna();
     }
 }

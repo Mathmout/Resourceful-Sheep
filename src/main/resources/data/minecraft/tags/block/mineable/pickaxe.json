@@ -1,6 +1,7 @@
 {
   "replace": false,
   "values": [
-    "resourceful_sheep:dna_sequencer"
+    "resourceful_sheep:dna_sequencer",
+    "resourceful_sheep:dna_splicer"
   ]
 }

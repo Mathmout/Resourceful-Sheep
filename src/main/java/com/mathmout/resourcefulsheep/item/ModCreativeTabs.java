@@ -22,7 +22,7 @@ public class ModCreativeTabs {
     public  static final Supplier<CreativeModeTab> RESOURCEFUL_SHEEP_TAB = CREATIVE_MODE_TAB.register("resourceful_sheep_tab",
             () -> CreativeModeTab.builder()
                     .icon(() -> new ItemStack(ModItems.LASSO.get()))
-                    .title(Component.translatable("creativetab.resourceful_sheep"))
+                    .title(Component.translatable("creativetab." + ResourcefulSheepMod.MOD_ID))
                     .displayItems((itemDisplayParameters, output) -> {
                         output.accept(ModItems.LASSO.get());
                         output.accept(ModItems.SHEEP_SCANNER.get());
@@ -31,6 +31,9 @@ public class ModCreativeTabs {
                         output.accept(ModItems.NETHERITE_SYRINGE.get());
                         output.accept(ModItems.DIAMOND_UPGRADE_SMITHING_TEMPLATE.get());
                         output.accept(ModBlocks.DNA_SEQUENCER.get());
+                        output.accept(ModBlocks.DNA_SPLICER.get());
+                        output.accept(ModItems.SUSPICIOUS_SPAWN_EGG.get());
+
                         for (DeferredItem<? extends SpawnEggItem> egg : SHEEP_SPAWN_EGGS) {
                             output.accept(egg.get());
                         }

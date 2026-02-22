@@ -11,6 +11,13 @@ public class Config {
     public static ModConfigSpec.IntValue DNA_SEQUENCER_TRANSFER;
     public static ModConfigSpec.IntValue DNA_SEQUENCER_ANALYZE_TIME;
 
+    // DNA Splicer
+    public static ModConfigSpec.IntValue DNA_SPLICER_CAPACITY;
+    public static ModConfigSpec.IntValue DNA_SPLICER_CONSUMPTION;
+    public static ModConfigSpec.IntValue DNA_SPLICER_TRANSFER;
+    public static ModConfigSpec.IntValue DNA_SPLICER_ANALYZE_TIME;
+    public static ModConfigSpec.IntValue DNA_SPLICER_RANGE;
+
     // Sheep Scanner
     public static ModConfigSpec.IntValue SHEEP_SCANNER_CAPACITY;
     public static ModConfigSpec.IntValue SHEEP_SCANNER_CONSUMPTION;
@@ -25,7 +32,7 @@ public class Config {
                 .defineInRange("capacity", 500_000, 1, Integer.MAX_VALUE);
 
         DNA_SEQUENCER_CONSUMPTION = BUILDER
-                .comment("Energy consumed per operation (FE)")
+                .comment("Energy consumed per operation (FE/t)")
                 .defineInRange("consumption", 1000, 1, Integer.MAX_VALUE);
 
         DNA_SEQUENCER_TRANSFER = BUILDER
@@ -35,6 +42,31 @@ public class Config {
         DNA_SEQUENCER_ANALYZE_TIME = BUILDER
                 .comment("Time required to sequence DNA (in ticks)")
                 .defineInRange("analyze_time", 100, 1, Integer.MAX_VALUE);
+
+        BUILDER.pop(); // Fin de section
+
+        // DNA Splicer
+        BUILDER.push("dna_splicer");
+
+        DNA_SPLICER_CAPACITY = BUILDER
+                .comment("Max energy capacity of the DNA Splicer (FE)")
+                .defineInRange("capacity", 10_000_000, 1, Integer.MAX_VALUE);
+
+        DNA_SPLICER_CONSUMPTION = BUILDER
+                .comment("Energy consumed per operation (FE/t)")
+                .defineInRange("consumption", 10000, 1, Integer.MAX_VALUE);
+
+        DNA_SPLICER_TRANSFER = BUILDER
+                .comment("Max energy transfer rate per tick (FE/t)")
+                .defineInRange("transfer_rate", 20000, 1, Integer.MAX_VALUE);
+
+        DNA_SPLICER_ANALYZE_TIME = BUILDER
+                .comment("Time required to splice DNA (in ticks)")
+                .defineInRange("splicer_time", 6000, 1, Integer.MAX_VALUE);
+
+        DNA_SPLICER_RANGE = BUILDER
+                .comment("The radius (in blocks) to search for a DNA Sequencer. 1 means adjacent, diagonals included.")
+                .defineInRange("splicer_range", 1, 1, Integer.MAX_VALUE);
 
         BUILDER.pop(); // Fin de section
 

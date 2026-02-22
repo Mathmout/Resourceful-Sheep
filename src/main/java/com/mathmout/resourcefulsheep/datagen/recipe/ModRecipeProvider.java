@@ -108,7 +108,7 @@ public class ModRecipeProvider extends RecipeProvider {
         // DNA Sequencer Clearing
         ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ModBlocks.DNA_SEQUENCER.get())
                 .requires(ModBlocks.DNA_SEQUENCER.get())
-                .unlockedBy("has_netherite_syringe", has(ModBlocks.DNA_SEQUENCER.get()))
+                .unlockedBy("has_dna_sequencer", has(ModBlocks.DNA_SEQUENCER.get()))
                 .save(pRecipeOutput, ResourceLocation.fromNamespaceAndPath(ResourcefulSheepMod.MOD_ID, "dna_sequencer_clearing"));
 
         // DNA Sequencer recipe
@@ -122,6 +122,24 @@ public class ModRecipeProvider extends RecipeProvider {
                 .define('R', Items.REDSTONE_BLOCK)
             .unlockedBy("has_template", has(ModItems.DIAMOND_UPGRADE_SMITHING_TEMPLATE.get()))
             .save(pRecipeOutput, ResourceLocation.fromNamespaceAndPath(ResourcefulSheepMod.MOD_ID, "dna_sequencer_recipe"));
+
+        // DNA Splicer recipe
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.DNA_SPLICER.get())
+                .pattern("ISI")
+                .pattern("BNB")
+                .pattern("III")
+                .define('I', Items.IRON_INGOT)
+                .define('S', Items.NETHER_STAR)
+                .define('B', Items.DRAGON_BREATH)
+                .define('N', Items.NETHERITE_BLOCK)
+            .unlockedBy("dna_sequencer", has(ModBlocks.DNA_SEQUENCER.get()))
+            .save(pRecipeOutput, ResourceLocation.fromNamespaceAndPath(ResourcefulSheepMod.MOD_ID, "dna_splicer_recipe"));
+
+        // DNA Splicer Clearing
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ModBlocks.DNA_SPLICER.get())
+                .requires(ModBlocks.DNA_SPLICER.get())
+                .unlockedBy("has_dna_splicer", has(ModBlocks.DNA_SPLICER.get()))
+                .save(pRecipeOutput, ResourceLocation.fromNamespaceAndPath(ResourcefulSheepMod.MOD_ID, "dna_splicer_clearing"));
 
     }
 }

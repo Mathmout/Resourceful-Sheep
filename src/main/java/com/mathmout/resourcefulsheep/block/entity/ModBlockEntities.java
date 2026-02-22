@@ -18,6 +18,11 @@ public class ModBlockEntities {
                     BlockEntityType.Builder.of(DNASequencerBlockEntity::new,
                             ModBlocks.DNA_SEQUENCER.get()).build(null));
 
+    public static final Supplier<BlockEntityType<DNASplicerBlockEntity>> DNA_SPLICER_BLOCK_ENTITY =
+            BLOCK_ENTITIES.register("dna_splicer_be", () ->
+                    BlockEntityType.Builder.of(DNASplicerBlockEntity::new,
+                            ModBlocks.DNA_SPLICER.get()).build(null));
+
     public static void register(IEventBus eventBus) {
         BLOCK_ENTITIES.register(eventBus);
     }

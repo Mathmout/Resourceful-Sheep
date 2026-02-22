@@ -68,8 +68,7 @@ public class ResourcefulSheepEntity extends Sheep {
                 .toList();
         goalsToRemove.forEach(this.goalSelector::removeGoal);
 
-        ResourcefulSheepEatBlockGoal eatBlockGoal = new ResourcefulSheepEatBlockGoal(this);
-        this.goalSelector.addGoal(5, eatBlockGoal);
+        this.goalSelector.addGoal(5, new ResourcefulSheepEatBlockGoal(this));
         this.goalSelector.addGoal(3, new TemptGoal(this, 1.1, this::isFood, false));
     }
 
@@ -112,11 +111,6 @@ public class ResourcefulSheepEntity extends Sheep {
             }
         }
         return false;
-    }
-
-    @Override
-    public boolean isPersistenceRequired() {
-        return true;
     }
 
     @Override

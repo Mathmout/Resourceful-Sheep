@@ -24,7 +24,7 @@ public class ConfigSheepTypeManager {
     public static final Path CONFIG_DIR = FMLPaths.CONFIGDIR.get().resolve("resourceful_sheep/sheep_types");
     private static final Map<String, SheepTypeData> SHEEP_TYPES = new HashMap<>();
     private static final Map<String, SheepVariantData> SHEEP_VARIANTS = new HashMap<>();
-    private static final Map<String, String> RESOURCE_FILE_MASHING = new HashMap<>();
+    private static final Map<String, String> RESOURCE_FILE_MATCHING = new HashMap<>();
     private static final Logger LOGGER = LoggerFactory.getLogger(ConfigSheepTypeManager.class);
 
     public static void init() {
@@ -40,7 +40,7 @@ public class ConfigSheepTypeManager {
 
     private static void loadSheepTypes() {
         SHEEP_TYPES.clear();
-        RESOURCE_FILE_MASHING.clear();
+        RESOURCE_FILE_MATCHING.clear();
         LOGGER.info("Validating Sheep Type Data...");
 
         try (Stream<Path> stream = Files.list(CONFIG_DIR)) {
@@ -53,7 +53,7 @@ public class ConfigSheepTypeManager {
                         String resourceId = data.Resource();
 
                         if (SHEEP_TYPES.containsKey(resourceId)) {
-                            String previousFile = RESOURCE_FILE_MASHING.get(resourceId);
+                            String previousFile = RESOURCE_FILE_MATCHING.get(resourceId);
                             LOGGER.error("Config Error [SheepType]: The ID '{}' is already defined in '{}'. Ignoring file '{}'.", resourceId, previousFile, fileName);
                             return;
                         }
@@ -63,7 +63,7 @@ public class ConfigSheepTypeManager {
                         }
 
                         SHEEP_TYPES.put(resourceId, data);
-                        RESOURCE_FILE_MASHING.put(resourceId, fileName);
+                        RESOURCE_FILE_MATCHING.put(resourceId, fileName);
                     }
                 } catch (JsonSyntaxException e) {
                     LOGGER.error("JSON SYNTAX ERROR in file '{}': {}", path.getFileName(), e.getMessage());

@@ -3,13 +3,14 @@ package com.mathmout.resourcefulsheep.block.entity;
 import com.mathmout.resourcefulsheep.Config;
 import com.mathmout.resourcefulsheep.item.ModDataComponents;
 import com.mathmout.resourcefulsheep.item.custom.Syringe;
-import com.mathmout.resourcefulsheep.screen.DNASequencerMenu;
+import com.mathmout.resourcefulsheep.screen.sequencer.DNASequencerMenu;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.network.Connection;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
@@ -270,5 +271,10 @@ public class DNASequencerBlockEntity extends BlockEntity implements MenuProvider
     @Override
     public @Nullable Packet<ClientGamePacketListener> getUpdatePacket() {
         return ClientboundBlockEntityDataPacket.create(this);
+    }
+
+    @Override
+    public void onDataPacket(@NotNull Connection net, @NotNull ClientboundBlockEntityDataPacket pkt, HolderLookup.@NotNull Provider lookupProvider) {
+        super.onDataPacket(net, pkt, lookupProvider);
     }
 }
