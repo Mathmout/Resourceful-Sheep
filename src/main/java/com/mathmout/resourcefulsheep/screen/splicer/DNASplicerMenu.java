@@ -56,7 +56,7 @@ public class DNASplicerMenu extends AbstractContainerMenu {
         int HOTBAR_START = 28; // 1 + 27
         int TOTAL_SLOTS = 37;  // 1 + 27 + 9
 
-        // 1. Si on clique dans la MACHINE (Slot 0 - Sortie) -> Vers le JOUEUR
+        // Si on clique dans la MACHINE (Slot 0 - Sortie) -> Vers le JOUEUR
         if (i < MACHINE_SLOTS) {
             // Le 'true' remplit en partant de la fin (Hotbar)
             if (!moveItemStackTo(sourceStack, INV_START, TOTAL_SLOTS, true)) {
@@ -64,19 +64,15 @@ public class DNASplicerMenu extends AbstractContainerMenu {
             }
             sourceSlot.onQuickCraft(sourceStack, copyOfSourceStack); // Notifie que l'item a été crafté/sorti
         }
-        // 2. Si on clique dans l'inventaire du JOUEUR
+        // Si on clique dans l'inventaire du JOUEUR
         else {
-            // NOTE : On ne tente JAMAIS de mettre un item dans la machine (index 0)
-            // car c'est un slot de sortie uniquement (isItemValid renvoie false dans le BlockEntity).
-            // On fait donc seulement du rangement Inventaire <-> Hotbar.
-
-            // A. Si Inventaire principal -> Vers Hotbar
+            // Si Inventaire principal -> Vers Hotbar
             if (i < HOTBAR_START) {
                 if (!moveItemStackTo(sourceStack, HOTBAR_START, TOTAL_SLOTS, false)) {
                     return ItemStack.EMPTY;
                 }
             }
-            // B. Si Hotbar -> Vers Inventaire principal
+            // Si Hotbar -> Vers Inventaire principal
             else {
                 if (!moveItemStackTo(sourceStack, INV_START, HOTBAR_START, false)) {
                     return ItemStack.EMPTY;
@@ -84,7 +80,6 @@ public class DNASplicerMenu extends AbstractContainerMenu {
             }
         }
 
-        // --- Gestion de la fin du transfert (Standard) ---
         if (sourceStack.getCount() == 0) {
             sourceSlot.set(ItemStack.EMPTY);
         } else {
@@ -150,8 +145,8 @@ public class DNASplicerMenu extends AbstractContainerMenu {
 
     public int getScaledProgress() {
         int progress = getProgress();
-        int maxProgress = getMaxProgress();  // Max Progress
-        int ArrowNPlusSize = 21; // Taille de la flèche en pixels sur la texture
+        int maxProgress = getMaxProgress();
+        int ArrowNPlusSize = 21;
         return maxProgress != 0 && progress != 0 ? progress * ArrowNPlusSize / maxProgress : 0;
     }
 

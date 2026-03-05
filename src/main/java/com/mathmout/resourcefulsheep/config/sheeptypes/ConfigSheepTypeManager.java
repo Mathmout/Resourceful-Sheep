@@ -48,9 +48,9 @@ public class ConfigSheepTypeManager {
                 try (Reader reader = Files.newBufferedReader(path)) {
                     SheepTypeData data = GSON.fromJson(reader, SheepTypeData.class);
 
-                    if (data != null && data.Resource() != null) {
+                    if (data != null && data.SheepName() != null) {
                         String fileName = path.getFileName().toString();
-                        String resourceId = data.Resource();
+                        String resourceId = data.SheepName();
 
                         if (SHEEP_TYPES.containsKey(resourceId)) {
                             String previousFile = RESOURCE_FILE_MATCHING.get(resourceId);
@@ -81,7 +81,7 @@ public class ConfigSheepTypeManager {
             if (stream.findAny().isEmpty()) {
                 LOGGER.info("No config files found in {}. Creating default configurations...", CONFIG_DIR);
                 for (SheepTypeData defaultType : DefaultSheepTypes.getDefaults()) {
-                    String fileName = defaultType.Resource() + "_sheep.json";
+                    String fileName = defaultType.SheepName() + "_sheep.json";
                     saveSheepType(fileName, defaultType);
                     LOGGER.info("Created default config file: {}", fileName);
                 }
@@ -104,7 +104,7 @@ public class ConfigSheepTypeManager {
         SHEEP_VARIANTS.clear();
         for (SheepTypeData type : SHEEP_TYPES.values()) {
             for (SheepTypeData.TierData tier : type.SheepTier()) {
-                String id = type.Resource().toLowerCase() + "_tier_" + tier.Tier();
+                String id = type.SheepName().toLowerCase() + "_tier_" + tier.Tier();
 
                 List<SheepVariantData.DroppedItems> variantDrops = new ArrayList<>();
                 if (tier.DroppedItems() != null) {
@@ -119,7 +119,7 @@ public class ConfigSheepTypeManager {
 
                 SheepVariantData variant = new SheepVariantData(
                         id,
-                        type.Resource(),
+                        type.SheepName(),
                         tier.Tier(),
                         variantDrops,
                         type.EggColorBackground(),

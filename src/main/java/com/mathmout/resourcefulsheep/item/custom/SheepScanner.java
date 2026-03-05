@@ -61,7 +61,8 @@ public class SheepScanner extends Item {
             pPlayer.playSound(SoundEvents.UI_BUTTON_CLICK.value(), 1.0F, 1.0F);
             return InteractionResult.SUCCESS;
         }
-        return InteractionResult.PASS;    }
+        return InteractionResult.PASS;
+    }
 
     private Component buildSheepInfoComponent(ResourcefulSheepEntity sheep) {
         String variantId = BuiltInRegistries.ENTITY_TYPE.getKey(sheep.getType()).getPath();
@@ -170,8 +171,8 @@ public class SheepScanner extends Item {
     public int getStoredEnergy(ItemStack stack) {
         if (stack.has(ModDataComponents.SHEEP_SCANNER_DATA.get())) {
             CompoundTag tag = stack.get(ModDataComponents.SHEEP_SCANNER_DATA.get());
-                if (tag != null && tag.contains("Energy")) {
-                return tag.getInt("Energy");
+                if (tag != null && tag.contains("energy")) {
+                return tag.getInt("energy");
             }
         }
         return 0;
@@ -184,7 +185,7 @@ public class SheepScanner extends Item {
         CompoundTag tag = stack.getOrDefault(ModDataComponents.SHEEP_SCANNER_DATA.get(), new CompoundTag()).copy();
 
         // On modifie la valeur
-        tag.putInt("Energy", clampedEnergy);
+        tag.putInt("energy", clampedEnergy);
 
         // On sauvegarde le tag dans le composant
         stack.set(ModDataComponents.SHEEP_SCANNER_DATA.get(), tag);    }

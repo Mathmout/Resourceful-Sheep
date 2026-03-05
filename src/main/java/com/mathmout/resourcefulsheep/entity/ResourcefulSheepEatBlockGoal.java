@@ -79,7 +79,7 @@ public class ResourcefulSheepEatBlockGoal extends EatBlockGoal {
         for (Map.Entry<String, String> entry : variant.EtableBocksMap().entrySet()) {
             String key = entry.getKey();
 
-            // 1. Tag
+            // Tag
             if (key.startsWith("#")) {
                 ResourceLocation tagLoc = ResourceLocation.tryParse(key.substring(1));
                 if (tagLoc != null) {
@@ -89,7 +89,7 @@ public class ResourcefulSheepEatBlockGoal extends EatBlockGoal {
                     }
                 }
             }
-            // 2. Item ID
+            // Item ID
             else {
                 if (key.equals(blockId)) {
                     return entry.getValue();
@@ -103,13 +103,9 @@ public class ResourcefulSheepEatBlockGoal extends EatBlockGoal {
     private boolean isEdible(BlockPos pos) {
         SheepVariantData variant = this.sheep.getSheepVariantData();
         BlockState state = this.level.getBlockState(pos);
-
-        // 1. Check Custom (Via la nouvelle méthode helper)
         if (getMatchingReplacement(state, variant) != null) {
             return true;
         }
-
-        // 2. Fallback Vanilla
         return state.is(Blocks.GRASS_BLOCK) || state.is(Blocks.SHORT_GRASS) || state.is(Blocks.FERN);
     }
 

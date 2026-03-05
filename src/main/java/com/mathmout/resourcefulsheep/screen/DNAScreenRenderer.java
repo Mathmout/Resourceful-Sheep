@@ -18,10 +18,7 @@ import net.minecraft.world.entity.animal.Squid;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class DNAScreenRenderer {
 
@@ -82,7 +79,7 @@ public static void renderDnaList(GuiGraphics guiGraphics, int panelX, int panelY
 
         for (String entityId : sortedentitiesList) {
             LivingEntity entity = getEntity(entityId);
-            renderCard(guiGraphics, panelX + 2, currentY, entity, entityId, font);
+            renderCard(guiGraphics, panelX + 2, currentY, entity, entityId, font, "red");
             currentY += CARD_HEIGHT + 2;
         }
         guiGraphics.pose().popPose();
@@ -90,10 +87,17 @@ public static void renderDnaList(GuiGraphics guiGraphics, int panelX, int panelY
         Lighting.setupFor3DItems();
     }
 
-    public static void renderCard(GuiGraphics guiGraphics, int x, int y, LivingEntity entity, String entityId, Font font) {
+    public static void renderCard(GuiGraphics guiGraphics, int x, int y, LivingEntity entity, String entityId, Font font, String color) {
 
         if (entity == null) return;
-        guiGraphics.blit(WIDGETS, x, y, 113, 0, CARD_WIDTH, CARD_HEIGHT);
+        if (Objects.equals(color, "red")){
+            guiGraphics.blit(WIDGETS, x, y, 113, 0, CARD_WIDTH, CARD_HEIGHT);
+        } else if (Objects.equals(color, "green")) {
+            guiGraphics.blit(WIDGETS, x, y, 113, 82, CARD_WIDTH, CARD_HEIGHT);
+        }else if (Objects.equals(color, "blue")) {
+            guiGraphics.blit(WIDGETS, x, y, 113, 123, CARD_WIDTH, CARD_HEIGHT);
+        }
+
         float width = entity.getBbWidth();
         float height = entity.getBbHeight();
 

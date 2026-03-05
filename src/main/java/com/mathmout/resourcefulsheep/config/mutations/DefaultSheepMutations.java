@@ -27,7 +27,7 @@ public class DefaultSheepMutations {
         DefaultMutation.add(new SheepMutation("diamond_tier_1", "diamond_tier_1", "diamond_tier_2", 40));
         DefaultMutation.add(new SheepMutation("emerald_tier_1", "emerald_tier_1", "emerald_tier_2", 40));
         DefaultMutation.add(new SheepMutation("netherite_scrap_tier_1", "netherite_scrap_tier_1", "netherite_scrap_tier_2", 40));
-        DefaultMutation.add(new SheepMutation("nether_star_tier_1", "nether_star_tier_1", "nether_star_tier_2", 20));
+        DefaultMutation.add(new SheepMutation("wither_tier_1", "wither_tier_1", "wither_tier_2", 20));
         DefaultMutation.add(new SheepMutation("netherite_tier_1", "netherite_tier_1", "netherite_tier_2", 20));
 
         // Tier 2 -> Tier 3
@@ -50,7 +50,7 @@ public class DefaultSheepMutations {
         DefaultMutation.add(new SheepMutation("quartz_tier_2", "quartz_tier_2", "quartz_tier_3", 25));
         DefaultMutation.add(new SheepMutation("diamond_tier_2", "diamond_tier_2", "diamond_tier_3", 25));
         DefaultMutation.add(new SheepMutation("emerald_tier_2", "emerald_tier_2", "emerald_tier_3", 25));
-        DefaultMutation.add(new SheepMutation("nether_star_tier_2", "nether_star_tier_2", "nether_star_tier_3", 15));
+        DefaultMutation.add(new SheepMutation("wither_tier_2", "wither_tier_2", "wither_tier_3", 15));
         DefaultMutation.add(new SheepMutation("netherite_tier_2", "netherite_tier_2", "netherite_tier_3", 15));
 
         // Cobblestone + Stone = Diorite

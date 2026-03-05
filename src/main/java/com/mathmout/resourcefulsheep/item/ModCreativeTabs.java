@@ -1,8 +1,10 @@
 package com.mathmout.resourcefulsheep.item;
 
+import com.mathmout.resourcefulsheep.Config;
 import com.mathmout.resourcefulsheep.ResourcefulSheepMod;
 import com.mathmout.resourcefulsheep.block.ModBlocks;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
@@ -26,6 +28,7 @@ public class ModCreativeTabs {
                     .displayItems((itemDisplayParameters, output) -> {
                         output.accept(ModItems.LASSO.get());
                         output.accept(ModItems.SHEEP_SCANNER.get());
+                        output.accept(getChargedSheepScanner());
                         output.accept(ModItems.IRON_SYRINGE.get());
                         output.accept(ModItems.DIAMOND_SYRINGE.get());
                         output.accept(ModItems.NETHERITE_SYRINGE.get());
@@ -39,6 +42,14 @@ public class ModCreativeTabs {
                         }
                     })
                         .build());
+
+    private static ItemStack getChargedSheepScanner(){
+        ItemStack sheepScanner = new ItemStack(ModItems.SHEEP_SCANNER.get());
+        CompoundTag tag = new CompoundTag();
+        tag.putInt("energy", Config.SHEEP_SCANNER_CAPACITY.get());
+        sheepScanner.set(ModDataComponents.SHEEP_SCANNER_DATA.get(), tag);
+        return sheepScanner;
+    }
 
     public static void register(IEventBus eventBus) {
         CREATIVE_MODE_TAB.register(eventBus);

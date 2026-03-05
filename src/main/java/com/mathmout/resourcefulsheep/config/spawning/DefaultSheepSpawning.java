@@ -32,10 +32,6 @@ public class DefaultSheepSpawning {
         defaultSpawning.add(new SheepSpawningData("sand_tier_1", 1, 1, 512, 1,
                 List.of(), true));
 
-        //Nether Star
-        defaultSpawning.add(new SheepSpawningData("nether_star_tier_1", 1, 1, 512, 1,
-                List.of("minecraft:soul_sand_valley"), false));
-
         //Gold
         defaultSpawning.add(new SheepSpawningData("gold_tier_1", 1, 1, 1024, 1,
                 List.of("minecraft:wooded_badlands"), true));

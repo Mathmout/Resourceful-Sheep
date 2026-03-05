@@ -128,7 +128,7 @@ public class DynamicSheepTextureGenerator {
         int furPixelsTotal = calculateTotalPixels(FUR_REGIONS);
 
         SheepTypeData sheepType = ConfigSheepTypeManager.getSheepTypes().stream()
-                .filter(st -> st.Resource().equals(variant.Resource()))
+                .filter(st -> st.SheepName().equals(variant.Resource()))
                 .findFirst()
                 .orElse(null);
         if (sheepType == null) return;

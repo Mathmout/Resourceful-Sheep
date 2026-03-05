@@ -7,11 +7,16 @@ import com.mathmout.resourcefulsheep.config.sheeptypes.ConfigSheepTypeManager;
 import com.mathmout.resourcefulsheep.config.spawning.ConfigSheepSpawningManager;
 import com.mathmout.resourcefulsheep.config.spawning.SheepSpawningData;
 import com.mathmout.resourcefulsheep.entity.custom.SheepVariantData;
+import com.mathmout.resourcefulsheep.item.ModDataComponents;
+import com.mathmout.resourcefulsheep.item.ModItems;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
+import mezz.jei.api.ingredients.subtypes.ISubtypeInterpreter;
+import mezz.jei.api.ingredients.subtypes.UidContext;
 import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.registration.IRecipeCategoryRegistration;
 import mezz.jei.api.registration.IRecipeRegistration;
+import mezz.jei.api.registration.ISubtypeRegistration;
 import mezz.jei.api.runtime.IJeiRuntime;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -19,9 +24,11 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.biome.Biome;
 import org.jetbrains.annotations.NotNull;
 
@@ -133,10 +140,11 @@ public class JEIResourcefulSheepModPlugin implements IModPlugin {
                 int end = Math.min(i + eatingPairsPerPage, entries.size());
                 List<Map.Entry<String, String>> pageEntries = entries.subList(i, end);
                 wrappedRecipes.add(new SheepEatingRecipeWrapper(variant, pageEntries));
+            }
         }
+        return wrappedRecipes;
     }
-    return wrappedRecipes;
-}
+
     private List<Map.Entry<String, String>> getEntriesForVariant(SheepVariantData variant) {
         Map<String, String> map = variant.EtableBocksMap();
         if (map == null || map.isEmpty()) {
@@ -152,5 +160,31 @@ public class JEIResourcefulSheepModPlugin implements IModPlugin {
     @Override
     public void onRuntimeAvailable(@NotNull IJeiRuntime jeiRuntime) {
         IModPlugin.super.onRuntimeAvailable(jeiRuntime);
+    }
+
+    @Override
+    public void registerItemSubtypes(ISubtypeRegistration registration) {
+        registration.registerSubtypeInterpreter(
+                ModItems.SHEEP_SCANNER.get(),
+                new ISubtypeInterpreter<>() {
+
+                    @Override
+                    public String getSubtypeData(@NotNull ItemStack stack, @NotNull UidContext context) {
+                        // TA LOGIQUE ICI :
+                        if (stack.has(ModDataComponents.SHEEP_SCANNER_DATA.get())) {
+                            CompoundTag tag = stack.get(ModDataComponents.SHEEP_SCANNER_DATA.get());
+                            if (tag != null && tag.contains("energy")) {
+                                return "energy_" + tag.getInt("energy");
+                            }
+                        }
+                        return "";
+                    }
+
+                    @Override
+                    public @NotNull String getLegacyStringSubtypeInfo(@NotNull ItemStack ingredient, @NotNull UidContext context) {
+                        return "";
+                    }
+                }
+        );
     }
 }

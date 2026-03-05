@@ -65,7 +65,7 @@ public class DNASequencerScreen extends AbstractContainerScreen<DNASequencerMenu
         }
 
         // Energy
-        guiGraphics.blit(WIDGETS, x + 23, y + 13, 12, 19, 11, 60);
+        guiGraphics.blit(WIDGETS, x + 153, y + 13, 12, 19, 11, 60);
 
         int stored = menu.getEnergy();
         int max = menu.getMaxEnergy();
@@ -73,7 +73,7 @@ public class DNASequencerScreen extends AbstractContainerScreen<DNASequencerMenu
             int barHeight = 60;
             int scaledHeight = Math.min((int) (((float) stored / max) * barHeight), barHeight);
             int yOffset = barHeight - scaledHeight;
-            guiGraphics.blit(WIDGETS, x + 23, y + 13 + yOffset, 0, 19 + yOffset, 11, scaledHeight);
+            guiGraphics.blit(WIDGETS, x + 153, y + 13 + yOffset, 0, 19 + yOffset, 11, scaledHeight);
         }
     }
 

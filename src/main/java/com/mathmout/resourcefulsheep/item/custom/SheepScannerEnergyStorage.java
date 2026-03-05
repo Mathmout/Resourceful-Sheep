@@ -36,7 +36,7 @@ public class SheepScannerEnergyStorage implements IEnergyStorage {
     public int getEnergyStored() {
         // On récupère le CompoundTag, s'il n'existe pas, l'énergie est 0
         CompoundTag tag = itemStack.get(ModDataComponents.SHEEP_SCANNER_DATA.get());
-        return (tag != null && tag.contains("Energy")) ? tag.getInt("Energy") : 0;
+        return (tag != null && tag.contains("energy")) ? tag.getInt("energy") : 0;
     }
 
     @Override
@@ -56,7 +56,7 @@ public class SheepScannerEnergyStorage implements IEnergyStorage {
 
     private void setEnergy(int energy) {
         CompoundTag tag = itemStack.getOrDefault(ModDataComponents.SHEEP_SCANNER_DATA.get(), new CompoundTag()).copy();
-        tag.putInt("Energy", energy);
+        tag.putInt("energy", energy);
         itemStack.set(ModDataComponents.SHEEP_SCANNER_DATA.get(), tag);
     }
 }

@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 
 public record SheepTypeData(
-        String Resource,
+        String SheepName,
         String EggColorBackground,
         String EggColorSpotsNTitle,
         List<String> FoodItems,

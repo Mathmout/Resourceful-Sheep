@@ -63,7 +63,7 @@ public class DNASplicerScreen extends AbstractContainerScreen<DNASplicerMenu> {
         tickCounter++;
 
         // Animation du cycle des résultats
-        if (tickCounter % 20 == 0) {
+        if (tickCounter % 40 == 0) {
             if (!possibleResults.isEmpty()) {
                 currentResultIndex = (currentResultIndex + 1) % possibleResults.size();
             }
@@ -77,7 +77,7 @@ public class DNASplicerScreen extends AbstractContainerScreen<DNASplicerMenu> {
             updatePossibleResults();
             lastParent1 = currentP1;
             lastParent2 = currentP2;
-            currentResultIndex = 0; // Reset l'index pour éviter un crash si la nouvelle liste est plus petite
+            currentResultIndex = 0;
         }
     }
 
@@ -103,10 +103,10 @@ public class DNASplicerScreen extends AbstractContainerScreen<DNASplicerMenu> {
         guiGraphics.blit(WIDGETS, x + 3 * space + 2 * CARD_WIDTH - 10, y + 41 - CARD_HEIGHT / 2, 113,41, CARD_WIDTH, CARD_HEIGHT);
 
         // Cards pleine
-        renderDnaCard(guiGraphics, x + space + 10, y + 41 - CARD_HEIGHT / 2, menu.getParent1());
-        renderDnaCard(guiGraphics, x + 2 * space + CARD_WIDTH, y + 41 - CARD_HEIGHT / 2, menu.getParent2());
+        renderDnaCard(guiGraphics, x + space + 10, y + 41 - CARD_HEIGHT / 2, menu.getParent1(), "green");
+        renderDnaCard(guiGraphics, x + 2 * space + CARD_WIDTH, y + 41 - CARD_HEIGHT / 2, menu.getParent2(), "green");
         if (!possibleResults.isEmpty()) {
-            renderDnaCard(guiGraphics, x + 3 * space + 2 * CARD_WIDTH - 10, y + 41 - CARD_HEIGHT / 2, possibleResults.get(currentResultIndex));
+            renderDnaCard(guiGraphics, x + 3 * space + 2 * CARD_WIDTH - 10, y + 41 - CARD_HEIGHT / 2, possibleResults.get(currentResultIndex), "blue");
         }
 
         // Slot
@@ -147,11 +147,11 @@ public class DNASplicerScreen extends AbstractContainerScreen<DNASplicerMenu> {
         DNAScreenRenderer.renderDnaList(guiGraphics, x - 75, y + 8, font, scrollOffset, this.menu.getNeighborDnaList());
     }
 
-    private void renderDnaCard(GuiGraphics guiGraphics, int x, int y, String dnaId) {
+    private void renderDnaCard(GuiGraphics guiGraphics, int x, int y, String dnaId, String color) {
         if (dnaId != null && !dnaId.isEmpty()) {
             LivingEntity entity = DNAScreenRenderer.getEntity(dnaId);
             if (entity != null) {
-                DNAScreenRenderer.renderCard(guiGraphics, x, y, entity, dnaId, font);
+                DNAScreenRenderer.renderCard(guiGraphics, x, y, entity, dnaId, font, color);
             }
         }
     }
@@ -167,7 +167,7 @@ public class DNASplicerScreen extends AbstractContainerScreen<DNASplicerMenu> {
             // On désactive le depth test pour être sûr que ça passe au dessus de tout
             RenderSystem.disableDepthTest();
             guiGraphics.pose().translate(0, 0, 200f);
-            renderDnaCard(guiGraphics, mouseX - CARD_WIDTH / 2, mouseY - CARD_HEIGHT / 2, draggingDna);
+            renderDnaCard(guiGraphics, mouseX - CARD_WIDTH / 2, mouseY - CARD_HEIGHT / 2, draggingDna, "red");
             RenderSystem.enableDepthTest();
         }
 
