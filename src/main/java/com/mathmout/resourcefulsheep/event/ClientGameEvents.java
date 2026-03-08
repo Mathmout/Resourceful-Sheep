@@ -52,7 +52,7 @@ public class ClientGameEvents {
                 if (variant != null && variant.EggColorSpotsNTitle() != null) {
                     // 1. Titre Coloré
                     int nameColor = Integer.parseInt(variant.EggColorSpotsNTitle().substring(1), 16);
-                    String displayName = "§l" + TexteUtils.StringToText(variant.Resource()) + " Resourceful Sheep Egg";
+                    String displayName = "§l" + TexteUtils.StringToText(variant.Name()) + " Resourceful Sheep Egg";
 
                     if (!event.getToolTip().isEmpty()) {
                         event.getToolTip().set(0, Component.literal(displayName).withStyle(Style.EMPTY.withColor(nameColor)));

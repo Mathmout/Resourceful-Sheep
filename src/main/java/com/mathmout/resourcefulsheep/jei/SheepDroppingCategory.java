@@ -145,7 +145,7 @@ public class SheepDroppingCategory implements IRecipeCategory<SheepVariantData> 
         int sheepX = getWidth() / 6;
 
         // Dessiner le mouton
-        JEIUtilitiesMethodes.drawSheep(guiGraphics, recipe.Id(), sheepX, baseY + 3 * scale / 4, scale);
+        JEIUtilitiesMethodes.drawEntity(guiGraphics, recipe.Id(), sheepX, baseY + 3 * scale / 4, scale);
 
         // Tooltip mouton
         List<Component> tips = new ArrayList<>();

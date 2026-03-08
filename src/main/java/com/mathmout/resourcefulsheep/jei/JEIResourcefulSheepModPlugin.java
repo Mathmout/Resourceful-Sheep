@@ -1,6 +1,9 @@
 package com.mathmout.resourcefulsheep.jei;
 
 import com.mathmout.resourcefulsheep.ResourcefulSheepMod;
+import com.mathmout.resourcefulsheep.block.ModBlocks;
+import com.mathmout.resourcefulsheep.config.dnacrossbreeding.ConfigDNACrossbreedingManager;
+import com.mathmout.resourcefulsheep.config.dnacrossbreeding.SheepCrossbreeding;
 import com.mathmout.resourcefulsheep.config.mutations.ConfigSheepMutationManager;
 import com.mathmout.resourcefulsheep.config.mutations.SheepMutation;
 import com.mathmout.resourcefulsheep.config.sheeptypes.ConfigSheepTypeManager;
@@ -14,6 +17,7 @@ import mezz.jei.api.JeiPlugin;
 import mezz.jei.api.ingredients.subtypes.ISubtypeInterpreter;
 import mezz.jei.api.ingredients.subtypes.UidContext;
 import mezz.jei.api.recipe.RecipeType;
+import mezz.jei.api.registration.IRecipeCatalystRegistration;
 import mezz.jei.api.registration.IRecipeCategoryRegistration;
 import mezz.jei.api.registration.IRecipeRegistration;
 import mezz.jei.api.registration.ISubtypeRegistration;
@@ -47,10 +51,18 @@ public class JEIResourcefulSheepModPlugin implements IModPlugin {
             new RecipeType<>(SheepFeedingCategory.UID, SheepVariantData.class);
     public static final RecipeType<SheepEatingRecipeWrapper> EATING_TYPE =
             new RecipeType<>(SheepEatingCategory.UID, SheepEatingRecipeWrapper.class);
+    public static final RecipeType<SheepCrossbreeding> CROSS_BREADING_TYPE =
+            new RecipeType<>(SheepCrossBreedingCategory.UID, SheepCrossbreeding.class);
 
     @Override
     public @NotNull ResourceLocation getPluginUid() {
         return ResourceLocation.fromNamespaceAndPath(ResourcefulSheepMod.MOD_ID, "jei_plugin");
+    }
+
+    @Override
+    public void registerRecipeCatalysts(IRecipeCatalystRegistration registration) {
+        ItemStack splicerStack = new ItemStack(ModBlocks.DNA_SPLICER.get());
+        registration.addRecipeCatalyst(splicerStack, CROSS_BREADING_TYPE);
     }
 
     @Override
@@ -60,6 +72,7 @@ public class JEIResourcefulSheepModPlugin implements IModPlugin {
         registration.addRecipeCategories(new SheepDroppingCategory(registration.getJeiHelpers().getGuiHelper()));
         registration.addRecipeCategories(new SheepFeedingCategory(registration.getJeiHelpers().getGuiHelper()));
         registration.addRecipeCategories(new SheepEatingCategory(registration.getJeiHelpers().getGuiHelper()));
+        registration.addRecipeCategories(new SheepCrossBreedingCategory(registration.getJeiHelpers().getGuiHelper()));
     }
 
     @Override
@@ -127,6 +140,9 @@ public class JEIResourcefulSheepModPlugin implements IModPlugin {
 
         // Eating Recipes
         registration.addRecipes(EATING_TYPE, getWrappedEatingRecipes(variants));
+
+        // Cross Breeding
+        registration.addRecipes(CROSS_BREADING_TYPE, ConfigDNACrossbreedingManager.getSheepCrossbreeding());
     }
 
     private List<SheepEatingRecipeWrapper> getWrappedEatingRecipes(List<SheepVariantData> variants) {

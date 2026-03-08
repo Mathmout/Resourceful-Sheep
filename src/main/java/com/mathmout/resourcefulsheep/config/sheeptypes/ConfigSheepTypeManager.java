@@ -34,14 +34,14 @@ public class ConfigSheepTypeManager {
             loadSheepTypes();
             buildVariants();
         } catch (IOException e) {
-            LOGGER.error("Failed to create config directory: {}", CONFIG_DIR, e);
+            LOGGER.error("[ResourcefulSheep] Failed to create config directory: {}", CONFIG_DIR, e);
         }
     }
 
     private static void loadSheepTypes() {
         SHEEP_TYPES.clear();
         RESOURCE_FILE_MATCHING.clear();
-        LOGGER.info("Validating Sheep Type Data...");
+        LOGGER.info("[ResourcefulSheep] Validating Sheep Type Data...");
 
         try (Stream<Path> stream = Files.list(CONFIG_DIR)) {
             stream.filter(path -> path.toString().endsWith(".json")).forEach(path -> {
@@ -54,40 +54,40 @@ public class ConfigSheepTypeManager {
 
                         if (SHEEP_TYPES.containsKey(resourceId)) {
                             String previousFile = RESOURCE_FILE_MATCHING.get(resourceId);
-                            LOGGER.error("Config Error [SheepType]: The ID '{}' is already defined in '{}'. Ignoring file '{}'.", resourceId, previousFile, fileName);
+                            LOGGER.error("[ResourcefulSheep] Config Error SheepType : The ID '{}' is already defined in '{}'. Ignoring file '{}'.", resourceId, previousFile, fileName);
                             return;
                         }
 
                         if (!fileName.contains(resourceId)) {
-                            LOGGER.warn("Config Warning [SheepType]: File '{}' contains Sheep ID '{}'. Mismatch possible.", fileName, resourceId);
+                            LOGGER.warn("[ResourcefulSheep] Config Warning SheepType : File '{}' contains Sheep ID '{}'. Mismatch possible.", fileName, resourceId);
                         }
 
                         SHEEP_TYPES.put(resourceId, data);
                         RESOURCE_FILE_MATCHING.put(resourceId, fileName);
                     }
                 } catch (JsonSyntaxException e) {
-                    LOGGER.error("JSON SYNTAX ERROR in file '{}': {}", path.getFileName(), e.getMessage());
+                    LOGGER.error("[ResourcefulSheep] JSON SYNTAX ERROR in file '{}': {}", path.getFileName(), e.getMessage());
                 } catch (IOException e) {
-                    LOGGER.error("Failed to read file: {}", path, e);
+                    LOGGER.error("[ResourcefulSheep] Failed to read file: {}", path, e);
                 }
             });
         } catch (IOException e) {
-            LOGGER.error("Failed to list config files", e);
+            LOGGER.error("[ResourcefulSheep] Failed to list config files", e);
         }
     }
 
     private static void createDefaultIfEmpty() {
         try (Stream<Path> stream = Files.list(CONFIG_DIR)) {
             if (stream.findAny().isEmpty()) {
-                LOGGER.info("No config files found in {}. Creating default configurations...", CONFIG_DIR);
+                LOGGER.info("[ResourcefulSheep] No config files found in {}. Creating default configurations...", CONFIG_DIR);
                 for (SheepTypeData defaultType : DefaultSheepTypes.getDefaults()) {
                     String fileName = defaultType.SheepName() + "_sheep.json";
                     saveSheepType(fileName, defaultType);
-                    LOGGER.info("Created default config file: {}", fileName);
+                    LOGGER.info("[ResourcefulSheep] Created default config file: {}", fileName);
                 }
             }
         } catch (IOException e) {
-            LOGGER.error("Failed to check if config directory is empty: {}", CONFIG_DIR, e);
+            LOGGER.error("[ResourcefulSheep] Failed to check if config directory is empty: {}", CONFIG_DIR, e);
         }
     }
 
@@ -96,7 +96,7 @@ public class ConfigSheepTypeManager {
         try (Writer writer = Files.newBufferedWriter(filePath)) {
             GSON.toJson(data, writer);
         } catch (IOException e) {
-            LOGGER.error("Failed to write sheep type data to file: {}", filePath, e);
+            LOGGER.error("[ResourcefulSheep] Failed to write sheep type data to file: {}", filePath, e);
         }
     }
 
@@ -132,7 +132,7 @@ public class ConfigSheepTypeManager {
                 SHEEP_VARIANTS.put(id, variant);
             }
         }
-        LOGGER.info("Loaded {} sheep variants from {} sheep types.", SHEEP_VARIANTS.size(), SHEEP_TYPES.size());
+        LOGGER.info("[ResourcefulSheep] Loaded {} sheep variants from {} sheep types.", SHEEP_VARIANTS.size(), SHEEP_TYPES.size());
     }
 
     public static Map<String, SheepVariantData> getSheepVariant() {
@@ -144,16 +144,16 @@ public class ConfigSheepTypeManager {
     }
 
     public static void validateConfig() {
-        SHEEP_TYPES.forEach((resource, data) -> {
+        SHEEP_TYPES.forEach((sheepName, data) -> {
 
             // Food Items
             if (data.FoodItems() != null) {
                 for (String item : data.FoodItems()) {
                     ResourceLocation loc = ResourceLocation.tryParse(item.startsWith("#") ? item.substring(1) : item);
                     if (loc == null) {
-                        LOGGER.warn("Config Warning [SheepType]: Invalid tag format '{}'.", item);
+                        LOGGER.warn("[ResourcefulSheep] Config Warning SheepType : Invalid tag format '{}'.", item);
                     } else if (!item.startsWith("#") && !BuiltInRegistries.ITEM.containsKey(loc)) {
-                        LOGGER.warn("Config Warning [SheepType]: FoodItem '{}' for '{}' sheep not found in Item Registry.", item, resource);
+                        LOGGER.warn("[ResourcefulSheep] Config Warning SheepType : FoodItem '{}' for '{}' sheep not found in Item Registry.", item, sheepName);
                     }
                 }
             }
@@ -162,7 +162,7 @@ public class ConfigSheepTypeManager {
             if (data.ImmuneEffects() != null) {
                 for (String effect : data.ImmuneEffects()) {
                     if (!BuiltInRegistries.MOB_EFFECT.containsKey(ResourceLocation.parse(effect))) {
-                        LOGGER.warn("Config Warning [SheepType]: ImmuneEffect '{}' for '{}' sheep not found in Effect Registry.", effect, resource);
+                        LOGGER.warn("[ResourcefulSheep] Config Warning SheepType : ImmuneEffect '{}' for '{}' sheep not found in Effect Registry.", effect, sheepName);
                     }
                 }
             }
@@ -173,14 +173,14 @@ public class ConfigSheepTypeManager {
                     ResourceLocation locEaten = ResourceLocation.tryParse(eatenBlockId.startsWith("#") ? eatenBlockId.substring(1) : eatenBlockId);
 
                     if (locEaten == null) {
-                        LOGGER.warn("Config Warning [SheepType]: Invalid Eaten Block format '{}'.", eatenBlockId);
+                        LOGGER.warn("[ResourcefulSheep] Config Warning SheepType : Invalid Eaten Block format '{}'.", eatenBlockId);
                     } else if (!eatenBlockId.startsWith("#") && !BuiltInRegistries.BLOCK.containsKey(locEaten)) {
-                        LOGGER.warn("Config Warning [SheepType]: EtableBlock key '{}' (eaten) for '{}' sheep not found in Block Registry.", eatenBlockId, resource);
+                        LOGGER.warn("[ResourcefulSheep] Config Warning SheepType : EtableBlock key '{}' (eaten) for '{}' sheep not found in Block Registry.", eatenBlockId, sheepName);
                     }
                     if (replacementBlockId.startsWith("#")) {
-                        LOGGER.warn("Config Warning [SheepType]: Replacement block '{}' cannot be a Tag! It must be a specific block.", replacementBlockId);
+                        LOGGER.warn("[ResourcefulSheep] Config Warning SheepType : Replacement block '{}' cannot be a Tag! It must be a specific block.", replacementBlockId);
                     } else if (!BuiltInRegistries.BLOCK.containsKey(ResourceLocation.parse(replacementBlockId))) {
-                        LOGGER.warn("Config Warning [SheepType]: EtableBlock value '{}' (replacement) for '{}' sheep not found in Block Registry.", replacementBlockId, resource);
+                        LOGGER.warn("[ResourcefulSheep] Config Warning SheepType : EtableBlock value '{}' (replacement) for '{}' sheep not found in Block Registry.", replacementBlockId, sheepName);
                     }
                 });
             }
@@ -193,16 +193,16 @@ public class ConfigSheepTypeManager {
                             String itemId = dropData.ItemId();
                             if (itemId.startsWith("#")) {
                                 if (ResourceLocation.tryParse(itemId.substring(1)) == null) {
-                                    LOGGER.warn("Config Warning: Invalid Tag format '{}'", itemId);
+                                    LOGGER.warn("[ResourcefulSheep] Config Warning : Invalid Tag format '{}'", itemId);
                                 }
                             } else if (!BuiltInRegistries.ITEM.containsKey(ResourceLocation.parse(itemId))) {
-                                LOGGER.warn("Config Warning [SheepType]: DroppedItem '{}' in Tier {} for {} sheep not found in Item Registry.", itemId, tier.Tier(), resource);
+                                LOGGER.warn("[ResourcefulSheep] Config Warning SheepType : DroppedItem '{}' in Tier {} for {} sheep not found in Item Registry.", itemId, tier.Tier(), sheepName);
                             }
                         }
                     }
                 }
             }
         });
-    LOGGER.info("Sheep Type Data Validation Complete.");
+    LOGGER.info("[ResourcefulSheep] Sheep Type Data Validation Complete.");
     }
 }

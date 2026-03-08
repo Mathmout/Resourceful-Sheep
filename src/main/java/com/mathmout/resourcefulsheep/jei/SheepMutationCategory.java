@@ -82,9 +82,9 @@ public class SheepMutationCategory implements IRecipeCategory<SheepMutation> {
         g.drawString(Minecraft.getInstance().font, "+", plusX, baseY, 0xFF404040, false);
         g.drawString(Minecraft.getInstance().font, "=", eqX, baseY, 0xFF404040, false);
 
-        JEIUtilitiesMethodes.drawSheep(g, recipe.MomId(), momX, baseY + 3 * scale / 4, scale);
-        JEIUtilitiesMethodes.drawSheep(g, recipe.DadId(), dadX, baseY + 3 * scale / 4, scale);
-        JEIUtilitiesMethodes.drawSheep(g, recipe.ChildId(), childX, baseY + 3 * scale / 4, scale);
+        JEIUtilitiesMethodes.drawEntity(g, recipe.MomId(), momX, baseY + 3 * scale / 4, scale);
+        JEIUtilitiesMethodes.drawEntity(g, recipe.DadId(), dadX, baseY + 3 * scale / 4, scale);
+        JEIUtilitiesMethodes.drawEntity(g, recipe.ChildId(), childX, baseY + 3 * scale / 4, scale);
 
         g.drawString(Minecraft.getInstance().font, "Chance of success : " + recipe.Chance() + " %",
                 ((childX + momX) - Minecraft.getInstance().font.width("Chance of success : " + recipe.Chance() + " %")) / 2,

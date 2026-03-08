@@ -126,7 +126,7 @@ public class SheepFeedingCategory implements IRecipeCategory<SheepVariantData> {
         int baseY = getHeight() / 2;
         int sheepX = 30;
 
-        JEIUtilitiesMethodes.drawSheep(guiGraphics, recipe.Id(), sheepX, baseY + 3 * scale / 4, scale);
+        JEIUtilitiesMethodes.drawEntity(guiGraphics, recipe.Id(), sheepX, baseY + 3 * scale / 4, scale);
 
         List<Component> tips = new ArrayList<>();
         if (JEIUtilitiesMethodes.isMouseOver(mouseX, mouseY, sheepX - scale, baseY - scale, sheepX + scale, baseY + scale)) {

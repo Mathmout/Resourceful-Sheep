@@ -30,7 +30,7 @@ public class ConfigDNACrossbreedingManager {
             createDefaultIfEmpty();
             loadSheepCrossbreeding();
         } catch (IOException e) {
-            LOGGER.error("Failed to create config directory: {}", CONFIG_DIR, e);
+            LOGGER.error("[ResourcefulSheep] Failed to create config directory: {}", CONFIG_DIR, e);
         }
     }
 
@@ -44,27 +44,27 @@ public class ConfigDNACrossbreedingManager {
                         SHEEP_CROSSBREEDING.add(data);
                     }
                 } catch (IOException e) {
-                    LOGGER.error("Failed to read sheep crossbreeding data from file: {}", path, e);
+                    LOGGER.error("[ResourcefulSheep] Failed to read sheep crossbreeding data from file: {}", path, e);
                 }
             });
         } catch (IOException e) {
-            LOGGER.error("Failed to list sheep crossbreeding configurations in: {}", CONFIG_DIR, e);
+            LOGGER.error("[ResourcefulSheep] Failed to list sheep crossbreeding configurations in: {}", CONFIG_DIR, e);
         }
-        LOGGER.info("Loaded {} sheep crossbreeding.", SHEEP_CROSSBREEDING.size());
+        LOGGER.info("[ResourcefulSheep] Loaded {} sheep crossbreeding.", SHEEP_CROSSBREEDING.size());
     }
 
     private static void createDefaultIfEmpty() {
         try (Stream<Path> stream = Files.list(CONFIG_DIR)) {
             if (stream.findAny().isEmpty()) {
-                LOGGER.info("No config files found in {}. Creating default configurations...", CONFIG_DIR);
+                LOGGER.info("[ResourcefulSheep] No config files found in {}. Creating default configurations...", CONFIG_DIR);
                 for (SheepCrossbreeding defaultsheepCrossbreeding : DefaultDNACrossbreeding.getDefaults()) {
                     String fileName = defaultsheepCrossbreeding.ChildId().split(":")[1] + ".json";
                     saveSheepCrossbreeding(fileName, defaultsheepCrossbreeding);
-                    LOGGER.info("Created default config file: {}", fileName);
+                    LOGGER.info("[ResourcefulSheep] Created default config file: {}", fileName);
                 }
             }
         } catch (IOException e) {
-            LOGGER.error("Failed to check if config directory is empty: {}", CONFIG_DIR, e);
+            LOGGER.error("[ResourcefulSheep] Failed to check if config directory is empty: {}", CONFIG_DIR, e);
         }
     }
 
@@ -73,33 +73,33 @@ public class ConfigDNACrossbreedingManager {
         try (Writer writer = Files.newBufferedWriter(filePath)) {
             GSON.toJson(data, writer);
         } catch (IOException e) {
-            LOGGER.error("Failed to write sheep crossbreeding data to file: {}", filePath, e);
+            LOGGER.error("[ResourcefulSheep] Failed to write sheep crossbreeding data to file: {}", filePath, e);
         }
     }
 
     public static void validateConfig() {
-        LOGGER.info("Validating DNA Crossbreeding IDs...");
+        LOGGER.info("[ResourcefulSheep] Validating DNA Crossbreeding IDs...");
 
         for (SheepCrossbreeding recipe : SHEEP_CROSSBREEDING) {
             if (!BuiltInRegistries.ENTITY_TYPE.containsKey(ResourceLocation.parse(recipe.MomId()))) {
-                LOGGER.warn("Config Warning [DNA Crossbreeding]: MomId '{}' not found in Entity Registry.", recipe.MomId());
+                LOGGER.warn("[ResourcefulSheep] Config Warning DNA Crossbreeding : MomId '{}' not found in Entity Registry.", recipe.MomId());
             }
 
             if (!BuiltInRegistries.ENTITY_TYPE.containsKey(ResourceLocation.parse(recipe.DadId()))) {
-                LOGGER.warn("Config Warning [DNA Crossbreeding]: DadId '{}' not found in Entity Registry.", recipe.DadId());
+                LOGGER.warn("[ResourcefulSheep] Config Warning DNA Crossbreeding : DadId '{}' not found in Entity Registry.", recipe.DadId());
             }
 
             if (!BuiltInRegistries.ENTITY_TYPE.containsKey(ResourceLocation.parse(recipe.ChildId()))) {
-                LOGGER.warn("Config Warning [DNA Crossbreeding]: ChildId '{}' not found in Entity Registry.", recipe.ChildId());
+                LOGGER.warn("[ResourcefulSheep] Config Warning DNA Crossbreeding : ChildId '{}' not found in Entity Registry.", recipe.ChildId());
             }
 
             for (String failId : recipe.ResultsIfFail()) {
                 if (!BuiltInRegistries.ENTITY_TYPE.containsKey(ResourceLocation.parse(failId))) {
-                    LOGGER.warn("Config Warning [DNA Crossbreeding]: ResultsIfFail Item '{}' not found in Entity Registry.", failId);
+                    LOGGER.warn("[ResourcefulSheep] Config Warning DNA Crossbreeding : ResultsIfFail Item '{}' not found in Entity Registry.", failId);
                 }
             }
         }
-        LOGGER.info("DNA Crossbreeding Config Validation Complete.");
+        LOGGER.info("[ResourcefulSheep] DNA Crossbreeding Config Validation Complete.");
     }
 
     public static List<SheepCrossbreeding> getSheepCrossbreeding() {

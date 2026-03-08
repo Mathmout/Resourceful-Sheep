@@ -469,17 +469,10 @@ public class DefaultSheepTypes {
 
         // Wither
         DefaultSheep.add(new SheepTypeData("wither", "#e7e5ff", "#777bc7",
-                List.of("minecraft:nether_wart"),
-                true,
                 List.of(),
-                new HashMap<>(Map.of(
-                        "minecraft:crimson_nylium", "minecraft:netherrack",
-                        "minecraft:warped_nylium", "minecraft:netherrack",
-                        "minecraft:crimson_fungus", "minecraft:air",
-                        "minecraft:crimson_roots", "minecraft:air",
-                        "minecraft:warped_fungus","minecraft:air",
-                        "minecraft:warped_roots", "minecraft:air"
-                )),
+                false,
+                List.of(),
+                new HashMap<>(Map.of()),
                 List.of(
                         new SheepTypeData.TierData(1, List.of(
                                 new SheepTypeData.TierData.DroppedItem("minecraft:nether_star", 0, 0)  //0
@@ -642,14 +635,73 @@ public class DefaultSheepTypes {
                                 new SheepTypeData.TierData.DroppedItem("minecraft:breeze_rod", 1, 2)
                         )),
                         new SheepTypeData.TierData(2, List.of(
-                                new SheepTypeData.TierData.DroppedItem("minecraft:breeze_rod", 2, 5)
+                                new SheepTypeData.TierData.DroppedItem("minecraft:breeze_rod", 2, 4)
                         )),
                         new SheepTypeData.TierData(3, List.of(
-                                new SheepTypeData.TierData.DroppedItem("minecraft:breeze_rod", 4, 8)
+                                new SheepTypeData.TierData.DroppedItem("minecraft:breeze_rod", 3, 6)
                         ))
                 )
         ));
 
+        // Squid
+        DefaultSheep.add(new SheepTypeData("squid", "#796571", "#4a404a",
+                List.of(),
+                false,
+                List.of(),
+                new HashMap<>(Map.of()),
+                List.of(
+                        new SheepTypeData.TierData(1, List.of(
+                                new SheepTypeData.TierData.DroppedItem("minecraft:ink_sac", 1, 2)
+                        )),
+                        new SheepTypeData.TierData(2, List.of(
+                                new SheepTypeData.TierData.DroppedItem("minecraft:ink_sac", 2, 5)
+                        )),
+                        new SheepTypeData.TierData(3, List.of(
+                                new SheepTypeData.TierData.DroppedItem("minecraft:ink_sac", 4, 6)
+                        ))
+                )
+        ));
+
+        // Guardian
+        DefaultSheep.add(new SheepTypeData("guardian", "#668980", "#396552",
+                List.of(),
+                false,
+                List.of(),
+                new HashMap<>(Map.of()),
+                List.of(
+                        new SheepTypeData.TierData(1, List.of(
+                                new SheepTypeData.TierData.DroppedItem("minecraft:prismarine_crystals", 1, 2),
+                                new SheepTypeData.TierData.DroppedItem("minecraft:prismarine_shard", 5, 8)
+                        )),
+                        new SheepTypeData.TierData(2, List.of(
+                                new SheepTypeData.TierData.DroppedItem("minecraft:prismarine_crystals", 3, 5),
+                                new SheepTypeData.TierData.DroppedItem("minecraft:prismarine_shard", 9, 13)
+                        )),
+                        new SheepTypeData.TierData(3, List.of(
+                                new SheepTypeData.TierData.DroppedItem("minecraft:prismarine_crystals", 4, 9),
+                                new SheepTypeData.TierData.DroppedItem("minecraft:prismarine_shard", 13, 17)
+                        ))
+                )
+        ));
+
+        // Bee
+        DefaultSheep.add(new SheepTypeData("Bee", "#edc343", "#ab6720",
+                List.of(),
+                false,
+                List.of(),
+                new HashMap<>(Map.of()),
+                List.of(
+                        new SheepTypeData.TierData(1, List.of(
+                                new SheepTypeData.TierData.DroppedItem("minecraft:honey_block", 0, 1)
+                        )),
+                        new SheepTypeData.TierData(2, List.of(
+                                new SheepTypeData.TierData.DroppedItem("minecraft:honey_block", 1, 2)
+                        )),
+                        new SheepTypeData.TierData(3, List.of(
+                                new SheepTypeData.TierData.DroppedItem("minecraft:honey_block", 2, 3)
+                        ))
+                )
+        ));
         return DefaultSheep;
     }
 }

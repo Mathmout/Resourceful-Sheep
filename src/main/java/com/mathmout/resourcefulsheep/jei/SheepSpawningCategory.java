@@ -2,8 +2,6 @@ package com.mathmout.resourcefulsheep.jei;
 
 import com.mathmout.resourcefulsheep.ResourcefulSheepMod;
 import com.mathmout.resourcefulsheep.config.spawning.SheepSpawningData;
-import com.mathmout.resourcefulsheep.item.ModItems;
-import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.drawable.IDrawable;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
@@ -29,7 +27,10 @@ public class SheepSpawningCategory implements IRecipeCategory<SheepSpawningRecip
     private final IDrawable icon;
 
     public SheepSpawningCategory(IGuiHelper guiHelper) {
-        this.icon = guiHelper.createDrawableIngredient(VanillaTypes.ITEM_STACK, new ItemStack(ModItems.SHEEP_SCANNER.get()));
+        ResourceLocation iconLocation = ResourceLocation.fromNamespaceAndPath(ResourcefulSheepMod.MOD_ID, "textures/item/sheep_scanner.png");
+        this.icon = guiHelper.drawableBuilder(iconLocation, 0, 0, 16, 16)
+                .setTextureSize(16, 16)
+                .build();
     }
 
     @Override
@@ -69,7 +70,7 @@ public class SheepSpawningCategory implements IRecipeCategory<SheepSpawningRecip
         int scale = 22;
         int sheepX = getWidth() / 6;
 
-        JEIUtilitiesMethodes.drawSheep(g, spawnData.sheepId(), sheepX, sheepX + scale/2, scale);
+        JEIUtilitiesMethodes.drawEntity(g, spawnData.sheepId(), sheepX, sheepX + scale/2, scale);
 
         List<Component> tips = new ArrayList<>();
         if (JEIUtilitiesMethodes.isMouseOver(mouseX, mouseY, sheepX - scale, sheepX - scale, sheepX + scale, sheepX + scale/2)) {

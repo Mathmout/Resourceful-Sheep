@@ -5,7 +5,7 @@ import java.util.Map;
 
 public record SheepVariantData(
         String Id,
-        String Resource,
+        String Name,
         int Tier,
         List<DroppedItems> DroppedItems,
         String EggColorBackground,

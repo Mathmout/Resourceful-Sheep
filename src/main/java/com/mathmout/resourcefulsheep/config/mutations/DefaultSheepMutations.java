@@ -8,6 +8,7 @@ public class DefaultSheepMutations {
         List<SheepMutation> DefaultMutation = new ArrayList<>();
 
         // Tier 1 -> Tier 2
+        // Resources
         DefaultMutation.add(new SheepMutation("cobblestone_tier_1", "cobblestone_tier_1", "cobblestone_tier_2", 40));
         DefaultMutation.add(new SheepMutation("stone_tier_1", "stone_tier_1", "stone_tier_2", 40));
         DefaultMutation.add(new SheepMutation("sand_tier_1", "sand_tier_1", "sand_tier_2", 40));
@@ -30,7 +31,20 @@ public class DefaultSheepMutations {
         DefaultMutation.add(new SheepMutation("wither_tier_1", "wither_tier_1", "wither_tier_2", 20));
         DefaultMutation.add(new SheepMutation("netherite_tier_1", "netherite_tier_1", "netherite_tier_2", 20));
 
+        // Mobs
+        DefaultMutation.add(new SheepMutation("slime_tier_1", "slime_tier_1", "slime_tier_2", 30));
+        DefaultMutation.add(new SheepMutation("squid_tier_1", "squid_tier_1", "squid_tier_2", 30));
+        DefaultMutation.add(new SheepMutation("bee_tier_1", "bee_tier_1", "bee_tier_2", 30));
+        DefaultMutation.add(new SheepMutation("creeper_tier_1", "creeper_tier_1", "creeper_tier_2", 25));
+        DefaultMutation.add(new SheepMutation("blaze_tier_1", "blaze_tier_1", "blaze_tier_2", 25));
+        DefaultMutation.add(new SheepMutation("enderman_tier_1", "enderman_tier_1", "enderman_tier_2", 25));
+        DefaultMutation.add(new SheepMutation("breeze_tier_1", "breeze_tier_1", "breeze_tier_2", 20));
+        DefaultMutation.add(new SheepMutation("guardian_tier_1", "guardian_tier_1", "guardian_tier_2", 20));
+        DefaultMutation.add(new SheepMutation("ghast_tier_1", "ghast_tier_1", "ghast_tier_2", 15));
+        DefaultMutation.add(new SheepMutation("shulker_tier_1", "shulker_tier_1", "shulker_tier_2", 15));
+
         // Tier 2 -> Tier 3
+        // Resources
         DefaultMutation.add(new SheepMutation("cobblestone_tier_2", "cobblestone_tier_2", "cobblestone_tier_3", 25));
         DefaultMutation.add(new SheepMutation("stone_tier_2", "stone_tier_2", "stone_tier_3", 25));
         DefaultMutation.add(new SheepMutation("sand_tier_2", "sand_tier_2", "sand_tier_3", 25));
@@ -52,6 +66,18 @@ public class DefaultSheepMutations {
         DefaultMutation.add(new SheepMutation("emerald_tier_2", "emerald_tier_2", "emerald_tier_3", 25));
         DefaultMutation.add(new SheepMutation("wither_tier_2", "wither_tier_2", "wither_tier_3", 15));
         DefaultMutation.add(new SheepMutation("netherite_tier_2", "netherite_tier_2", "netherite_tier_3", 15));
+
+        // Mobs
+        DefaultMutation.add(new SheepMutation("slime_tier_2", "slime_tier_2", "slime_tier_3", 20));
+        DefaultMutation.add(new SheepMutation("squid_tier_2", "squid_tier_2", "squid_tier_3", 20));
+        DefaultMutation.add(new SheepMutation("bee_tier_2", "bee_tier_2", "bee_tier_3", 20));
+        DefaultMutation.add(new SheepMutation("creeper_tier_2", "creeper_tier_2", "creeper_tier_3", 15));
+        DefaultMutation.add(new SheepMutation("blaze_tier_2", "blaze_tier_2", "blaze_tier_3", 15));
+        DefaultMutation.add(new SheepMutation("enderman_tier_2", "enderman_tier_2", "enderman_tier_3", 15));
+        DefaultMutation.add(new SheepMutation("breeze_tier_2", "breeze_tier_2", "breeze_tier_3", 15));
+        DefaultMutation.add(new SheepMutation("guardian_tier_2", "guardian_tier_2", "guardian_tier_3", 15));
+        DefaultMutation.add(new SheepMutation("ghast_tier_2", "ghast_tier_2", "ghast_tier_3", 10));
+        DefaultMutation.add(new SheepMutation("shulker_tier_2", "shulker_tier_2", "shulker_tier_3", 10));
 
         // Cobblestone + Stone = Diorite
         DefaultMutation.add(new SheepMutation("cobblestone_tier_3", "stone_tier_3", "diorite_tier_1", 30));

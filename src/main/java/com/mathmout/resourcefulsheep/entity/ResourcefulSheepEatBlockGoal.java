@@ -71,10 +71,10 @@ public class ResourcefulSheepEatBlockGoal extends EatBlockGoal {
         }
     }
 
-    private String getMatchingReplacement(BlockState state, SheepVariantData variant) {
+    private String getMatchingReplacement(BlockState blockState, SheepVariantData variant) {
         if (variant == null || variant.EtableBocksMap() == null) return null;
 
-        String blockId = BuiltInRegistries.BLOCK.getKey(state.getBlock()).toString();
+        String blockId = BuiltInRegistries.BLOCK.getKey(blockState.getBlock()).toString();
 
         for (Map.Entry<String, String> entry : variant.EtableBocksMap().entrySet()) {
             String key = entry.getKey();
@@ -84,7 +84,7 @@ public class ResourcefulSheepEatBlockGoal extends EatBlockGoal {
                 ResourceLocation tagLoc = ResourceLocation.tryParse(key.substring(1));
                 if (tagLoc != null) {
                     TagKey<Block> tagKey = TagKey.create(Registries.BLOCK, tagLoc);
-                    if (state.is(tagKey)) {
+                    if (blockState.is(tagKey)) {
                         return entry.getValue();
                     }
                 }
@@ -100,13 +100,13 @@ public class ResourcefulSheepEatBlockGoal extends EatBlockGoal {
     }
 
     // Vérifie si un bloc est comestible
-    private boolean isEdible(BlockPos pos) {
+    private boolean isEdible(BlockPos blockPos) {
         SheepVariantData variant = this.sheep.getSheepVariantData();
-        BlockState state = this.level.getBlockState(pos);
-        if (getMatchingReplacement(state, variant) != null) {
-            return true;
+        BlockState blockState = this.level.getBlockState(blockPos);
+        if (variant != null && variant.EtableBocksMap() != null && !variant.EtableBocksMap().isEmpty()) {
+            return getMatchingReplacement(blockState, variant) != null;
         }
-        return state.is(Blocks.GRASS_BLOCK) || state.is(Blocks.SHORT_GRASS) || state.is(Blocks.FERN);
+        return blockState.is(Blocks.GRASS_BLOCK) || blockState.is(Blocks.SHORT_GRASS) || blockState.is(Blocks.FERN);
     }
 
     // Exécute l'action de manger
@@ -124,9 +124,8 @@ public class ResourcefulSheepEatBlockGoal extends EatBlockGoal {
             return true;
         }
 
-        // 1. Custom : On récupère le remplacement via le Helper
+        // Custom
         String newId = getMatchingReplacement(currentBlockState, variant);
-
         if (newId != null) {
             // Logique de remplacement
             if (newId.equals("minecraft:air") || newId.isEmpty()) {
@@ -139,7 +138,7 @@ public class ResourcefulSheepEatBlockGoal extends EatBlockGoal {
             return true;
         }
 
-        // 2. Vanilla
+        // Vanilla
         else {
             if (currentBlockState.is(Blocks.GRASS_BLOCK)) {
                 this.level.setBlock(pos, Blocks.DIRT.defaultBlockState(), 3);

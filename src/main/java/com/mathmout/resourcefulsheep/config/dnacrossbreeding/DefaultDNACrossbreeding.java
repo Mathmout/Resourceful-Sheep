@@ -70,13 +70,31 @@ public class DefaultDNACrossbreeding {
                 20)
         );
 
-        // Spider
+        // Squid
         DefaultCrossbreeding.add(new SheepCrossbreeding(
-                "minecraft:spider",
+                "minecraft:squid",
                 "minecraft:sheep",
-                "resourceful_sheep:spider_tier_1",
-                List.of("minecraft:sheep", "minecraft:spider"),
+                "resourceful_sheep:squid_tier_1",
+                List.of("minecraft:sheep", "minecraft:squid"),
+                25)
+        );
+
+        // Guardian
+        DefaultCrossbreeding.add(new SheepCrossbreeding(
+                "minecraft:guardian",
+                "minecraft:sheep",
+                "resourceful_sheep:guardian_tier_1",
+                List.of("minecraft:sheep", "minecraft:guardian"),
                 20)
+        );
+
+        // Bee
+        DefaultCrossbreeding.add(new SheepCrossbreeding(
+                "minecraft:bee",
+                "minecraft:sheep",
+                "resourceful_sheep:bee_tier_1",
+                List.of("minecraft:sheep", "minecraft:bee"),
+                25)
         );
 
         return DefaultCrossbreeding;

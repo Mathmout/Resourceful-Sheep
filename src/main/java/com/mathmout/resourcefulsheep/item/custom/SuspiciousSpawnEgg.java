@@ -6,7 +6,7 @@ import com.mathmout.resourcefulsheep.config.dnacrossbreeding.SheepCrossbreeding;
 import com.mathmout.resourcefulsheep.config.mutations.ConfigSheepMutationManager;
 import com.mathmout.resourcefulsheep.config.mutations.SheepMutation;
 import com.mathmout.resourcefulsheep.item.ModDataComponents;
-import com.mathmout.resourcefulsheep.utils.TexteUtils;
+import com.mathmout.resourcefulsheep.screen.DNAScreenRenderer;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockPos;
@@ -120,7 +120,11 @@ public class SuspiciousSpawnEgg extends Item {
                     tooltipComponents.add(Component.literal("... and " + (list.size() - maxDisplay) + " more.").withStyle(ChatFormatting.GRAY));
                     break;
                 }
-                String name = TexteUtils.getPrettyName(id);
+
+                String fullId = id.contains(":") ? id : ResourcefulSheepMod.MOD_ID + ":" + id;
+                net.minecraft.world.entity.LivingEntity entity = DNAScreenRenderer.getEntity(fullId);
+                String name = DNAScreenRenderer.getDisplayName(fullId, entity);
+
                 tooltipComponents.add(Component.literal("- " + name).withStyle(ChatFormatting.GRAY));
                 count++;
             }

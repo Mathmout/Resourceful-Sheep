@@ -56,6 +56,7 @@ public class DynamicResourceProvider implements PackResources {
         langJson.addProperty("recipe." + ResourcefulSheepMod.MOD_ID + ".sheep_dropping", "Sheep Dropping");
         langJson.addProperty("recipe." + ResourcefulSheepMod.MOD_ID + ".sheep_feeding", "Sheep Feeding");
         langJson.addProperty("recipe." + ResourcefulSheepMod.MOD_ID + ".sheep_eating", "Sheep Eating");
+        langJson.addProperty("recipe." + ResourcefulSheepMod.MOD_ID + ".sheep_cross_breeding", "Sheep Cross Breeding");
 
         // Smithing Template
         langJson.addProperty("item." + ResourcefulSheepMod.MOD_ID + ".smithing_template.diamond_upgrade.applies_to", "Iron Equipment");

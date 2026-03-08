@@ -139,7 +139,7 @@ public class SheepEatingCategory implements IRecipeCategory<SheepEatingRecipeWra
         int sheepX = getWidth() / 6;
 
         // Dessiner le mouton
-        JEIUtilitiesMethodes.drawSheep(guiGraphics, recipe.variant().Id(), sheepX, baseY + 3 * scale / 4, scale);
+        JEIUtilitiesMethodes.drawEntity(guiGraphics, recipe.variant().Id(), sheepX, baseY + 3 * scale / 4, scale);
 
         // Tooltip mouton
         List<Component> tips = new ArrayList<>();

@@ -23,6 +23,7 @@ import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.context.UseOnContext;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -31,6 +32,12 @@ public class SheepScanner extends Item {
 
     public SheepScanner(Properties properties) {
         super(properties.stacksTo(1));
+    }
+
+    // TODO
+    @Override
+    public @NotNull InteractionResult useOn(@NotNull UseOnContext context) {
+        return super.useOn(context);
     }
 
     @Override
@@ -46,7 +53,7 @@ public class SheepScanner extends Item {
             if (pPlayer.level().isClientSide) {
                 Component message;
                 if (sheep instanceof ResourcefulSheepEntity resourcefulSheep) {
-                    message = buildSheepInfoComponent(resourcefulSheep);
+                    message = buildResourcefulSheepInfoComponent(resourcefulSheep);
                 } else {
                     message = buildVanillaSheepInfoComponent(sheep);
                 }
@@ -64,7 +71,7 @@ public class SheepScanner extends Item {
         return InteractionResult.PASS;
     }
 
-    private Component buildSheepInfoComponent(ResourcefulSheepEntity sheep) {
+    private Component buildResourcefulSheepInfoComponent(ResourcefulSheepEntity sheep) {
         String variantId = BuiltInRegistries.ENTITY_TYPE.getKey(sheep.getType()).getPath();
         SheepVariantData variant = ConfigSheepTypeManager.getSheepVariant().get(variantId);
 
@@ -72,26 +79,31 @@ public class SheepScanner extends Item {
             return Component.literal("Unknown Sheep Variant").withStyle(ChatFormatting.RED);
         }
 
-        MutableComponent mainComponent = Component.literal("");
+        MutableComponent mutableComponent = Component.literal("");
 
-        // 1. Header
-        MutableComponent header = Component.literal("=== Sheep Scanner Result ===").withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD);
-        mainComponent.append(header).append("\n");
+        // Header
+        mutableComponent.append(Component.literal("=== Sheep Scanner Result ===").withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD))
+                        .append("\n");
 
-        // 2. Tier.
-        MutableComponent lineTier = Component.literal("Tier : ").withStyle(ChatFormatting.RED)
-                .append(Component.literal(String.valueOf(variant.Tier())).withStyle(ChatFormatting.LIGHT_PURPLE));
-        mainComponent.append(lineTier).append("\n");
 
-        // 3. Drops.
-        mainComponent.append(Component.literal("Drops :").withStyle(ChatFormatting.BLUE)).append("\n");
+        // Name
+        mutableComponent.append(Component.literal(TexteUtils.StringToText(variant.Name()) + " Resourceful Sheep")
+                        .withStyle(Style.EMPTY.withColor(Integer.parseInt(variant.EggColorSpotsNTitle().substring(1), 16))))
+                        .append("\n");
+        // Tier.
+        mutableComponent.append(Component.literal("Tier : ").withStyle(ChatFormatting.RED)
+                        .append(Component.literal(String.valueOf(variant.Tier())).withStyle(ChatFormatting.LIGHT_PURPLE))
+                        .append("\n"));
+
+        // Drops.
+        mutableComponent.append(Component.literal("Drops :").withStyle(ChatFormatting.BLUE)).append("\n");
 
         List<SheepVariantData.DroppedItems> drops = variant.DroppedItems();
 
         if (drops != null && !drops.isEmpty()) {
             for (SheepVariantData.DroppedItems dropData : drops) {
                 if( dropData.ItemId().equals("minecraft:air")) {
-                    mainComponent.append(Component.literal(" - None").withStyle(ChatFormatting.GRAY)).append("\n");
+                    mutableComponent.append(Component.literal(" - None").withStyle(ChatFormatting.GRAY)).append("\n");
                 }else {
                     String itemName = TexteUtils.getPrettyName(dropData.ItemId());
                     String amountString;
@@ -107,11 +119,11 @@ public class SheepScanner extends Item {
                             .append(Component.literal(" : ").withStyle(ChatFormatting.GRAY))
                             .append(Component.literal(amountString).withStyle(ChatFormatting.DARK_AQUA));
 
-                    mainComponent.append(dropLine).append("\n");
+                    mutableComponent.append(dropLine).append("\n");
                 }
             }
         } else {
-            mainComponent.append(Component.literal(" - None").withStyle(ChatFormatting.GRAY)).append("\n");
+            mutableComponent.append(Component.literal(" - None").withStyle(ChatFormatting.GRAY)).append("\n");
         }
 
         // 4. Couleur
@@ -119,9 +131,9 @@ public class SheepScanner extends Item {
         String colorName = dyeColor.getName().substring(0, 1).toUpperCase() + dyeColor.getName().substring(1);
         MutableComponent lineColor = Component.literal("Color : ").withStyle(ChatFormatting.GRAY)
                 .append(Component.literal(TexteUtils.StringToText(colorName)).withStyle(Style.EMPTY.withColor(dyeColor.getTextColor())));
-        mainComponent.append(lineColor);
+        mutableComponent.append(lineColor);
 
-        return mainComponent;
+        return mutableComponent;
     }
 
     private Component buildVanillaSheepInfoComponent(Sheep sheep) {
@@ -166,7 +178,8 @@ public class SheepScanner extends Item {
     @Override
     public int getBarColor(@NotNull ItemStack stack) {
         float energyPourcentage = (float) getStoredEnergy(stack) / Config.SHEEP_SCANNER_CAPACITY.get();
-        return Mth.hsvToRgb(energyPourcentage / 3, 1, 1);    }
+        return Mth.hsvToRgb(energyPourcentage / 3, 1, 1);
+    }
 
     public int getStoredEnergy(ItemStack stack) {
         if (stack.has(ModDataComponents.SHEEP_SCANNER_DATA.get())) {

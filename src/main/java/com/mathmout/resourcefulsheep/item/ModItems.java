@@ -20,7 +20,6 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import java.util.*;
 import java.util.function.Function;
 
-
 public class ModItems {
 
     public static final List<DeferredItem<? extends SpawnEggItem>> SHEEP_SPAWN_EGGS = new ArrayList<>();
@@ -91,7 +90,7 @@ public class ModItems {
                     Integer.parseInt(variant.EggColorBackground().substring(1), 16),
                     Integer.parseInt(variant.EggColorSpotsNTitle().substring(1), 16),
                     properties,
-                    "§l" + TexteUtils.StringToText(variant.Resource()) + " Resourceful Sheep Egg",
+                    "§l" + TexteUtils.StringToText(variant.Name()) + " Resourceful Sheep Egg",
                     Integer.parseInt(variant.EggColorSpotsNTitle().substring(1), 16)
                     ));
             SHEEP_SPAWN_EGGS.add(spawnEgg);

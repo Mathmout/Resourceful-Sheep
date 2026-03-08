@@ -30,7 +30,7 @@ public class ConfigSheepMutationManager {
             createDefaultIfEmpty();
             loadSheepMutations();
         } catch (IOException e) {
-            LOGGER.error("Failed to create config directory: {}", CONFIG_DIR, e);
+            LOGGER.error("[ResourcefulSheep] Failed to create config directory: {}", CONFIG_DIR, e);
         }
     }
 
@@ -44,27 +44,27 @@ public class ConfigSheepMutationManager {
                         SHEEP_MUTATIONS.add(data);
                     }
                 } catch (IOException e) {
-                    LOGGER.error("Failed to read sheep mutation data from file: {}", path, e);
+                    LOGGER.error("[ResourcefulSheep] Failed to read sheep mutation data from file: {}", path, e);
                 }
             });
         } catch (IOException e) {
-            LOGGER.error("Failed to list sheep mutation configurations in: {}", CONFIG_DIR, e);
+            LOGGER.error("[ResourcefulSheep] Failed to list sheep mutation configurations in: {}", CONFIG_DIR, e);
         }
-        LOGGER.info("Loaded {} sheep mutations.", SHEEP_MUTATIONS.size());
+        LOGGER.info("[ResourcefulSheep] Loaded {} sheep mutations.", SHEEP_MUTATIONS.size());
     }
 
     private static void createDefaultIfEmpty() {
         try (Stream<Path> stream = Files.list(CONFIG_DIR)) {
             if (stream.findAny().isEmpty()) {
-                LOGGER.info("No config files found in {}. Creating default configurations...", CONFIG_DIR);
+                LOGGER.info("[ResourcefulSheep] No config files found in {}. Creating default configurations...", CONFIG_DIR);
                 for (SheepMutation defaultMutation : DefaultSheepMutations.getDefaults()) {
                     String fileName = defaultMutation.ChildId() + ".json";
                     saveSheepMutation(fileName, defaultMutation);
-                    LOGGER.info("Created default config file: {}", fileName);
+                    LOGGER.info("[ResourcefulSheep] Created default config file: {}", fileName);
                 }
             }
         } catch (IOException e) {
-            LOGGER.error("Failed to check if config directory is empty: {}", CONFIG_DIR, e);
+            LOGGER.error("[ResourcefulSheep] Failed to check if config directory is empty: {}", CONFIG_DIR, e);
         }
     }
 
@@ -73,7 +73,7 @@ public class ConfigSheepMutationManager {
         try (Writer writer = Files.newBufferedWriter(filePath)) {
             GSON.toJson(data, writer);
         } catch (IOException e) {
-            LOGGER.error("Failed to write sheep mutation data to file: {}", filePath, e);
+            LOGGER.error("[ResourcefulSheep] Failed to write sheep mutation data to file: {}", filePath, e);
         }
     }
 
@@ -82,21 +82,21 @@ public class ConfigSheepMutationManager {
     }
 
     public static void validateConfig() {
-        LOGGER.info("Validating Sheep Mutations...");
+        LOGGER.info("[ResourcefulSheep] Validating Sheep Mutations...");
         for (SheepMutation mutation : SHEEP_MUTATIONS) {
             // Maman
             if (!BuiltInRegistries.ENTITY_TYPE.containsKey(ResourceLocation.parse("resourceful_sheep:" + mutation.MomId()))) {
-                LOGGER.warn("Config Warning [SheepMutation]: MomId '{}' not found in Entity Registry.", mutation.MomId());
+                LOGGER.warn("[ResourcefulSheep] Config Warning SheepMutation: MomId '{}' not found in Entity Registry.", mutation.MomId());
             }
             // Papa
             if (!BuiltInRegistries.ENTITY_TYPE.containsKey(ResourceLocation.parse("resourceful_sheep:" + mutation.DadId()))) {
-                LOGGER.warn("Config Warning [SheepMutation]: DadId '{}' not found in Entity Registry.", mutation.DadId());
+                LOGGER.warn("[ResourcefulSheep] Config Warning SheepMutation: DadId '{}' not found in Entity Registry.", mutation.DadId());
             }
             // Enfant
             if (!BuiltInRegistries.ENTITY_TYPE.containsKey(ResourceLocation.parse("resourceful_sheep:" + mutation.ChildId()))) {
-                LOGGER.warn("Config Warning [SheepMutation]: ChildId '{}' not found in Entity Registry.", mutation.ChildId());
+                LOGGER.warn("[ResourcefulSheep] Config Warning SheepMutation: ChildId '{}' not found in Entity Registry.", mutation.ChildId());
             }
         }
-        LOGGER.info("Sheep Mutations Config Validation Complete.");
+        LOGGER.info("[ResourcefulSheep] Sheep Mutations Config Validation Complete.");
     }
 }
