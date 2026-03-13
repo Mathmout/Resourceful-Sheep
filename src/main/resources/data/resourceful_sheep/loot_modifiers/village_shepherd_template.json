@@ -1,0 +1,10 @@
+{
+  "type": "resourceful_sheep:add_item",
+  "conditions": [
+    {
+      "condition": "neoforge:loot_table_id",
+      "loot_table_id": "minecraft:chests/village/village_shepherd"
+    }
+  ],
+  "item": "resourceful_sheep:diamond_upgrade_smithing_template"
+}

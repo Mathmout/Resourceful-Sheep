@@ -5,6 +5,10 @@ import com.mathmout.resourcefulsheep.config.sheeptypes.ConfigSheepTypeManager;
 import com.mathmout.resourcefulsheep.config.sheeptypes.SheepTypeData;
 import com.mathmout.resourcefulsheep.entity.custom.SheepVariantData;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
@@ -12,6 +16,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.tags.TagKey;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -167,7 +172,7 @@ public class DynamicSheepTextureGenerator {
             for (SheepVariantData.DroppedItems dropData : variant.DroppedItems()) {
                 String rawId = dropData.ItemId();
 
-// TAG
+                // TAG
                 if (rawId.startsWith("#")) {
                     try {
                         ResourceLocation tagLoc = ResourceLocation.parse(rawId.substring(1));
@@ -204,28 +209,55 @@ public class DynamicSheepTextureGenerator {
 
     private List<BufferedImage> loadBufferedImages(ResourceManager resourceManager, ResourceLocation itemKey) {
         List<BufferedImage> images = new ArrayList<>();
-        String name = itemKey.getPath();
+        Set<ResourceLocation> texturePathsToLoad = new HashSet<>();
 
-        // On cherche dans textures/block toutes les textures qui correspondent au nom ou à ses variantes top, side,...
-        Map<ResourceLocation, Resource> foundResources = new HashMap<>();
+        Item item = BuiltInRegistries.ITEM.get(itemKey);
 
-        foundResources.putAll(resourceManager.listResources("textures/block", loc -> {
-            String path = loc.getPath();
-            return path.endsWith(".png") && (path.equals("textures/block/" + name + ".png") || path.startsWith("textures/block/" + name + "_"));
-        }));
+        if (item != Items.AIR) {
+            // On demande le modèle de l'Item.
+            ItemStack stack = new ItemStack(item);
+            BakedModel model = Minecraft.getInstance().getItemRenderer().getModel(stack, null, null, 0);
 
-        // On fait la même chose dans textures/item
-        foundResources.putAll(resourceManager.listResources("textures/item", loc -> {
-            String path = loc.getPath();
-            return path.endsWith(".png") && (path.equals("textures/item/" + name + ".png") || path.startsWith("textures/item/" + name + "_"));
-        }));
+            // Textures des Quads
+            RandomSource random = RandomSource.create();
 
-        // On charge toutes les images trouvées
-        for (Map.Entry<ResourceLocation, Resource> entry : foundResources.entrySet()) {
-            try (InputStream is = entry.getValue().open()) {
-                images.add(ImageIO.read(is));
-            } catch (IOException e) {
-                LOGGER.warn("[ResourcefulSheep] Failed to read texture stream for: {}", entry.getKey());
+            for (Direction dir : Direction.values()) {
+                try {
+                    // On utilise null pour le BlockState car on lit un modèle d'Item
+                    List<BakedQuad> quads = model.getQuads(null, dir, random);
+                    for (BakedQuad quad : quads) {
+                        texturePathsToLoad.add(getTexturePathFromSprite(quad.getSprite()));
+                    }
+                } catch (Exception ignored) {}
+            }
+
+            try {
+                List<BakedQuad> quads = model.getQuads(null, null, random);
+                for (BakedQuad quad : quads) {
+                    texturePathsToLoad.add(getTexturePathFromSprite(quad.getSprite()));
+                }
+            } catch (Exception ignored) {}
+        }
+
+        // Au cas où le modèle ne charge pas
+        if (texturePathsToLoad.isEmpty()) {
+            String name = itemKey.getPath();
+            // On essaie les deux dossiers block et item
+            texturePathsToLoad.add(ResourceLocation.fromNamespaceAndPath(itemKey.getNamespace(), "textures/item/" + name + ".png"));
+            texturePathsToLoad.add(ResourceLocation.fromNamespaceAndPath(itemKey.getNamespace(), "textures/block/" + name + ".png"));
+        }
+
+        // Chargement des images .png à partir de la liste
+        for (ResourceLocation loc : texturePathsToLoad) {
+            if (loc.getPath().contains("missingno")) continue;
+
+            Optional<Resource> resource = resourceManager.getResource(loc);
+            if (resource.isPresent()) {
+                try (InputStream is = resource.get().open()) {
+                    images.add(ImageIO.read(is));
+                } catch (IOException e) {
+                    LOGGER.warn("[ResourcefulSheep] Failed to read texture stream for: {}", loc);
+                }
             }
         }
 
@@ -233,6 +265,12 @@ public class DynamicSheepTextureGenerator {
             LOGGER.debug("[ResourcefulSheep] Could not find any texture resource for: {}", itemKey);
         }
         return images;
+    }
+
+    // Transforme l'ID interne du Sprite en vrai chemin de fichier .png
+    private ResourceLocation getTexturePathFromSprite(TextureAtlasSprite sprite) {
+        ResourceLocation spriteLoc = sprite.contents().name();
+        return ResourceLocation.fromNamespaceAndPath(spriteLoc.getNamespace(), "textures/" + spriteLoc.getPath() + ".png");
     }
 
     private byte[] bufferedImageToPngBytes(BufferedImage image) throws IOException {

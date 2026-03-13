@@ -12,6 +12,7 @@ import com.mathmout.resourcefulsheep.item.ModCreativeTabs;
 import com.mathmout.resourcefulsheep.item.ModDataComponents;
 import com.mathmout.resourcefulsheep.item.ModItems;
 
+import com.mathmout.resourcefulsheep.loot.ModLootModifiers;
 import com.mathmout.resourcefulsheep.screen.ModMenuTypes;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
@@ -35,6 +36,7 @@ public class ResourcefulSheepMod {
         ModEntities.registerVariantEntity();
         ModEntities.ENTITY_TYPES.register(modEventBus);
 
+        // Creative Tabs
         ModCreativeTabs.register(modEventBus);
 
         ModItems.register(modEventBus);
@@ -54,6 +56,9 @@ public class ResourcefulSheepMod {
 
         // Menu
         ModMenuTypes.register(modEventBus);
+
+        // Loot Table
+        ModLootModifiers.LOOT_MODIFIER_SERIALIZERS.register(modEventBus);
 
         // Config
         modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);

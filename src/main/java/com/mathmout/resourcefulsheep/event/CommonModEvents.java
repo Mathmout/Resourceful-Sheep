@@ -31,10 +31,13 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.animal.Sheep;
+import net.minecraft.world.entity.npc.VillagerProfession;
 import net.minecraft.world.flag.FeatureFlagSet;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.SmithingTemplateItem;
+import net.minecraft.world.item.trading.ItemCost;
+import net.minecraft.world.item.trading.MerchantOffer;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.phys.AABB;
@@ -48,6 +51,7 @@ import net.neoforged.neoforge.event.AddPackFindersEvent;
 import net.neoforged.neoforge.event.entity.EntityAttributeCreationEvent;
 import net.neoforged.neoforge.event.entity.RegisterSpawnPlacementsEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
+import net.neoforged.neoforge.event.village.VillagerTradesEvent;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
 import net.neoforged.neoforge.registries.RegisterEvent;
 import org.jetbrains.annotations.NotNull;
@@ -61,6 +65,29 @@ import static net.minecraft.world.level.block.Blocks.BEDROCK;
 @EventBusSubscriber(modid = ResourcefulSheepMod.MOD_ID)
 public class CommonModEvents {
 
+    // Trades Villager
+    @SubscribeEvent
+    public static void onVillagerTrades(VillagerTradesEvent event) {
+        if (event.getType() == VillagerProfession.SHEPHERD) {
+
+            // On utilise une lambda pour que "random" soit généré spécifiquement pour CE villageois
+            event.getTrades().get(3).add((trader, random) -> {
+
+                // Génère un prix entre 12 et 16 émeraudes (uniforme)
+                int emeraldCost = random.nextInt(5) + 12;
+
+                return new MerchantOffer(
+                        new ItemCost(Items.EMERALD, emeraldCost), // Price
+                        new ItemStack(ModItems.DIAMOND_UPGRADE_SMITHING_TEMPLATE.get(), 1), // Result
+                        3,   // Max trades number
+                        10,  // Villager XP
+                        0.05f // Pricing factor
+                );
+            });
+        }
+    }
+
+    // Validating Config
     @SubscribeEvent
     public static void commonSetup(final FMLCommonSetupEvent event) {
             ConfigSheepTypeManager.validateConfig();
@@ -69,6 +96,7 @@ public class CommonModEvents {
             ConfigSheepSpawningManager.validateConfig();
     }
 
+    // Syringe interaction with Boss entity
     @SubscribeEvent
     public static void onEntityInteract(PlayerInteractEvent.EntityInteract event) {
         ItemStack stack = event.getItemStack();
@@ -98,6 +126,7 @@ public class CommonModEvents {
         }
         return null;
     }
+
 
     @SubscribeEvent
     public static void registerCapabilities(RegisterCapabilitiesEvent event) {

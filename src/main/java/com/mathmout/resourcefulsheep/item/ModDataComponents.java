@@ -41,7 +41,7 @@ public class ModDataComponents {
                     .networkSynchronized(ByteBufCodecs.COMPOUND_TAG)
                     .build());
 
-    // Sheep Scanner
+    // DNA Splicer
     public static final Supplier<DataComponentType<CompoundTag>> SPLICER_DATA = DATA_COMPONENTS.register("splicer_data", () ->
             DataComponentType.<CompoundTag>builder()
                     .persistent(CompoundTag.CODEC)
