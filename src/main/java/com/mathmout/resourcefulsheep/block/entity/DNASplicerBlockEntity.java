@@ -159,11 +159,13 @@ public class DNASplicerBlockEntity extends BlockEntity implements MenuProvider {
 
     public void setMom_id(String id) {
         this.mom_id = id; setChanged();
+        assert level != null;
         level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
     }
 
     public void setDad_id(String id) {
         this.dad_id = id; setChanged();
+        assert level != null;
         level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
     }
 

@@ -155,9 +155,11 @@ public class SheepScanner extends Item {
 
     @Override
     public void appendHoverText(@NotNull ItemStack stack, Item.@NotNull TooltipContext context, List<Component> tooltipComponents, @NotNull TooltipFlag tooltipFlag) {
+        String[] energyStored = TexteUtils.formatEnergy(getStoredEnergy(stack));
+        String[] energyMax = TexteUtils.formatEnergy(Config.SHEEP_SCANNER_CAPACITY.get());
 
-        tooltipComponents.add(Component.literal("Energy : ").withStyle(ChatFormatting.GREEN)
-                .append(Component.literal(getStoredEnergy(stack) + "/" + Config.SHEEP_SCANNER_CAPACITY.get() + " FE").withStyle(ChatFormatting.GRAY)));
+        tooltipComponents.add(Component.literal("Energy : ").withStyle(ChatFormatting.DARK_RED)
+                .append(Component.literal(energyStored[0] + energyStored[1] + "/" + energyMax[0] + energyMax[1]).withStyle(ChatFormatting.GRAY)));
 
         tooltipComponents.add(Component.literal("Right click on a sheep to scan it.").withStyle(ChatFormatting.GRAY));
         super.appendHoverText(stack, context, tooltipComponents, tooltipFlag);

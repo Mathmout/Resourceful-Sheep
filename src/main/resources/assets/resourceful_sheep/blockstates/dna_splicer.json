@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "resourceful_sheep:block/dna_splicer"
+    },
+    "facing=east": {
+      "model": "resourceful_sheep:block/dna_splicer",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "resourceful_sheep:block/dna_splicer",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "resourceful_sheep:block/dna_splicer",
+      "y": 270
+    }
+  }
+}

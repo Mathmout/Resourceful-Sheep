@@ -1,8 +1,8 @@
 package com.mathmout.resourcefulsheep.jei;
 
 import com.mathmout.resourcefulsheep.ResourcefulSheepMod;
+import com.mathmout.resourcefulsheep.block.ModBlocks;
 import com.mathmout.resourcefulsheep.config.dnacrossbreeding.SheepCrossbreeding;
-import com.mathmout.resourcefulsheep.item.ModItems;
 import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.drawable.IDrawable;
@@ -34,7 +34,7 @@ public class SheepCrossBreedingCategory implements IRecipeCategory<SheepCrossbre
     private final IDrawable icon;
 
     public SheepCrossBreedingCategory(IGuiHelper guiHelper) {
-        this.icon = guiHelper.createDrawableIngredient(VanillaTypes.ITEM_STACK, new ItemStack(ModItems.NETHERITE_SYRINGE.get()));
+        this.icon = guiHelper.createDrawableIngredient(VanillaTypes.ITEM_STACK, new ItemStack(ModBlocks.DNA_SPLICER.get()));
     }
 
     @Override

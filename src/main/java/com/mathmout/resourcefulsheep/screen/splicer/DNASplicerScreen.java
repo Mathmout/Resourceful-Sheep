@@ -7,8 +7,8 @@ import com.mathmout.resourcefulsheep.config.mutations.ConfigSheepMutationManager
 import com.mathmout.resourcefulsheep.config.mutations.SheepMutation;
 import com.mathmout.resourcefulsheep.network.SetDnaParentPayload;
 import com.mathmout.resourcefulsheep.screen.DNAScreenRenderer;
+import com.mathmout.resourcefulsheep.utils.TexteUtils;
 import com.mojang.blaze3d.systems.RenderSystem;
-import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.GameRenderer;
@@ -163,8 +163,6 @@ public class DNASplicerScreen extends AbstractContainerScreen<DNASplicerMenu> {
         renderTooltip(guiGraphics, mouseX, mouseY);
 
         if (isDragging && draggingDna != null) {
-            // On dessine la carte sous la souris (centrée sur le curseur)
-            // On désactive le depth test pour être sûr que ça passe au dessus de tout
             RenderSystem.disableDepthTest();
             guiGraphics.pose().translate(0, 0, 200f);
             renderDnaCard(guiGraphics, mouseX - CARD_WIDTH / 2, mouseY - CARD_HEIGHT / 2, draggingDna, "red");
@@ -172,13 +170,7 @@ public class DNASplicerScreen extends AbstractContainerScreen<DNASplicerMenu> {
         }
 
         if(isHovering(((imageWidth - 3 * CARD_WIDTH) / 4 + 10) / 2 - 5, 13, 11, 60, mouseX, mouseY)) {
-
-            guiGraphics.renderTooltip(font,
-                    Component.literal(String.valueOf(menu.getEnergy())).withStyle(ChatFormatting.DARK_RED)
-                            .append(Component.literal(" / ").withStyle(ChatFormatting.GOLD))
-                            .append(Component.literal(String.valueOf(menu.getMaxEnergy())).withStyle(ChatFormatting.WHITE))
-                            .append(Component.literal(" FE").withStyle(ChatFormatting.GOLD)),
-                    mouseX, mouseY);
+            DNAScreenRenderer.renderEnergyValue(guiGraphics, font, menu.getMaxEnergy(), menu.getEnergy(), mouseX, mouseY);
         }
     }
 
@@ -238,17 +230,7 @@ public class DNASplicerScreen extends AbstractContainerScreen<DNASplicerMenu> {
         List<String> entitiesList = this.menu.getNeighborDnaList();
         if (entitiesList == null || entitiesList.isEmpty()) return null;
 
-        // Tri alphabétique
-        List<String> sortedentitiesList = new ArrayList<>(entitiesList);
-        sortedentitiesList.sort((id1, id2) -> {
-            LivingEntity e1 = DNAScreenRenderer.getEntity(id1);
-            LivingEntity e2 = DNAScreenRenderer.getEntity(id2);
-
-            String name1 = DNAScreenRenderer.getDisplayName(id1, e1);
-            String name2 = DNAScreenRenderer.getDisplayName(id2, e2);
-
-            return name1.compareToIgnoreCase(name2);
-        });
+        entitiesList = TexteUtils.sortEntityIdsByName(entitiesList);
 
         int x = (width - imageWidth) / 2;
         int y = (height - imageHeight) / 2;
@@ -261,8 +243,8 @@ public class DNASplicerScreen extends AbstractContainerScreen<DNASplicerMenu> {
 
         int index = (int) (relativeY / (CARD_HEIGHT + 2));
 
-        if (index >= 0 && index < sortedentitiesList.size()) {
-            return sortedentitiesList.get(index);
+        if (index >= 0 && index < entitiesList.size()) {
+            return entitiesList.get(index);
         }
         return null;
     }
@@ -276,8 +258,7 @@ public class DNASplicerScreen extends AbstractContainerScreen<DNASplicerMenu> {
 
         // Crossbreeding
         for (SheepCrossbreeding recipe : ConfigDNACrossbreedingManager.getSheepCrossbreeding()) {
-            if ((recipe.MomId().equals(p1) && recipe.DadId().equals(p2)) ||
-                    (recipe.MomId().equals(p2) && recipe.DadId().equals(p1))) {
+            if ((recipe.MomId().equals(p1) && recipe.DadId().equals(p2)) || (recipe.MomId().equals(p2) && recipe.DadId().equals(p1))) {
                 addIdSafe(recipe.ChildId());
                 for (String failId : recipe.ResultsIfFail()) {
                     addIdSafe(failId);
@@ -290,15 +271,12 @@ public class DNASplicerScreen extends AbstractContainerScreen<DNASplicerMenu> {
         String p2Clean = p2.replace(ResourcefulSheepMod.MOD_ID + ":", "");
 
         for (SheepMutation mutation : ConfigSheepMutationManager.getSheepMutations()) {
-            if ((mutation.MomId().equals(p1Clean) && mutation.DadId().equals(p2Clean)) ||
-                    (mutation.MomId().equals(p2Clean) && mutation.DadId().equals(p1Clean))) {
+            if ((mutation.MomId().equals(p1Clean) && mutation.DadId().equals(p2Clean)) || (mutation.MomId().equals(p2Clean) && mutation.DadId().equals(p1Clean))) {
                 addIdSafe(ResourcefulSheepMod.MOD_ID + ":" + mutation.ChildId());
+                addIdSafe(p1);
+                addIdSafe(p2);
             }
         }
-
-        // Si aucune recette trouvée et pour le 50/50
-        addIdSafe(p1);
-        addIdSafe(p2);
     }
 
     private void addIdSafe(String id) {

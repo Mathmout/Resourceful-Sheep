@@ -70,20 +70,21 @@ public class CommonModEvents {
     public static void onVillagerTrades(VillagerTradesEvent event) {
         if (event.getType() == VillagerProfession.SHEPHERD) {
 
-            // On utilise une lambda pour que "random" soit généré spécifiquement pour CE villageois
-            event.getTrades().get(3).add((trader, random) -> {
+            // Increase trade chance to appear here ~26%
+            for (int i = 0; i < 7; i++) {
+                event.getTrades().get(3).add((trader, random) -> {
 
-                // Génère un prix entre 12 et 16 émeraudes (uniforme)
-                int emeraldCost = random.nextInt(5) + 12;
+                    int emeraldCost = random.nextInt(10) + 10;
 
-                return new MerchantOffer(
-                        new ItemCost(Items.EMERALD, emeraldCost), // Price
-                        new ItemStack(ModItems.DIAMOND_UPGRADE_SMITHING_TEMPLATE.get(), 1), // Result
-                        3,   // Max trades number
-                        10,  // Villager XP
-                        0.05f // Pricing factor
-                );
-            });
+                    return new MerchantOffer(
+                            new ItemCost(Items.EMERALD, emeraldCost), // Price
+                            new ItemStack(ModItems.DIAMOND_UPGRADE_SMITHING_TEMPLATE.get(), 1), // Result
+                            3,   // Max trades number
+                            10,  // Villager XP
+                            0.05f // Pricing factor
+                    );
+                });
+            }
         }
     }
 

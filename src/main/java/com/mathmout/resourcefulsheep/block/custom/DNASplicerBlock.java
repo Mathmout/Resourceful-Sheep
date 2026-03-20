@@ -1,14 +1,17 @@
 package com.mathmout.resourcefulsheep.block.custom;
 
+import com.mathmout.resourcefulsheep.Config;
 import com.mathmout.resourcefulsheep.block.entity.DNASplicerBlockEntity;
 import com.mathmout.resourcefulsheep.block.entity.ModBlockEntities;
 import com.mathmout.resourcefulsheep.item.ModDataComponents;
+import com.mathmout.resourcefulsheep.utils.TexteUtils;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
@@ -27,10 +30,12 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.phys.BlockHitResult;
+import net.neoforged.neoforge.items.ItemStackHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Objects;
 
 public class DNASplicerBlock extends BaseEntityBlock {
 
@@ -124,20 +129,56 @@ public class DNASplicerBlock extends BaseEntityBlock {
 
     @Override
     public void appendHoverText(@NotNull ItemStack stack, Item.@NotNull TooltipContext context, @NotNull List<Component> tooltipComponents, @NotNull TooltipFlag tooltipFlag) {
-        if (stack.has(ModDataComponents.SPLICER_DATA.get())){
+
+        if (stack.has(ModDataComponents.SPLICER_DATA.get())) {
             CompoundTag data = stack.get(ModDataComponents.SPLICER_DATA.get());
-                if (data != null) {
-                    if (Screen.hasShiftDown()) {
-                        tooltipComponents.add(Component.literal("Data :").withStyle(ChatFormatting.GREEN));
-                    } else {
-                        tooltipComponents.add(Component.literal("Hold SHIFT for details.")
-                                .withStyle(ChatFormatting.GRAY)
-                                .withStyle(ChatFormatting.ITALIC));
+
+            if (data != null) {
+                if (Screen.hasShiftDown()) {
+
+                    // Energy
+                    int storedEnergy = data.contains("energy") ? data.getInt("energy") : 0;
+                    int maxEnergy = Config.DNA_SPLICER_CAPACITY.get();
+
+                    String[] energyStored = TexteUtils.formatEnergy(storedEnergy);
+                    String[] energyMax = TexteUtils.formatEnergy(maxEnergy);
+
+                    tooltipComponents.add(Component.literal("Energy : ").withStyle(ChatFormatting.DARK_RED)
+                            .append(Component.literal(energyStored[0] + energyStored[1] + " / " + energyMax[0] + energyMax[1]).withStyle(ChatFormatting.GRAY)));
+
+                    // Inventory
+                    boolean hasEgg = false;
+
+                    // On vérifie que les registries sont bien chargés
+                    if (data.contains("inventory", Tag.TAG_COMPOUND) && context.registries() != null) {
+                        CompoundTag inventoryTag = data.getCompound("inventory");
+
+                        // Inventaire temporaire
+                        ItemStackHandler tempHandler = new ItemStackHandler(1);
+                        tempHandler.deserializeNBT(Objects.requireNonNull(context.registries()), inventoryTag);
+
+                        hasEgg = !tempHandler.getStackInSlot(0).isEmpty();
                     }
+
+                    String syringeText = hasEgg ? "Yes" : "No";
+                    ChatFormatting syringeColor = hasEgg ? ChatFormatting.GREEN : ChatFormatting.DARK_RED;
+
+                    tooltipComponents.add(Component.literal("Egg inside : ").withStyle(ChatFormatting.AQUA)
+                            .append(Component.literal(syringeText).withStyle(syringeColor)));
+
+                } else {
+                    tooltipComponents.add(Component.literal("Hold SHIFT for details.")
+                            .withStyle(ChatFormatting.GRAY)
+                            .withStyle(ChatFormatting.ITALIC));
                 }
+            } else {
+                tooltipComponents.add(Component.literal("Allows you to combine DNA sequences to create new sheep variations.")
+                        .withStyle(ChatFormatting.GRAY));
+            }
         } else {
-            tooltipComponents.add(Component.literal("Allows you to do something cool with DNA...")
+            tooltipComponents.add(Component.literal("Allows you to combine DNA sequences to create new sheep variations.")
                     .withStyle(ChatFormatting.GRAY));
         }
-    }
-}
+
+        super.appendHoverText(stack, context, tooltipComponents, tooltipFlag);
+    }}

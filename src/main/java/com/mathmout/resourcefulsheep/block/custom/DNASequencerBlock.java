@@ -1,5 +1,6 @@
 package com.mathmout.resourcefulsheep.block.custom;
 
+import com.mathmout.resourcefulsheep.Config;
 import com.mathmout.resourcefulsheep.block.entity.DNASequencerBlockEntity;
 import com.mathmout.resourcefulsheep.block.entity.ModBlockEntities;
 import com.mathmout.resourcefulsheep.item.ModDataComponents;
@@ -30,12 +31,13 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.phys.BlockHitResult;
+import net.neoforged.neoforge.items.ItemStackHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 public class DNASequencerBlock extends BaseEntityBlock {
     public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
@@ -129,40 +131,66 @@ public class DNASequencerBlock extends BaseEntityBlock {
 
     @Override
     public void appendHoverText(@NotNull ItemStack stack, Item.@NotNull TooltipContext context, @NotNull List<Component> tooltipComponents, @NotNull TooltipFlag tooltipFlag) {
+
         if (stack.has(ModDataComponents.SEQUENCER_DATA.get())) {
             CompoundTag data = stack.get(ModDataComponents.SEQUENCER_DATA.get());
 
-            if (data != null && data.contains("dna_list", 9)) {
-                ListTag nbtList = data.getList("dna_list", 8); // 8 = Type String
+            if (data != null) {
+                if (Screen.hasShiftDown()) {
 
-                if (!nbtList.isEmpty()) {
-                    if (Screen.hasShiftDown()) {
-                        tooltipComponents.add(Component.literal("Stored DNA Sequences :").withStyle(ChatFormatting.GREEN));
+                    // Energy
+                    int storedEnergy = data.contains("energy") ? data.getInt("energy") : 0;
+                    int maxEnergy = Config.DNA_SEQUENCER_CAPACITY.get();
 
-                        List<String> sortedIds = new ArrayList<>();
-                        for (Tag tag : nbtList) {
-                            sortedIds.add(tag.getAsString());
-                        }
+                    String[] energyStored = TexteUtils.formatEnergy(storedEnergy);
+                    String[] energyMax = TexteUtils.formatEnergy(maxEnergy);
 
-                        int maxDisplayed = 22;
-                        Collections.sort(sortedIds);
-                        for (int i = 0; i < Math.min(maxDisplayed, sortedIds.size()); i++) {
-                            tooltipComponents.add(Component.literal(" - ").withStyle(ChatFormatting.GRAY)
-                                    .append(Component.literal(TexteUtils.getPrettyName(sortedIds.get(i))).withStyle(ChatFormatting.GRAY)));
-                        }
-                        if (sortedIds.size() > maxDisplayed) {
-                            tooltipComponents.add(Component.literal("And " + (sortedIds.size() - maxDisplayed) + " more...").withStyle(ChatFormatting.GRAY));
-                        }
+                    tooltipComponents.add(Component.literal("Energy : ").withStyle(ChatFormatting.DARK_RED)
+                            .append(Component.literal(energyStored[0] + energyStored[1] + " / " + energyMax[0] + energyMax[1]).withStyle(ChatFormatting.GRAY)));
+
+                    // Inventory
+                    boolean hasSyringe = false;
+
+                    // On vérifie que les registries sont bien chargés
+                    if (data.contains("inventory", Tag.TAG_COMPOUND) && context.registries() != null) {
+                        CompoundTag inventoryTag = data.getCompound("inventory");
+
+                        // Inventaire temporaire
+                        ItemStackHandler tempHandler = new ItemStackHandler(2);
+                        tempHandler.deserializeNBT(Objects.requireNonNull(context.registries()), inventoryTag);
+
+                        hasSyringe = !tempHandler.getStackInSlot(0).isEmpty() || !tempHandler.getStackInSlot(1).isEmpty();
                     }
-                    else {
-                        tooltipComponents.add(Component.literal("Hold SHIFT for details.")
-                                .withStyle(ChatFormatting.GRAY)
-                                .withStyle(ChatFormatting.ITALIC));
+
+                    String syringeText = hasSyringe ? "Yes" : "No";
+                    ChatFormatting syringeColor = hasSyringe ? ChatFormatting.GREEN : ChatFormatting.DARK_RED;
+
+                    tooltipComponents.add(Component.literal("Syringe inside : ").withStyle(ChatFormatting.AQUA)
+                            .append(Component.literal(syringeText).withStyle(syringeColor)));
+
+                    // DNA
+                    if (data.contains("dna_list", Tag.TAG_LIST)) {
+                        ListTag nbtList = data.getList("dna_list", Tag.TAG_STRING);
+
+                        if (!nbtList.isEmpty()) {
+                            tooltipComponents.add(Component.literal("Stored DNA Sequences :").withStyle(ChatFormatting.GREEN));
+
+                            List<String> ids = new ArrayList<>();
+                            for (Tag tag : nbtList) {
+                                ids.add(tag.getAsString());
+                            }
+                            ids = TexteUtils.sortEntityIdsByName(ids);
+                            TexteUtils.DisplayEntityList(tooltipComponents, ids);
+                        }
                     }
                 } else {
-                    tooltipComponents.add(Component.literal("Allows you to store and analyze DNA sequences.")
-                            .withStyle(ChatFormatting.GRAY));
+                    tooltipComponents.add(Component.literal("Hold SHIFT for details.")
+                            .withStyle(ChatFormatting.GRAY)
+                            .withStyle(ChatFormatting.ITALIC));
                 }
+            }else {
+                tooltipComponents.add(Component.literal("Allows you to store and analyze DNA sequences.")
+                        .withStyle(ChatFormatting.GRAY));
             }
         } else {
             tooltipComponents.add(Component.literal("Allows you to store and analyze DNA sequences.")

@@ -5,10 +5,12 @@ import com.mathmout.resourcefulsheep.entity.custom.ResourcefulSheepEntity;
 import com.mathmout.resourcefulsheep.utils.TexteUtils;
 import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.systems.RenderSystem;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -239,5 +241,18 @@ public static void renderDnaList(GuiGraphics guiGraphics, int panelX, int panelY
             }
         }
         return null;
+    }
+
+    public static void renderEnergyValue(GuiGraphics guiGraphics, Font font, int maxEnergy, int storedEnergy, int mouseX, int mouseY) {
+        String[] energyStored = TexteUtils.formatEnergy(storedEnergy);
+        String[] energyMax = TexteUtils.formatEnergy(maxEnergy);
+
+        guiGraphics.renderTooltip(font,
+                Component.literal(energyStored[0]).withStyle(ChatFormatting.DARK_RED)
+                        .append(Component.literal(energyStored[1]).withStyle(ChatFormatting.DARK_RED))
+                        .append(Component.literal(" / ").withStyle(ChatFormatting.GOLD))
+                        .append(Component.literal(energyMax[0]).withStyle(ChatFormatting.WHITE))
+                        .append(Component.literal(energyMax[1]).withStyle(ChatFormatting.GOLD)),
+                mouseX, mouseY);
     }
 }

@@ -6,7 +6,7 @@ import com.mathmout.resourcefulsheep.config.dnacrossbreeding.SheepCrossbreeding;
 import com.mathmout.resourcefulsheep.config.mutations.ConfigSheepMutationManager;
 import com.mathmout.resourcefulsheep.config.mutations.SheepMutation;
 import com.mathmout.resourcefulsheep.item.ModDataComponents;
-import com.mathmout.resourcefulsheep.screen.DNAScreenRenderer;
+import com.mathmout.resourcefulsheep.utils.TexteUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockPos;
@@ -113,21 +113,8 @@ public class SuspiciousSpawnEgg extends Item {
                 list = getAllSpawnEggIds();
             }
 
-            int maxDisplay = 15;
-            int count = 0;
-            for (String id : list) {
-                if (count >= maxDisplay) {
-                    tooltipComponents.add(Component.literal("... and " + (list.size() - maxDisplay) + " more.").withStyle(ChatFormatting.GRAY));
-                    break;
-                }
-
-                String fullId = id.contains(":") ? id : ResourcefulSheepMod.MOD_ID + ":" + id;
-                net.minecraft.world.entity.LivingEntity entity = DNAScreenRenderer.getEntity(fullId);
-                String name = DNAScreenRenderer.getDisplayName(fullId, entity);
-
-                tooltipComponents.add(Component.literal("- " + name).withStyle(ChatFormatting.GRAY));
-                count++;
-            }
+            list = TexteUtils.sortEntityIdsByName(list);
+            TexteUtils.DisplayEntityList(tooltipComponents, list);
         } else {
             tooltipComponents.add(Component.literal("Hold SHIFT for details.")
                     .withStyle(ChatFormatting.GRAY)
@@ -181,11 +168,11 @@ public class SuspiciousSpawnEgg extends Item {
             if ((mutation.MomId().equals(p1Clean) && mutation.DadId().equals(p2Clean)) ||
                     (mutation.MomId().equals(p2Clean) && mutation.DadId().equals(p1Clean))) {
                 addIdSafe(list, ResourcefulSheepMod.MOD_ID + ":" + mutation.ChildId());
+                addIdSafe(list, p1);
+                addIdSafe(list, p2);
             }
         }
 
-        addIdSafe(list, p1);
-        addIdSafe(list, p2);
         return list;
     }
 

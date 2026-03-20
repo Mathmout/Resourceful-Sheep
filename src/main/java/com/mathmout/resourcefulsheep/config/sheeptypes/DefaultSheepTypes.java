@@ -685,7 +685,7 @@ public class DefaultSheepTypes {
         ));
 
         // Bee
-        DefaultSheep.add(new SheepTypeData("Bee", "#edc343", "#ab6720",
+        DefaultSheep.add(new SheepTypeData("bee", "#edc343", "#ab6720",
                 List.of(),
                 false,
                 List.of(),

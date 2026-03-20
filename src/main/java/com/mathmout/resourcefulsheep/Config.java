@@ -61,7 +61,7 @@ public class Config {
                 .defineInRange("transfer_rate", 20000, 1, Integer.MAX_VALUE);
 
         DNA_SPLICER_ANALYZE_TIME = BUILDER
-                .comment("Time required to splice DNA (in ticks)")
+                .comment("Time required to splice DNA (in ticks, 1s = 20 ticks)")
                 .defineInRange("splicer_time", 6000, 1, Integer.MAX_VALUE);
 
         DNA_SPLICER_RANGE = BUILDER

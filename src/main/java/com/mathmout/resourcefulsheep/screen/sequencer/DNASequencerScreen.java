@@ -3,7 +3,6 @@ package com.mathmout.resourcefulsheep.screen.sequencer;
 import com.mathmout.resourcefulsheep.ResourcefulSheepMod;
 import com.mathmout.resourcefulsheep.screen.DNAScreenRenderer;
 import com.mojang.blaze3d.systems.RenderSystem;
-import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.GameRenderer;
@@ -91,13 +90,7 @@ public class DNASequencerScreen extends AbstractContainerScreen<DNASequencerMenu
         renderTooltip(guiGraphics, mouseX, mouseY);
 
         if(isHovering(153, 13, 11, 60, mouseX, mouseY)) {
-
-            guiGraphics.renderTooltip(font,
-                    Component.literal(String.valueOf(menu.getEnergy())).withStyle(ChatFormatting.DARK_RED)
-                            .append(Component.literal(" / ").withStyle(ChatFormatting.GOLD))
-                            .append(Component.literal(String.valueOf(menu.getMaxEnergy())).withStyle(ChatFormatting.WHITE))
-                            .append(Component.literal(" FE").withStyle(ChatFormatting.GOLD)),
-                    mouseX, mouseY);
+            DNAScreenRenderer.renderEnergyValue(guiGraphics, font, menu.getMaxEnergy(), menu.getEnergy(), mouseX, mouseY);
         }
     }
 
