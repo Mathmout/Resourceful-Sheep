@@ -128,8 +128,6 @@ public class TexteUtils {
             tooltipComponents.add(Component.literal(" - " + name).withStyle(ChatFormatting.GRAY));
             count++;
         }
-
     }
-
 }
 

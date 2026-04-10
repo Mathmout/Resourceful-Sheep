@@ -1,0 +1,46 @@
+site_name: Resourceful Sheep Wiki
+site_description: Official documentation for the Resourceful Sheep Minecraft Mod
+site_author: Mathmout
+repo_url: https://github.com/Mathmout/Resourceful-Sheep
+
+# Configuration du thème Material
+theme:
+  name: material
+  features:
+    - navigation.tabs # Met le menu principal en haut
+    - navigation.sections
+    - search.suggest
+    - search.highlight
+    - content.code.copy # Ajoute un bouton "Copier" sur les blocs de code JSON !
+
+  # Gestion du Mode Clair / Mode Sombre
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: blue # Couleur principale
+      accent: indigo
+      toggle:
+        icon: material/weather-night
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: blue
+      accent: indigo
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to light mode
+
+# Structure du menu sur la gauche
+nav:
+  - Home: index.md
+  - Getting Started: getting-started.md
+  - Genetics & Machines: genetics-machines.md
+  - Configuration JSON: configuration.md
+  - Download: download.md
+
+# Activer les extensions Markdown (boîtes colorées, etc.)
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - attr_list
