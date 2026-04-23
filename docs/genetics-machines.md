@@ -16,6 +16,7 @@ Here is exactly what each Syringe tier can target:
 ### 💉 Syringe Upgrades
 You start with an Iron Syringe, but it can be upgraded to Diamond and Netherite using the Smithing Table. To do this, you need a specific **Smithing Template**.
 You can find a diamond smithing template in two ways:
+
 1. **Loot:** Found randomly in chests inside Shepherd village houses.
 2. **Trading:** A Level 3 Shepherd Villager has about a **26% chance** to sell it to you for Emeralds.
 

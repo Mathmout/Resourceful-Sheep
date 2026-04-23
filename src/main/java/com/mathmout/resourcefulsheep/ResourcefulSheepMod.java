@@ -39,6 +39,7 @@ public class ResourcefulSheepMod {
         // Creative Tabs
         ModCreativeTabs.register(modEventBus);
 
+        // Items
         ModItems.register(modEventBus);
         ModItems.registerVariantSpawnEggs();
 

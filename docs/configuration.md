@@ -2,6 +2,8 @@
 
 Resourceful Sheep is **fully customizable**. The mod is entirely data-driven, meaning you can create your own sheep types, define mutations, and control where they spawn using simple JSON files.
 
+Don't worry if it looks complex at first, upon first launch, the mod generates plenty of default configuration files that serve as perfect examples to help you understand how the structure works!
+
 !!! info "File Location"
     All config files are located in `config/resourceful_sheep/` inside your Minecraft instance. They are loaded at game start. **Every change needs a full restart of the game** `/reload` is not enough.
 
@@ -127,7 +129,7 @@ These files define breeding recipes for new sheep when using classic breeding (f
 
 ## 3. DNA Crossbreeding
 
-### 3.2 Settings
+### 3.1 Settings
 
 You can create custom DNA crossbreeding recipes for the **DNA Splicer** machine.
 
