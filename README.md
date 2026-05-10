@@ -17,5 +17,7 @@ You can change drops, tiers, and spawning as you like.
 
 👉 Or on Modrinth : https://modrinth.com/mod/resourceful-sheep
 
+👉 Wiki : https://mathmout.github.io/Resourceful-Sheep/
+
 ✨ Thanks for checking out Resourceful Sheep!  
 Feel free to open suggestions or ideas to make it better.
