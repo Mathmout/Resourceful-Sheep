@@ -13,11 +13,11 @@ The mod is **fully customizable**:
 ⚡ All configuration is done with **JSON files**.  
 You can change drops, tiers, and spawning as you like.
 
-👉 More information on CurseForge : https://www.curseforge.com/minecraft/mc-mods/resourcefulsheep.
+👉 More information on [CurseForge](https://www.curseforge.com/minecraft/mc-mods/resourcefulsheep).
 
-👉 Or on Modrinth : https://modrinth.com/mod/resourceful-sheep
+👉 Or on [Modrinth](https://modrinth.com/mod/resourceful-sheep)
 
-👉 Wiki : https://mathmout.github.io/Resourceful-Sheep/
+👉 The Resourceful Sheep [Wiki](https://mathmout.github.io/Resourceful-Sheep/)
 
 ✨ Thanks for checking out Resourceful Sheep!  
 Feel free to open suggestions or ideas to make it better.
