@@ -3,18 +3,20 @@ package com.mathmout.resourcefulsheep.item;
 import com.mathmout.resourcefulsheep.Config;
 import com.mathmout.resourcefulsheep.ResourcefulSheepMod;
 import com.mathmout.resourcefulsheep.block.ModBlocks;
+import com.mathmout.resourcefulsheep.item.custom.CustomDeferredSpawnEggItem;
+import com.mathmout.resourcefulsheep.item.custom.ResourcefulWoolItem;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.SpawnEggItem;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
 import java.util.function.Supplier;
 
+import static com.mathmout.resourcefulsheep.item.ModItems.RESOURCEFUL_WOOLS;
 import static com.mathmout.resourcefulsheep.item.ModItems.SHEEP_SPAWN_EGGS;
 
 public class ModCreativeTabs {
@@ -37,8 +39,13 @@ public class ModCreativeTabs {
                         output.accept(ModBlocks.DNA_SPLICER.get());
                         output.accept(ModItems.SUSPICIOUS_SPAWN_EGG.get());
 
-                        for (DeferredItem<? extends SpawnEggItem> egg : SHEEP_SPAWN_EGGS) {
+                        for (DeferredItem<CustomDeferredSpawnEggItem> egg : SHEEP_SPAWN_EGGS) {
                             output.accept(egg.get());
+                        }
+                        if (Config.DISPLAY_WOOLS.get()) {
+                            for (DeferredItem<ResourcefulWoolItem> wool : RESOURCEFUL_WOOLS) {
+                                output.accept(wool.get());
+                            }
                         }
                     })
                         .build());

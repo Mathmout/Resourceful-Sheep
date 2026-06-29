@@ -87,7 +87,7 @@ public class SheepScanner extends Item {
 
 
         // Name
-        mutableComponent.append(Component.literal(TexteUtils.StringToText(variant.Name()) + " Resourceful Sheep")
+        mutableComponent.append(Component.literal(TexteUtils.stringToText(variant.Name()) + " Resourceful Sheep")
                         .withStyle(Style.EMPTY.withColor(Integer.parseInt(variant.EggColorSpotsNTitle().substring(1), 16))))
                         .append("\n");
         // Tier.
@@ -130,7 +130,7 @@ public class SheepScanner extends Item {
         DyeColor dyeColor = sheep.getColor();
         String colorName = dyeColor.getName().substring(0, 1).toUpperCase() + dyeColor.getName().substring(1);
         MutableComponent lineColor = Component.literal("Color : ").withStyle(ChatFormatting.GRAY)
-                .append(Component.literal(TexteUtils.StringToText(colorName)).withStyle(Style.EMPTY.withColor(dyeColor.getTextColor())));
+                .append(Component.literal(TexteUtils.stringToText(colorName)).withStyle(Style.EMPTY.withColor(dyeColor.getTextColor())));
         mutableComponent.append(lineColor);
 
         return mutableComponent;
@@ -145,7 +145,7 @@ public class SheepScanner extends Item {
 
         // Description
         DyeColor dyeColor = sheep.getColor();
-        String colorName = TexteUtils.StringToText(dyeColor.getName());
+        String colorName = TexteUtils.stringToText(dyeColor.getName());
         MutableComponent line2 = Component.literal("It's just a ").withStyle(ChatFormatting.GRAY)
                 .append(Component.literal(colorName).withStyle(Style.EMPTY.withColor(dyeColor.getTextColor())))
                 .append(Component.literal(" sheep.").withStyle(ChatFormatting.GRAY));

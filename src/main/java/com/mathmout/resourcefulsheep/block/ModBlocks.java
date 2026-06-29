@@ -3,6 +3,9 @@ package com.mathmout.resourcefulsheep.block;
 import com.mathmout.resourcefulsheep.ResourcefulSheepMod;
 import com.mathmout.resourcefulsheep.block.custom.DNASequencerBlock;
 import com.mathmout.resourcefulsheep.block.custom.DNASplicerBlock;
+import com.mathmout.resourcefulsheep.block.custom.ResourcefulWoolBlock;
+import com.mathmout.resourcefulsheep.config.sheeptypes.ConfigSheepTypeManager;
+import com.mathmout.resourcefulsheep.entity.custom.SheepVariantData;
 import com.mathmout.resourcefulsheep.item.ModItems;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
@@ -12,10 +15,13 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Supplier;
 
 public class ModBlocks {
     public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(ResourcefulSheepMod.MOD_ID);
+    public static final Map<String, DeferredBlock<Block>> RESOURCEFUL_WOOL_BLOCKS = new HashMap<>();
 
     public static final DeferredBlock<Block> DNA_SEQUENCER = registerBlock("dna_sequencer",
             () -> new DNASequencerBlock(
@@ -33,10 +39,25 @@ public class ModBlocks {
                             .noOcclusion() // Empêche le X-Ray
             ));
 
+    public static void registerVariantWools() {
+        for (SheepVariantData variant : ConfigSheepTypeManager.getSheepVariant().values()) {
+
+            DeferredBlock<Block> woolBlock = BLOCKS.register(variant.Id() + "_wool",
+                    () -> new ResourcefulWoolBlock(
+                            BlockBehaviour.Properties.of()
+                                    .strength(0.8f) // Comme la laine vanilla
+                                    .sound(net.minecraft.world.level.block.SoundType.WOOL)
+                                    .ignitedByLava() // Ça brûle !
+                    ));
+
+            RESOURCEFUL_WOOL_BLOCKS.put(variant.Id(), woolBlock);
+        }
+    }
+
     private static <T extends Block> DeferredBlock<T> registerBlock(String name, Supplier<T> block) {
-        DeferredBlock<T> toReturn = BLOCKS.register(name, block);
-        registerBlockItem(name, toReturn);
-        return toReturn;
+        DeferredBlock<T> deferredBlock = BLOCKS.register(name, block);
+        registerBlockItem(name, deferredBlock);
+        return deferredBlock;
     }
 
     private static <T extends Block> void registerBlockItem(String name, DeferredBlock<T> block) {

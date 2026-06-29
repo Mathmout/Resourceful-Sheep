@@ -36,9 +36,9 @@ public record SetDnaParentPayload(BlockPos pos, int slotId, String dnaId) implem
                 if (level.isLoaded(payload.pos)) {
                     if (level.getBlockEntity(payload.pos) instanceof DNASplicerBlockEntity splicer) {
                         if (payload.slotId == 1) {
-                            splicer.setMom_id(payload.dnaId);
+                            splicer.setMomId(payload.dnaId);
                         } else if (payload.slotId == 2) {
-                            splicer.setDad_id(payload.dnaId);
+                            splicer.setDadId(payload.dnaId);
                         }
                     }
                 }

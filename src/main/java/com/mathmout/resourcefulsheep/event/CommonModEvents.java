@@ -70,7 +70,7 @@ public class CommonModEvents {
     public static void onVillagerTrades(VillagerTradesEvent event) {
         if (event.getType() == VillagerProfession.SHEPHERD) {
 
-            // Increase trade chance to appear here ~26%
+            // Increase trade chance to appear here ~26% in vanilla.
             for (int i = 0; i < 7; i++) {
                 event.getTrades().get(3).add((trader, random) -> {
 
@@ -143,7 +143,7 @@ public class CommonModEvents {
         event.registerBlockEntity(
                 Capabilities.EnergyStorage.BLOCK,
                 ModBlockEntities.DNA_SEQUENCER_BLOCK_ENTITY.get(),
-                (block_entity, side) -> block_entity.energyStorage
+                (dnaSequencerBlockEntity, side) -> dnaSequencerBlockEntity.energyStorage
         );
 
         // DNA Splicer
@@ -158,7 +158,7 @@ public class CommonModEvents {
         event.registerBlockEntity(
                 Capabilities.EnergyStorage.BLOCK,
                 ModBlockEntities.DNA_SPLICER_BLOCK_ENTITY.get(),
-                (block_entity, side) -> block_entity.energyStorage
+                (dnaSplicerBlockEntity, side) -> dnaSplicerBlockEntity.energyStorage
         );
 
         // Sheep Scanner
@@ -171,7 +171,7 @@ public class CommonModEvents {
     }
 
     @SubscribeEvent
-    public static void ModifyTemplateIcons(FMLCommonSetupEvent event) {
+    public static void modifyTemplateIcons(FMLCommonSetupEvent event) {
         SmithingTemplateItem netheriteTemplate = (SmithingTemplateItem) Items.NETHERITE_UPGRADE_SMITHING_TEMPLATE.asItem();
         List<ResourceLocation> currentIcons = netheriteTemplate.baseSlotEmptyIcons;
         List<ResourceLocation> newIcons = new ArrayList<>(currentIcons);
@@ -199,7 +199,7 @@ public class CommonModEvents {
 
     public static boolean checkResourcefulSheepSpawnRules(EntityType<? extends Animal> entityType, ServerLevelAccessor level, MobSpawnType spawnType, BlockPos pos, RandomSource random) {
 
-        // 1. On récupère la config tout de suite
+        // On récupère la config tout de suite
         Optional<SheepSpawningData> spawningDataOpt = ConfigSheepSpawningManager.getSpawningDataFor(entityType);
         if (spawningDataOpt.isEmpty()) {
             return false;

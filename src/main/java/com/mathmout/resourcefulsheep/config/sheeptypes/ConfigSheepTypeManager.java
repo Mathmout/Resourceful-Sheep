@@ -50,7 +50,7 @@ public class ConfigSheepTypeManager {
 
                     if (data != null && data.SheepName() != null) {
                         String fileName = path.getFileName().toString();
-                        String resourceId = data.SheepName();
+                        String resourceId = data.SheepName().toLowerCase();
 
                         if (SHEEP_TYPES.containsKey(resourceId)) {
                             String previousFile = RESOURCE_FILE_MATCHING.get(resourceId);
@@ -58,7 +58,7 @@ public class ConfigSheepTypeManager {
                             return;
                         }
 
-                        if (!fileName.contains(resourceId)) {
+                        if (!fileName.toLowerCase().contains(resourceId)) {
                             LOGGER.warn("[ResourcefulSheep] Config Warning SheepType : File '{}' contains Sheep ID '{}'. Mismatch possible.", fileName, resourceId);
                         }
 
@@ -119,7 +119,7 @@ public class ConfigSheepTypeManager {
 
                 SheepVariantData variant = new SheepVariantData(
                         id,
-                        type.SheepName(),
+                        type.SheepName().toLowerCase(),
                         tier.Tier(),
                         variantDrops,
                         type.EggColorBackground(),

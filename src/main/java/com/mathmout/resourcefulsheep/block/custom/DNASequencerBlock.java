@@ -180,7 +180,7 @@ public class DNASequencerBlock extends BaseEntityBlock {
                                 ids.add(tag.getAsString());
                             }
                             ids = TexteUtils.sortEntityIdsByName(ids);
-                            TexteUtils.DisplayEntityList(tooltipComponents, ids);
+                            TexteUtils.displayEntityList(tooltipComponents, ids);
                         }
                     }
                 } else {

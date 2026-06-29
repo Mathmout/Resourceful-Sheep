@@ -72,14 +72,14 @@ public class SheepDroppingCategory implements IRecipeCategory<SheepVariantData> 
         int startY = 18;
         int slotSize = 18;
         int columns = 5;
-        List<SheepVariantData.DroppedItems> DroppedItemsData = recipe.DroppedItems();
+        List<SheepVariantData.DroppedItems> droppedItemsData = recipe.DroppedItems();
 
-        if (DroppedItemsData == null || DroppedItemsData.isEmpty()) {
+        if (droppedItemsData == null || droppedItemsData.isEmpty()) {
             return;
         }
 
         int i = 0;
-        for (SheepVariantData.DroppedItems droppedItems : DroppedItemsData) {
+        for (SheepVariantData.DroppedItems droppedItems : droppedItemsData) {
             List<ItemStack> stacksToAdd = new ArrayList<>();
             String itemId = droppedItems.ItemId();
 

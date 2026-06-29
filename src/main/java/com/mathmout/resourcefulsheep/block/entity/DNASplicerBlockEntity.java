@@ -30,11 +30,11 @@ import java.util.List;
 public class DNASplicerBlockEntity extends BlockEntity implements MenuProvider {
 
     // On stocke les IDs des parents sélectionnés (Strings, pas items)
-    private String mom_id = "";
-    private String dad_id = "";
+    private String momId = "";
+    private String dadId = "";
 
     private int progress = 0;
-    private final int maxProgress = Config.DNA_SPLICER_ANALYZE_TIME.get(); // Temps un peu plus long que l'analyse
+    private final int maxProgress = Config.DNA_SPLICER_ANALYZE_TIME.get();
 
     public final ItemStackHandler itemHandler = new ItemStackHandler(1) {
         @Override
@@ -125,8 +125,8 @@ public class DNASplicerBlockEntity extends BlockEntity implements MenuProvider {
             if (this.progress >= this.maxProgress) {
                 craftResult();
                 this.progress = 0;
-                mom_id = "";
-                dad_id = "";
+                momId = "";
+                dadId = "";
                 setChanged();
                 level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
             }
@@ -139,7 +139,7 @@ public class DNASplicerBlockEntity extends BlockEntity implements MenuProvider {
     }
 
     private boolean canCraft() {
-        if (mom_id.isEmpty() || dad_id.isEmpty()) return false;
+        if (momId.isEmpty() || dadId.isEmpty()) return false;
         if (energyStorage.getEnergyStored() < Config.DNA_SEQUENCER_CONSUMPTION.get()) return false;
         return itemHandler.getStackInSlot(0).isEmpty();
     }
@@ -150,31 +150,31 @@ public class DNASplicerBlockEntity extends BlockEntity implements MenuProvider {
         ItemStack suspiciousEgg = new ItemStack(ModItems.SUSPICIOUS_SPAWN_EGG.get());
 
         CompoundTag data = new CompoundTag();
-        data.putString("mom_id", mom_id);
-        data.putString("dad_id", dad_id);
+        data.putString("mom_id", momId);
+        data.putString("dad_id", dadId);
 
         suspiciousEgg.set(ModDataComponents.SUSPICIOUS_EGG_DATA.get(), data);
         itemHandler.setStackInSlot(0, suspiciousEgg);
     }
 
-    public void setMom_id(String id) {
-        this.mom_id = id; setChanged();
+    public void setMomId(String id) {
+        this.momId = id; setChanged();
         assert level != null;
         level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
     }
 
-    public void setDad_id(String id) {
-        this.dad_id = id; setChanged();
+    public void setDadId(String id) {
+        this.dadId = id; setChanged();
         assert level != null;
         level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
     }
 
-    public String getMom_id() {
-        return mom_id;
+    public String getMomId() {
+        return momId;
     }
 
-    public String getDad_id() {
-        return dad_id;
+    public String getDadId() {
+        return dadId;
     }
 
     @Override
@@ -183,8 +183,8 @@ public class DNASplicerBlockEntity extends BlockEntity implements MenuProvider {
         tag.put("inventory", itemHandler.serializeNBT(registries));
         tag.putInt("energy", energyStorage.getEnergyStored());
         tag.putInt("dna_splicer.progress", progress);
-        tag.putString("parent1", mom_id);
-        tag.putString("parent2", dad_id);
+        tag.putString("parent1", momId);
+        tag.putString("parent2", dadId);
     }
 
     @Override
@@ -200,10 +200,10 @@ public class DNASplicerBlockEntity extends BlockEntity implements MenuProvider {
             progress = tag.getInt("dna_splicer.progress");
 
         if (tag.contains("parent1"))
-            mom_id = tag.getString("parent1");
+            momId = tag.getString("parent1");
 
         if (tag.contains("parent2"))
-            dad_id = tag.getString("parent2");
+            dadId = tag.getString("parent2");
     }
 
     // Sauvegarde Item (quand on casse le bloc)
@@ -212,8 +212,8 @@ public class DNASplicerBlockEntity extends BlockEntity implements MenuProvider {
         data.putInt("energy", energyStorage.getEnergyStored());
         data.put("inventory", itemHandler.serializeNBT(registries));
         data.putInt("dna_splicer.progress", progress);
-        data.putString("parent1", mom_id);
-        data.putString("parent2", dad_id);
+        data.putString("parent1", momId);
+        data.putString("parent2", dadId);
 
         stack.set(ModDataComponents.SPLICER_DATA.get(), data);
     }
@@ -233,10 +233,10 @@ public class DNASplicerBlockEntity extends BlockEntity implements MenuProvider {
                     progress = data.getInt("dna_splicer.progress");
 
                 if (data.contains("parent1"))
-                    mom_id = data.getString("parent1");
+                    momId = data.getString("parent1");
 
                 if (data.contains("parent2"))
-                    dad_id = data.getString("parent2");
+                    dadId = data.getString("parent2");
             }
         }
     }

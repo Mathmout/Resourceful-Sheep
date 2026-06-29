@@ -114,7 +114,7 @@ public class SuspiciousSpawnEgg extends Item {
             }
 
             list = TexteUtils.sortEntityIdsByName(list);
-            TexteUtils.DisplayEntityList(tooltipComponents, list);
+            TexteUtils.displayEntityList(tooltipComponents, list);
         } else {
             tooltipComponents.add(Component.literal("Hold SHIFT for details.")
                     .withStyle(ChatFormatting.GRAY)

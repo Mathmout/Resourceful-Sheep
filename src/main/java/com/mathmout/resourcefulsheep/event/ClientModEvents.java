@@ -2,18 +2,24 @@ package com.mathmout.resourcefulsheep.event;
 
 import com.mathmout.resourcefulsheep.ResourcefulSheepMod;
 import com.mathmout.resourcefulsheep.client.data.DynamicResourceProvider;
-import com.mathmout.resourcefulsheep.client.data.DynamicSheepTextureGenerator;
+import com.mathmout.resourcefulsheep.client.data.DynamicTexturesGenerator;
 import com.mathmout.resourcefulsheep.client.renderer.ResourcefulSheepRenderer;
+import com.mathmout.resourcefulsheep.config.sheeptypes.ConfigSheepTypeManager;
 import com.mathmout.resourcefulsheep.entity.ModEntities;
 import com.mathmout.resourcefulsheep.item.ModDataComponents;
 import com.mathmout.resourcefulsheep.item.ModItems;
+import com.mathmout.resourcefulsheep.item.custom.ResourcefulWoolItem;
 import com.mathmout.resourcefulsheep.item.custom.SuspiciousSpawnEgg;
 import com.mathmout.resourcefulsheep.screen.sequencer.DNASequencerScreen;
 import com.mathmout.resourcefulsheep.screen.ModMenuTypes;
 import com.mathmout.resourcefulsheep.screen.splicer.DNASplicerScreen;
 import net.minecraft.client.renderer.entity.EntityRenderers;
+import net.minecraft.client.renderer.item.ItemProperties;
+import net.minecraft.client.resources.model.ModelResourceLocation;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackLocationInfo;
 import net.minecraft.server.packs.PackResources;
 import net.minecraft.server.packs.PackSelectionConfig;
@@ -21,38 +27,40 @@ import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.repository.Pack;
 import net.minecraft.server.packs.repository.PackCompatibility;
 import net.minecraft.server.packs.repository.PackSource;
-import net.minecraft.server.packs.resources.PreparableReloadListener;
 import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.server.packs.resources.SimplePreparableReloadListener;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.flag.FeatureFlagSet;
+import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.SpawnEggItem;
+import net.minecraft.world.item.component.BlockItemStateProperties;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
+import net.neoforged.neoforge.client.event.ModelEvent;
 import net.neoforged.neoforge.client.event.RegisterClientReloadListenersEvent;
 import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 import net.neoforged.neoforge.event.AddPackFindersEvent;
+import net.neoforged.neoforge.registries.DeferredItem;
 import org.jetbrains.annotations.NotNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executor;
 
+// Lancement du jeu
 @EventBusSubscriber(modid = ResourcefulSheepMod.MOD_ID, value = Dist.CLIENT)
 public class ClientModEvents {
+// ---------------------------------------------------------
+    // 1. COULEURS ET RENDUS
+    // ---------------------------------------------------------
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ClientModEvents.class);
-
+    // Enregistre les couleurs dynamiques (arc-en-ciel) pour les œufs de spawn suspects
     @SubscribeEvent
     public static void registerItemColors(RegisterColorHandlersEvent.Item event) {
         event.register((stack, tintIndex) -> {
-
             List<String> possibleIds;
             if (stack.has(ModDataComponents.SUSPICIOUS_EGG_DATA.get())) {
                 CompoundTag data = stack.get(ModDataComponents.SUSPICIOUS_EGG_DATA.get());
@@ -84,9 +92,97 @@ public class ClientModEvents {
             int colorB = getSpawnEggColor(idB, tintIndex);
 
             return blendColors(colorA, colorB, factor);
-
         }, ModItems.SUSPICIOUS_SPAWN_EGG.get());
     }
+
+    // Lie les entités (les moutons) à leurs modèles 3D visuels
+    @SubscribeEvent
+    public static void registerEntityRenderers(final FMLClientSetupEvent event) {
+        ModEntities.SHEEP_ENTITIES.forEach((id, entityType) ->
+                EntityRenderers.register(entityType.get(), ResourcefulSheepRenderer::new));
+    }
+
+    // ---------------------------------------------------------
+    // 2. INTERFACES GRAPHIQUES (GUI)
+    // ---------------------------------------------------------
+
+    // Associe les écrans (GUI) à leurs conteneurs (Menus)
+    @SubscribeEvent
+    public static void registerScreens(RegisterMenuScreensEvent event) {
+        event.register(ModMenuTypes.DNA_SEQUENCER_MENU.get(), DNASequencerScreen::new);
+        event.register(ModMenuTypes.DNA_SPLICER_MENU.get(), DNASplicerScreen::new);
+    }
+
+    // ---------------------------------------------------------
+    // 3. GÉNÉRATION DYNAMIQUE (TEXTURES & MODÈLES)
+    // ---------------------------------------------------------
+
+    // Injecte notre pack de ressources généré dynamiquement dans le jeu
+    @SubscribeEvent
+    public static void registerDynamicPackFinders(AddPackFindersEvent event) {
+        if (event.getPackType() == PackType.CLIENT_RESOURCES) {
+            event.addRepositorySource((packConsumer) -> packConsumer.accept(createDynamicClientPack()));
+        }
+    }
+
+    // Force le jeu à générer les textures puis à charger les modèles de laine colorée
+    @SubscribeEvent
+    public static void registerAdditionalModels(ModelEvent.RegisterAdditional event) {
+        for (String variantId : ConfigSheepTypeManager.getSheepVariant().keySet()) {
+            String safeVariantId = variantId.toLowerCase();
+            for (DyeColor color : DyeColor.values()) {
+                if (color != DyeColor.WHITE) {
+                    event.register(new ModelResourceLocation(
+                            ResourceLocation.fromNamespaceAndPath(
+                                    ResourcefulSheepMod.MOD_ID,
+                                    "item/" + safeVariantId + "_wool_" + color.getName()
+                            ),
+                            "standalone"
+                    ));
+                }
+            }
+        }
+    }
+
+    @SubscribeEvent
+    public static void onClientReloadListeners(RegisterClientReloadListenersEvent event) {
+        event.registerReloadListener(new SimplePreparableReloadListener<Void>() {
+            @Override
+            protected @NotNull Void prepare(@NotNull ResourceManager resourceManager, @NotNull ProfilerFiller profiler) {
+                DynamicTexturesGenerator.clear();
+                return null;
+            }
+            @Override
+            protected void apply(@NotNull Void aVoid, @NotNull ResourceManager resourceManager, @NotNull ProfilerFiller profiler) {
+
+            }
+        });
+    }
+
+    // Permet aux items de laine de lire leur propriété "color" pour afficher la bonne texture dans l'inventaire
+    @SubscribeEvent
+    public static void registerWoolColorProperties(FMLClientSetupEvent event) {
+        event.enqueueWork(() -> {
+            for (DeferredItem<ResourcefulWoolItem> woolItem : ModItems.RESOURCEFUL_WOOLS) {
+                ItemProperties.register(woolItem.get(),
+                        ResourceLocation.fromNamespaceAndPath(ResourcefulSheepMod.MOD_ID, "color"),
+                        (stack, level, entity, seed) -> {
+                            BlockItemStateProperties stateProps = stack.get(DataComponents.BLOCK_STATE);
+                            if (stateProps != null) {
+                                String colorStr = stateProps.properties().get("color");
+                                if (colorStr != null) {
+                                    return DyeColor.byName(colorStr, DyeColor.WHITE).getId();
+                                }
+                            }
+                            return 0.0f; // Par défaut, on affiche le blanc
+                        });
+            }
+        });
+    }
+
+    // ---------------------------------------------------------
+    // 4. MÉTHODES UTILITAIRES
+    // ---------------------------------------------------------
 
     private static int getSpawnEggColor(String entityId, int tintIndex) {
         EntityType<?> type = EntityType.byString(entityId).orElse(null);
@@ -113,51 +209,6 @@ public class ClientModEvents {
         float b = b1 + (b2 - b1) * ratio;
 
         return (255 << 24) | ((int) r << 16) | ((int) g << 8) | (int) b;
-    }
-
-    @SubscribeEvent
-    public static void registerScreens(RegisterMenuScreensEvent event) {
-        event.register(ModMenuTypes.DNA_SEQUENCER_MENU.get(), DNASequencerScreen::new);
-        event.register(ModMenuTypes.DNA_SPLICER_MENU.get(), DNASplicerScreen::new);
-    }
-
-    @SubscribeEvent
-    public static void onClientSetup(final FMLClientSetupEvent event) {
-        ModEntities.SHEEP_ENTITIES.forEach((id, entityType) ->
-                EntityRenderers.register(entityType.get(), ResourcefulSheepRenderer::new));
-    }
-
-    @SubscribeEvent
-    public static void onAddPackFinders(AddPackFindersEvent event) {
-        if (event.getPackType() == PackType.CLIENT_RESOURCES) {
-            event.addRepositorySource((packConsumer) -> packConsumer.accept(createDynamicClientPack()));
-        }
-    }
-
-    @SubscribeEvent
-    public static void onRegisterClientReloadListeners(RegisterClientReloadListenersEvent event) {
-        event.registerReloadListener(new PreparableReloadListener() {
-            @Override
-            public @NotNull CompletableFuture<Void> reload(
-                    @NotNull PreparationBarrier preparationBarrier,
-                    @NotNull ResourceManager resourceManager,
-                    @NotNull ProfilerFiller preparationsProfiler,
-                    @NotNull ProfilerFiller reloadProfiler,
-                    @NotNull Executor backgroundExecutor,
-                    @NotNull Executor gameExecutor) {
-                LOGGER.info("Dynamic textures reload listener: Starting reload...");
-                return CompletableFuture.runAsync(() -> LOGGER.info("Dynamic textures reload listener: Prepare stage running."), backgroundExecutor).thenCompose(preparationBarrier::wait).thenRunAsync(() -> {
-                    LOGGER.info("Dynamic textures reload listener: Apply stage starting...");
-                    try {
-                        DynamicSheepTextureGenerator.clear();
-                        new DynamicSheepTextureGenerator().generateAllTextures(resourceManager);
-                    } catch (Exception e) {
-                        LOGGER.error("Failed to run dynamic texture generator", e);
-                    }
-                    LOGGER.info("Dynamic textures reload listener: Apply stage finished.");
-                }, gameExecutor);
-            }
-        });
     }
 
     private static Pack createDynamicClientPack() {

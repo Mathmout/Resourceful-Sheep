@@ -19,9 +19,9 @@ import java.util.Locale;
 public class TexteUtils {
 
     // Utility to convert an item ID to readable text.
-    public static String StringToText(String itemId) {
-        String IdWithoutUnderscore = itemId.replace('_', ' ');
-        String[] words = IdWithoutUnderscore.split(" ");
+    public static String stringToText(String itemId) {
+        String idWithoutUnderscore = itemId.replace('_', ' ');
+        String[] words = idWithoutUnderscore.split(" ");
         StringBuilder result = new StringBuilder();
         for (String word : words) {
             if (!word.isEmpty()) {
@@ -36,22 +36,22 @@ public class TexteUtils {
     }
 
     // Utility to convert an item ID or item TAG to its display name.
-    public static String getPrettyName(String Id) {
-        if (Id == null || Id.isEmpty()) return "";
+    public static String getPrettyName(String id) {
+        if (id == null || id.isEmpty()) return "";
 
         // TAG
-        if (Id.startsWith("#")) {
-            String tagContent = Id.substring(1);
+        if (id.startsWith("#")) {
+            String tagContent = id.substring(1);
             ResourceLocation loc = ResourceLocation.tryParse(tagContent);
             if (loc != null) {
-                return StringToText(loc.getPath());
+                return stringToText(loc.getPath());
             }
-            return StringToText(tagContent);
+            return stringToText(tagContent);
         }
 
         // Item ID
         else {
-            ResourceLocation loc = ResourceLocation.tryParse(Id);
+            ResourceLocation loc = ResourceLocation.tryParse(id);
             if (loc != null) {
                 // ITEM
                 if (BuiltInRegistries.ITEM.containsKey(loc)) {
@@ -65,7 +65,7 @@ public class TexteUtils {
                 }
             }
         }
-            return StringToText(Id);
+            return stringToText(id);
     }
 
     public static String[] formatEnergy(int energy) {
@@ -111,7 +111,7 @@ public class TexteUtils {
         return sortedList;
     }
 
-    public static void DisplayEntityList(List<Component> tooltipComponents, List<String> ids){
+    public static void displayEntityList(List<Component> tooltipComponents, List<String> ids){
         int count = 0;
         int maxDisplayed = 22;
         for (String id : ids) {

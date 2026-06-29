@@ -1,7 +1,7 @@
 package com.mathmout.resourcefulsheep.event;
 
 import com.mathmout.resourcefulsheep.ResourcefulSheepMod;
-import com.mathmout.resourcefulsheep.client.data.DynamicSheepTextureGenerator;
+import com.mathmout.resourcefulsheep.client.data.DynamicTexturesGenerator;
 import com.mathmout.resourcefulsheep.config.sheeptypes.ConfigSheepTypeManager;
 import com.mathmout.resourcefulsheep.entity.custom.SheepVariantData;
 import com.mathmout.resourcefulsheep.utils.TexteUtils;
@@ -23,6 +23,7 @@ import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
 
 import java.util.List;
 
+// Pendant le jeu
 @EventBusSubscriber(modid = ResourcefulSheepMod.MOD_ID, value = Dist.CLIENT)
 public class ClientGameEvents {
 
@@ -30,7 +31,7 @@ public class ClientGameEvents {
     public static void onTagsUpdated(TagsUpdatedEvent event) {
         if (event.getUpdateCause() == TagsUpdatedEvent.UpdateCause.CLIENT_PACKET_RECEIVED) {
             ResourceManager resourceManager = Minecraft.getInstance().getResourceManager();
-            new DynamicSheepTextureGenerator().generateAllTextures(resourceManager);
+            new DynamicTexturesGenerator().generateAllTextures(resourceManager);
         }
     }
 
@@ -50,9 +51,9 @@ public class ClientGameEvents {
                 SheepVariantData variant = ConfigSheepTypeManager.getSheepVariant().get(variantId);
 
                 if (variant != null && variant.EggColorSpotsNTitle() != null) {
-                    // 1. Titre Coloré
+                    // Titre Coloré
                     int nameColor = Integer.parseInt(variant.EggColorSpotsNTitle().substring(1), 16);
-                    String displayName = "§l" + TexteUtils.StringToText(variant.Name()) + " Resourceful Sheep Egg";
+                    String displayName = "§l" + TexteUtils.stringToText(variant.Name()) + " Resourceful Sheep Egg";
 
                     if (!event.getToolTip().isEmpty()) {
                         event.getToolTip().set(0, Component.literal(displayName).withStyle(Style.EMPTY.withColor(nameColor)));
@@ -62,12 +63,12 @@ public class ClientGameEvents {
                                     .withStyle(ChatFormatting.ITALIC)
                                     .withStyle(ChatFormatting.GRAY));
                         } else {
-                            // 2. Tier
+                            // Tier
                             MutableComponent tierLine = Component.literal("Tier : ").withStyle(ChatFormatting.RED)
                                     .append(Component.literal(String.valueOf(variant.Tier())).withStyle(ChatFormatting.LIGHT_PURPLE));
                             event.getToolTip().add(tierLine);
 
-                            // 3. Liste des Drops
+                            // Liste des Drops
                             event.getToolTip().add(Component.literal("Drops :").withStyle(ChatFormatting.BLUE));
 
                             List<SheepVariantData.DroppedItems> drops = variant.DroppedItems();

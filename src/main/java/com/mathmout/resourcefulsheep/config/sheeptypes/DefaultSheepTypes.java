@@ -7,12 +7,12 @@ import java.util.Map;
 
 public class DefaultSheepTypes {
     public static List<SheepTypeData> getDefaults() {
-        List<SheepTypeData> DefaultSheep = new ArrayList<>();
+        List<SheepTypeData> defaultSheep = new ArrayList<>();
 
         // --- RESOURCES ---
 
         // Cobblestone
-        DefaultSheep.add(new SheepTypeData("cobblestone", "#808080", "#555555",
+        defaultSheep.add(new SheepTypeData("cobblestone", "#808080", "#555555",
                 List.of(),
                 false,
                 List.of(),
@@ -31,7 +31,7 @@ public class DefaultSheepTypes {
         ));
 
         // Stone
-        DefaultSheep.add(new SheepTypeData("stone", "#888888", "#555555",
+        defaultSheep.add(new SheepTypeData("stone", "#888888", "#555555",
                 List.of(),
                 false,
                 List.of(),
@@ -50,7 +50,7 @@ public class DefaultSheepTypes {
         ));
 
         // Sand
-        DefaultSheep.add(new SheepTypeData("sand", "#f0d890", "#d2b56b",
+        defaultSheep.add(new SheepTypeData("sand", "#f0d890", "#d2b56b",
                 List.of(),
                 false,
                 List.of(),
@@ -69,7 +69,7 @@ public class DefaultSheepTypes {
         ));
 
         // Dripstone
-        DefaultSheep.add(new SheepTypeData("dripstone", "#c2b8a3", "#9e8f74",
+        defaultSheep.add(new SheepTypeData("dripstone", "#c2b8a3", "#9e8f74",
                 List.of(),
                 false,
                 List.of(),
@@ -88,7 +88,7 @@ public class DefaultSheepTypes {
         ));
 
         // Granite
-        DefaultSheep.add(new SheepTypeData("granite", "#d16b6b", "#9c4747",
+        defaultSheep.add(new SheepTypeData("granite", "#d16b6b", "#9c4747",
                 List.of(),
                 false,
                 List.of(),
@@ -107,7 +107,7 @@ public class DefaultSheepTypes {
         ));
 
         // Diorite
-        DefaultSheep.add(new SheepTypeData("diorite", "#c5c5c5", "#8a8a8a",
+        defaultSheep.add(new SheepTypeData("diorite", "#c5c5c5", "#8a8a8a",
                 List.of(),
                 false,
                 List.of(),
@@ -126,7 +126,7 @@ public class DefaultSheepTypes {
         ));
 
         // Andesite
-        DefaultSheep.add(new SheepTypeData("andesite", "#888888", "#666666",
+        defaultSheep.add(new SheepTypeData("andesite", "#888888", "#666666",
                 List.of(),
                 false,
                 List.of(),
@@ -145,7 +145,7 @@ public class DefaultSheepTypes {
         ));
 
         // Netherrack
-        DefaultSheep.add(new SheepTypeData("netherrack", "#5a2b2b", "#3d1d1d",
+        defaultSheep.add(new SheepTypeData("netherrack", "#5a2b2b", "#3d1d1d",
                 List.of("minecraft:nether_wart"),
                 true,
                 List.of(),
@@ -171,7 +171,7 @@ public class DefaultSheepTypes {
         ));
 
         // Soul Sand
-        DefaultSheep.add(new SheepTypeData("soul_sand", "#4a3e32", "#30261c",
+        defaultSheep.add(new SheepTypeData("soul_sand", "#4a3e32", "#30261c",
                 List.of("minecraft:nether_wart"),
                 true,
                 List.of(),
@@ -197,7 +197,7 @@ public class DefaultSheepTypes {
         ));
 
         // Coal
-        DefaultSheep.add(new SheepTypeData("coal", "#252525", "#101015",
+        defaultSheep.add(new SheepTypeData("coal", "#252525", "#101015",
                 List.of(),
                 false,
                 List.of(),
@@ -221,7 +221,7 @@ public class DefaultSheepTypes {
         ));
 
         // Iron
-        DefaultSheep.add(new SheepTypeData("iron", "#D8D8D8", "#A0A0A0",
+        defaultSheep.add(new SheepTypeData("iron", "#D8D8D8", "#A0A0A0",
                 List.of(),
                 false,
                 List.of(),
@@ -244,7 +244,7 @@ public class DefaultSheepTypes {
         ));
 
         // Copper
-        DefaultSheep.add(new SheepTypeData("copper", "#e77c56", "#8a4129",
+        defaultSheep.add(new SheepTypeData("copper", "#e77c56", "#8a4129",
                 List.of(),
                 false,
                 List.of(),
@@ -265,7 +265,7 @@ public class DefaultSheepTypes {
         ));
 
         // Redstone
-        DefaultSheep.add(new SheepTypeData("redstone", "#FF0000", "#8B0000",
+        defaultSheep.add(new SheepTypeData("redstone", "#FF0000", "#8B0000",
                 List.of("minecraft:nether_wart", "minecraft:wheat"),
                 true,
                 List.of(),
@@ -296,7 +296,7 @@ public class DefaultSheepTypes {
         ));
 
         // Lapis Lazuli
-        DefaultSheep.add(new SheepTypeData("lapis_lazuli", "#0042A3", "#002E8C",
+        defaultSheep.add(new SheepTypeData("lapis_lazuli", "#0042A3", "#002E8C",
                 List.of(),
                 false,
                 List.of(),
@@ -317,7 +317,7 @@ public class DefaultSheepTypes {
         ));
 
         // Quartz
-        DefaultSheep.add(new SheepTypeData("quartz", "#EAE5DE", "#D4CCC5",
+        defaultSheep.add(new SheepTypeData("quartz", "#EAE5DE", "#D4CCC5",
                 List.of("minecraft:nether_wart", "minecraft:wheat"),
                 true,
                 List.of(),
@@ -348,7 +348,7 @@ public class DefaultSheepTypes {
         ));
 
         // Gold
-        DefaultSheep.add(new SheepTypeData("gold", "#fdf55f", "#dc9613",
+        defaultSheep.add(new SheepTypeData("gold", "#fdf55f", "#dc9613",
                 List.of(),
                 false,
                 List.of(),
@@ -369,7 +369,7 @@ public class DefaultSheepTypes {
         ));
 
         // Diamond
-        DefaultSheep.add(new SheepTypeData("diamond", "#63F7F2", "#00E0D8",
+        defaultSheep.add(new SheepTypeData("diamond", "#63F7F2", "#00E0D8",
                 List.of(),
                 false,
                 List.of(),
@@ -389,7 +389,7 @@ public class DefaultSheepTypes {
         ));
 
         // Emerald
-        DefaultSheep.add(new SheepTypeData("emerald", "#00A82B", "#008C23",
+        defaultSheep.add(new SheepTypeData("emerald", "#00A82B", "#008C23",
                 List.of(),
                 false,
                 List.of(),
@@ -410,7 +410,7 @@ public class DefaultSheepTypes {
         ));
 
         // Netherite Scrap
-        DefaultSheep.add(new SheepTypeData("netherite_scrap", "#654740", "#4a281d",
+        defaultSheep.add(new SheepTypeData("netherite_scrap", "#654740", "#4a281d",
                 List.of("minecraft:nether_wart"),
                 true,
                 List.of(),
@@ -436,7 +436,7 @@ public class DefaultSheepTypes {
         ));
 
         // Netherite
-        DefaultSheep.add(new SheepTypeData("netherite", "#4d494d", "#31292a",
+        defaultSheep.add(new SheepTypeData("netherite", "#4d494d", "#31292a",
                 List.of("minecraft:nether_wart", "minecraft:wheat"),
                 true,
                 List.of(),
@@ -468,7 +468,7 @@ public class DefaultSheepTypes {
         // --- MOBS ---
 
         // Wither
-        DefaultSheep.add(new SheepTypeData("wither", "#e7e5ff", "#777bc7",
+        defaultSheep.add(new SheepTypeData("wither", "#e7e5ff", "#777bc7",
                 List.of(),
                 false,
                 List.of(),
@@ -487,7 +487,7 @@ public class DefaultSheepTypes {
         ));
 
         // Creeper
-        DefaultSheep.add(new SheepTypeData("creeper", "#727272", "#494949",
+        defaultSheep.add(new SheepTypeData("creeper", "#727272", "#494949",
                 List.of(),
                 false,
                 List.of(),
@@ -506,7 +506,7 @@ public class DefaultSheepTypes {
         ));
 
         // Blaze
-        DefaultSheep.add(new SheepTypeData("blaze", "#ffc100", "#bf5a00",
+        defaultSheep.add(new SheepTypeData("blaze", "#ffc100", "#bf5a00",
                 List.of(),
                 true,
                 List.of(),
@@ -525,7 +525,7 @@ public class DefaultSheepTypes {
         ));
 
         // Enderman
-        DefaultSheep.add(new SheepTypeData("enderman", "#161616", "#cc00ff", // Noir avec des taches violettes (yeux)
+        defaultSheep.add(new SheepTypeData("enderman", "#161616", "#cc00ff", // Noir avec des taches violettes (yeux)
                 List.of(),
                 false,
                 List.of(),
@@ -544,7 +544,7 @@ public class DefaultSheepTypes {
         ));
 
         // Spider
-        DefaultSheep.add(new SheepTypeData("spider", "#35312e", "#a22221",
+        defaultSheep.add(new SheepTypeData("spider", "#35312e", "#a22221",
                 List.of(),
                 false,
                 List.of("minecraft:poison"),
@@ -566,7 +566,7 @@ public class DefaultSheepTypes {
         ));
 
         // Slime
-        DefaultSheep.add(new SheepTypeData("slime", "#7bcb62", "#5baa43",
+        defaultSheep.add(new SheepTypeData("slime", "#7bcb62", "#5baa43",
                 List.of(),
                 false,
                 List.of(),
@@ -587,7 +587,7 @@ public class DefaultSheepTypes {
         ));
 
         // Ghast
-        DefaultSheep.add(new SheepTypeData("ghast", "#f0f0f0", "#8f8f8f",
+        defaultSheep.add(new SheepTypeData("ghast", "#f0f0f0", "#8f8f8f",
                 List.of(),
                 true,
                 List.of(),
@@ -606,7 +606,7 @@ public class DefaultSheepTypes {
         ));
 
         // Shulker
-        DefaultSheep.add(new SheepTypeData("shulker", "#976697", "#e6f0ad",
+        defaultSheep.add(new SheepTypeData("shulker", "#976697", "#e6f0ad",
                 List.of(),
                 false,
                 List.of(),
@@ -625,7 +625,7 @@ public class DefaultSheepTypes {
         ));
 
         // Breeze
-        DefaultSheep.add(new SheepTypeData("breeze", "#b5a5ca", "#2f527f",
+        defaultSheep.add(new SheepTypeData("breeze", "#b5a5ca", "#2f527f",
                 List.of(),
                 false,
                 List.of(),
@@ -644,7 +644,7 @@ public class DefaultSheepTypes {
         ));
 
         // Squid
-        DefaultSheep.add(new SheepTypeData("squid", "#796571", "#4a404a",
+        defaultSheep.add(new SheepTypeData("squid", "#796571", "#4a404a",
                 List.of(),
                 false,
                 List.of(),
@@ -663,7 +663,7 @@ public class DefaultSheepTypes {
         ));
 
         // Guardian
-        DefaultSheep.add(new SheepTypeData("guardian", "#668980", "#396552",
+        defaultSheep.add(new SheepTypeData("guardian", "#668980", "#396552",
                 List.of(),
                 false,
                 List.of(),
@@ -685,7 +685,7 @@ public class DefaultSheepTypes {
         ));
 
         // Bee
-        DefaultSheep.add(new SheepTypeData("bee", "#edc343", "#ab6720",
+        defaultSheep.add(new SheepTypeData("bee", "#edc343", "#ab6720",
                 List.of(),
                 false,
                 List.of(),
@@ -702,6 +702,6 @@ public class DefaultSheepTypes {
                         ))
                 )
         ));
-        return DefaultSheep;
+        return defaultSheep;
     }
 }

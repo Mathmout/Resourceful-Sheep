@@ -1,5 +1,6 @@
 package com.mathmout.resourcefulsheep.entity.custom;
 
+import com.mathmout.resourcefulsheep.ResourcefulSheepMod;
 import com.mathmout.resourcefulsheep.config.mutations.ConfigSheepMutationManager;
 import com.mathmout.resourcefulsheep.config.mutations.SheepMutation;
 import com.mathmout.resourcefulsheep.config.sheeptypes.ConfigSheepTypeManager;
@@ -9,6 +10,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.TagKey;
@@ -37,6 +39,11 @@ public class ResourcefulSheepEntity extends Sheep {
 
     public ResourcefulSheepEntity(EntityType<? extends Sheep> type, Level level) {
         super(type, level);
+    }
+
+    @Override
+    public @NotNull Component getName() {
+        return Component.translatable("entity." + ResourcefulSheepMod.MOD_ID + ".resourceful_sheep");
     }
 
     @Override

@@ -1,14 +1,12 @@
 package com.mathmout.resourcefulsheep.client.data;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.mathmout.resourcefulsheep.ResourcefulSheepMod;
 import com.mathmout.resourcefulsheep.config.sheeptypes.ConfigSheepTypeManager;
 import com.mathmout.resourcefulsheep.config.sheeptypes.SheepTypeData;
 import com.mathmout.resourcefulsheep.entity.custom.SheepVariantData;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.resources.model.BakedModel;
-import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
@@ -16,7 +14,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.tags.TagKey;
-import net.minecraft.util.RandomSource;
+import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -29,14 +27,20 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class DynamicSheepTextureGenerator {
+public class DynamicTexturesGenerator {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(DynamicSheepTextureGenerator.class);
-    public static final Map<ResourceLocation, byte[]> DYNAMIC_TEXTURES = new ConcurrentHashMap<>();
+    private static final Logger LOGGER = LoggerFactory.getLogger(DynamicTexturesGenerator.class);
+    public static final Map<ResourceLocation, byte[]> DYNAMIC_SHEEP_TEXTURES = new ConcurrentHashMap<>();
+    public static final Map<ResourceLocation, byte[]> DYNAMIC_WOOL_TEXTURES = new ConcurrentHashMap<>();
+
+    private static volatile boolean isGenerated = false;
+    private static volatile Thread generatingThread = null;
+    private static final Object LOCK = new Object();
 
     private static final int MAX_TIER_INCREMENT = 6; // 60% maximum coverage
     private static final double BODY_INTENSITY_FACTOR = 0.45;
@@ -60,7 +64,41 @@ public class DynamicSheepTextureGenerator {
     );
 
     public static void clear() {
-        DYNAMIC_TEXTURES.clear();
+        synchronized(LOCK) {
+            DYNAMIC_SHEEP_TEXTURES.clear();
+            DYNAMIC_WOOL_TEXTURES.clear();
+            isGenerated = false;
+            generatingThread = null;
+        }
+    }
+
+    public static void triggerGeneration() {
+        // 1. Si tout est déjà prêt, on passe directement.
+        if (isGenerated) return;
+
+        // 2. L'ASTUCE MAGIQUE : Si le thread qui demande une texture est CELUI qui
+        // est actuellement en train de les générer, on le laisse passer sans rien
+        // bloquer pour qu'il puisse récupérer ses images de base (évite la boucle infinie).
+        if (Thread.currentThread() == generatingThread) return;
+
+        // 3. Les AUTRES threads (qui chargent les textures du jeu) vont s'entasser ici et ATTENDRE.
+        synchronized(LOCK) {
+            // Quand la porte s'ouvre enfin, on vérifie si le premier thread a fini le travail.
+            if (isGenerated) return;
+
+            // On verrouille officiellement cette tâche pour CE thread précis.
+            generatingThread = Thread.currentThread();
+
+            ResourceManager rm = Minecraft.getInstance().getResourceManager();
+            try {
+                new DynamicTexturesGenerator().generateAllTextures(rm);
+                isGenerated = true; // On marque comme terminé pour libérer tous les autres threads !
+            } catch (Exception e) {
+                LOGGER.error("[ResourcefulSheep] Erreur lors de la génération dynamique", e);
+            } finally {
+                generatingThread = null; // On rend les clés
+            }
+        }
     }
 
     public void generateAllTextures(ResourceManager resourceManager) {
@@ -70,7 +108,9 @@ public class DynamicSheepTextureGenerator {
         Optional<Resource> furBaseResource = resourceManager.getResource(SHEEP_FUR_BASE_TEXTURE);
 
         if (sheepBaseResource.isEmpty() || furBaseResource.isEmpty()) {
-            LOGGER.error("[ResourcefulSheep] Could not load base sheep templates! Aborting texture generation.");
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.error("[ResourcefulSheep] Could not load base sheep templates! Aborting texture generation.");
+            }
             return;
         }
 
@@ -80,10 +120,26 @@ public class DynamicSheepTextureGenerator {
             BufferedImage sheepBaseImage = ImageIO.read(sheepBaseStream);
             BufferedImage furBaseImage = ImageIO.read(furBaseStream);
 
+            // Chargement des 16 laines de base
+            Map<String, BufferedImage> woolBaseImages = new HashMap<>();
+            for (DyeColor color : DyeColor.values()) {
+                ResourceLocation loc = ResourceLocation.fromNamespaceAndPath(ResourcefulSheepMod.MOD_ID, "textures/block/wools/" + color.getName() + "_wool.png");
+                Optional<Resource> res = resourceManager.getResource(loc);
+                if (res.isPresent()) {
+                    try (InputStream is = res.get().open()) {
+                        woolBaseImages.put(color.getName(), ImageIO.read(is));
+                    } catch (IOException e) {
+                        LOGGER.warn("[ResourcefulSheep] Error reading wool texture: {}", loc);
+                    }
+                } else {
+                    LOGGER.warn("[ResourcefulSheep] Missing base wool texture in your folder: {}", loc);
+                }
+            }
+
             for (SheepVariantData variant : ConfigSheepTypeManager.getSheepVariant().values()) {
                 try {
                     List<ResourceLocation> sources = getVariantSourceTextures(variant);
-                    generateTexturesForVariant(variant, resourceManager, sheepBaseImage, furBaseImage, sources);
+                    generateTexturesForVariant(variant, resourceManager, sheepBaseImage, furBaseImage, woolBaseImages, sources);
                 } catch (IOException e) {
                     LOGGER.error("[ResourcefulSheep] Failed to generate textures for sheep variant: {}", variant.Id(), e);
                 }
@@ -91,13 +147,12 @@ public class DynamicSheepTextureGenerator {
         } catch (IOException e) {
             LOGGER.error("[ResourcefulSheep] Error processing base sheep templates.", e);
         }
-        LOGGER.info("[ResourcefulSheep] Dynamic sheep texture generation finished. Generated {} textures.", DYNAMIC_TEXTURES.size());
+        LOGGER.info("[ResourcefulSheep] Dynamic sheep texture generation finished. Generated {} textures.", DYNAMIC_SHEEP_TEXTURES.size());
     }
 
-    private void generateTexturesForVariant(SheepVariantData variant, ResourceManager resourceManager, BufferedImage sheepBaseImage, BufferedImage furBaseImage, List<ResourceLocation> itemKeys) throws IOException {
+    private void generateTexturesForVariant(SheepVariantData variant, ResourceManager resourceManager, BufferedImage sheepBaseImage, BufferedImage furBaseImage, Map<String, BufferedImage> woolBaseImages, List<ResourceLocation> itemKeys) throws IOException {
         if (itemKeys == null || itemKeys.isEmpty()) {
             LOGGER.warn("[ResourcefulSheep] No suitable item/block textures found for sheep name: {}", variant.Name());
-            return;
         }
 
         Map<Integer, Integer> combinedPalette = new HashMap<>();
@@ -123,7 +178,6 @@ public class DynamicSheepTextureGenerator {
 
         if (combinedPalette.isEmpty()) {
             LOGGER.warn("[ResourcefulSheep] Combined color palette for {} is empty (all source textures failed). Skipping.", variant.Name());
-            return;
         }
 
         List<Map.Entry<Integer, Integer>> weightedColorPalette = new ArrayList<>(combinedPalette.entrySet());
@@ -150,6 +204,7 @@ public class DynamicSheepTextureGenerator {
         int bodyPixelsToAdd = (int) (bodyPixelsTotal * coverage * BODY_INTENSITY_FACTOR);
         int furPixelsToAdd = (int) (furPixelsTotal * coverage);
 
+        // Moutons
         BufferedImage sheepImage = copyImage(sheepBaseImage);
         BufferedImage furImage = copyImage(furBaseImage);
 
@@ -158,11 +213,27 @@ public class DynamicSheepTextureGenerator {
 
         ResourceLocation sheepTextureLocation = ResourceLocation.fromNamespaceAndPath(ResourcefulSheepMod.MOD_ID,
                 "textures/entity/sheep/" + variant.Id() + ".png");
-        DYNAMIC_TEXTURES.put(sheepTextureLocation, bufferedImageToPngBytes(sheepImage));
+        DYNAMIC_SHEEP_TEXTURES.put(sheepTextureLocation, bufferedImageToPngBytes(sheepImage));
 
         ResourceLocation furTextureLocation = ResourceLocation.fromNamespaceAndPath(ResourcefulSheepMod.MOD_ID,
                 "textures/entity/sheep/" + variant.Id() + "_fur.png");
-        DYNAMIC_TEXTURES.put(furTextureLocation, bufferedImageToPngBytes(furImage));
+        DYNAMIC_SHEEP_TEXTURES.put(furTextureLocation, bufferedImageToPngBytes(furImage));
+
+        // Laines
+        int woolPixelsToAdd = (int) (256 * coverage);
+        List<Rectangle> woolRegion = List.of(new Rectangle(0, 0, 16, 16));
+
+        for (Map.Entry<String, BufferedImage> entry : woolBaseImages.entrySet()) {
+            String colorName = entry.getKey();
+            BufferedImage woolImage = copyImage(entry.getValue());
+
+            // On tamponne les pixels colorés sur toute la surface de la laine
+            addRandomPixels(woolImage, woolRegion, weightedColorPalette, woolPixelsToAdd);
+
+            ResourceLocation woolLoc = ResourceLocation.fromNamespaceAndPath(ResourcefulSheepMod.MOD_ID,
+                    "textures/block/" + variant.Id() + "_wool_" + colorName + ".png");
+            DYNAMIC_WOOL_TEXTURES.put(woolLoc, bufferedImageToPngBytes(woolImage));
+        }
     }
 
     private List<ResourceLocation> getVariantSourceTextures(SheepVariantData variant) {
@@ -211,66 +282,49 @@ public class DynamicSheepTextureGenerator {
         List<BufferedImage> images = new ArrayList<>();
         Set<ResourceLocation> texturePathsToLoad = new HashSet<>();
 
-        Item item = BuiltInRegistries.ITEM.get(itemKey);
+        ResourceLocation itemModelLoc = ResourceLocation.fromNamespaceAndPath(itemKey.getNamespace(), "models/item/" + itemKey.getPath() + ".json");
+        ResourceLocation blockModelLoc = ResourceLocation.fromNamespaceAndPath(itemKey.getNamespace(), "models/block/" + itemKey.getPath() + ".json");
 
-        if (item != Items.AIR) {
-            // On demande le modèle de l'Item.
-            ItemStack stack = new ItemStack(item);
-            BakedModel model = Minecraft.getInstance().getItemRenderer().getModel(stack, null, null, 0);
-
-            // Textures des Quads
-            RandomSource random = RandomSource.create();
-
-            for (Direction dir : Direction.values()) {
-                try {
-                    // On utilise null pour le BlockState car on lit un modèle d'Item
-                    List<BakedQuad> quads = model.getQuads(null, dir, random);
-                    for (BakedQuad quad : quads) {
-                        texturePathsToLoad.add(getTexturePathFromSprite(quad.getSprite()));
-                    }
-                } catch (Exception ignored) {}
-            }
-
-            try {
-                List<BakedQuad> quads = model.getQuads(null, null, random);
-                for (BakedQuad quad : quads) {
-                    texturePathsToLoad.add(getTexturePathFromSprite(quad.getSprite()));
-                }
-            } catch (Exception ignored) {}
+        Optional<Resource> modelRes = resourceManager.getResource(itemModelLoc);
+        if (modelRes.isEmpty()) {
+            modelRes = resourceManager.getResource(blockModelLoc);
         }
 
-        // Au cas où le modèle ne charge pas
+        if (modelRes.isPresent()) {
+            try (InputStream is = modelRes.get().open()) {
+                JsonObject modelJson = JsonParser.parseReader(new InputStreamReader(is)).getAsJsonObject();
+                if (modelJson.has("textures")) {
+                    JsonObject textures = modelJson.getAsJsonObject("textures");
+                    for (String key : textures.keySet()) {
+                        String texPath = textures.get(key).getAsString();
+                        ResourceLocation texLoc = ResourceLocation.parse(texPath);
+                        texturePathsToLoad.add(ResourceLocation.fromNamespaceAndPath(texLoc.getNamespace(), "textures/" + texLoc.getPath() + ".png"));
+                    }
+                }
+            } catch (Exception e) {
+                LOGGER.warn("[ResourcefulSheep] Failed to parse model JSON for {}", itemKey);
+            }
+        }
+
         if (texturePathsToLoad.isEmpty()) {
             String name = itemKey.getPath();
-            // On essaie les deux dossiers block et item
             texturePathsToLoad.add(ResourceLocation.fromNamespaceAndPath(itemKey.getNamespace(), "textures/item/" + name + ".png"));
             texturePathsToLoad.add(ResourceLocation.fromNamespaceAndPath(itemKey.getNamespace(), "textures/block/" + name + ".png"));
         }
 
-        // Chargement des images .png à partir de la liste
         for (ResourceLocation loc : texturePathsToLoad) {
             if (loc.getPath().contains("missingno")) continue;
-
             Optional<Resource> resource = resourceManager.getResource(loc);
             if (resource.isPresent()) {
-                try (InputStream is = resource.get().open()) {
-                    images.add(ImageIO.read(is));
+                try (InputStream inputStream = resource.get().open()) {
+                    images.add(ImageIO.read(inputStream));
                 } catch (IOException e) {
                     LOGGER.warn("[ResourcefulSheep] Failed to read texture stream for: {}", loc);
                 }
             }
         }
 
-        if (images.isEmpty()) {
-            LOGGER.debug("[ResourcefulSheep] Could not find any texture resource for: {}", itemKey);
-        }
         return images;
-    }
-
-    // Transforme l'ID interne du Sprite en vrai chemin de fichier .png
-    private ResourceLocation getTexturePathFromSprite(TextureAtlasSprite sprite) {
-        ResourceLocation spriteLoc = sprite.contents().name();
-        return ResourceLocation.fromNamespaceAndPath(spriteLoc.getNamespace(), "textures/" + spriteLoc.getPath() + ".png");
     }
 
     private byte[] bufferedImageToPngBytes(BufferedImage image) throws IOException {

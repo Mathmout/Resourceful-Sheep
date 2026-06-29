@@ -39,9 +39,14 @@ public class ResourcefulSheepMod {
         // Creative Tabs
         ModCreativeTabs.register(modEventBus);
 
+        // Blocks
+        ModBlocks.register(modEventBus);
+        ModBlocks.registerVariantWools();
+
         // Items
-        ModItems.register(modEventBus);
         ModItems.registerVariantSpawnEggs();
+        ModItems.registerVariantWools();
+        ModItems.register(modEventBus);
 
         // Components
         ModDataComponents.register(modEventBus);
@@ -51,9 +56,6 @@ public class ResourcefulSheepMod {
 
         // Block Entities
         ModBlockEntities.register(modEventBus);
-
-        // Blocks
-        ModBlocks.register(modEventBus);
 
         // Menu
         ModMenuTypes.register(modEventBus);
@@ -65,3 +67,32 @@ public class ResourcefulSheepMod {
         modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
     }
 }
+
+// TODO
+//
+// TAGS
+// Ajouter la possibilité d'utiliser les tags de mouton dans les json de sheep_spawning.
+//
+// MACHINES
+// Faire en sorte que les machine puisse fonctionner sans énergie si la config est faite ainsi.
+// et adapter l'interface en conséquence.
+// Ajouter un bouton supprimer pour les cards dans le Splicer.
+// Possible problème en cas d'explosion s'une machine elle ne risuqe de ne pas droper prbl avec playerWillDestroy
+//
+// ETA
+// Ajouter un indicateur sur le temps restant dans les machines.
+//
+// SHEEP SCANNER
+// Ajouter une vraie interface pour le SheepScanner.
+// Ajouter un mécanisme afin de lier un SheepScanner a un DNA Sequencer on peut utiliser les UUID.
+//
+// CENTRIFUGE
+// Ajouter la centrifugeuse.
+// Changer l'organisation des catégories JEI.
+//
+// TEXTURES
+// Amériorer les algo pour les texture des moutons et des laines.
+//
+// CAGE
+// Ajouter des cages pour enfermer des moutons pour qu'ils produisent de la laine dans une machine.
+// Répresenter un environment naturel dans la cage vitrée customisable.

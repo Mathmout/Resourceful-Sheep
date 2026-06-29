@@ -189,7 +189,7 @@ public static void renderDnaList(GuiGraphics guiGraphics, int panelX, int panelY
         if (entity instanceof ResourcefulSheepEntity) {
             try {
                 String path = entityId.contains(":") ? entityId.split(":")[1] : entityId;
-                return TexteUtils.StringToText(path).replace("Tier", "Sheep Tier");
+                return TexteUtils.stringToText(path).replace("Tier", "Sheep Tier");
             } catch (Exception e) {
                 return entity.getName().getString();
             }

@@ -6,6 +6,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.mathmout.resourcefulsheep.ResourcefulSheepMod;
 import com.mathmout.resourcefulsheep.config.sheeptypes.ConfigSheepTypeManager;
+import com.mathmout.resourcefulsheep.config.sheeptypes.SheepTypeData;
 import com.mathmout.resourcefulsheep.config.spawning.ConfigSheepSpawningManager;
 import com.mathmout.resourcefulsheep.config.spawning.SheepSpawningData;
 import net.minecraft.resources.ResourceLocation;
@@ -30,25 +31,111 @@ public class DynamicServerDataPackProvider implements PackResources {
 
     public DynamicServerDataPackProvider(PackLocationInfo locationInfo) {
         this.locationInfo = locationInfo;
-        generateResources();
-        generateSheepTag();
+        generateSpawningData();
+        generateSheepTags();
+        generateWoolBlockTag();
+        generateWoolLootTables();
     }
 
-    private void generateSheepTag() {
+    private void generateWoolLootTables() {
+        for (String variantId : ConfigSheepTypeManager.getSheepVariant().keySet()) {
+            String blockId = ResourcefulSheepMod.MOD_ID + ":" + variantId + "_wool";
+
+            JsonObject root = new JsonObject();
+            root.addProperty("type", "minecraft:block");
+
+            JsonArray pools = new JsonArray();
+            JsonObject pool = new JsonObject();
+            pool.addProperty("rolls", 1);
+
+            JsonArray entries = new JsonArray();
+            JsonObject entry = new JsonObject();
+            entry.addProperty("type", "minecraft:item");
+            entry.addProperty("name", blockId);
+
+            JsonArray functions = new JsonArray();
+            JsonObject copyStateFunc = new JsonObject();
+            copyStateFunc.addProperty("function", "minecraft:copy_state");
+            copyStateFunc.addProperty("block", blockId);
+
+            JsonArray propertiesArray = new JsonArray();
+            propertiesArray.add("color"); // C'est le nom de la propriété dans ton ResourcefulWoolBlock
+            copyStateFunc.add("properties", propertiesArray);
+
+            functions.add(copyStateFunc);
+            entry.add("functions", functions);
+
+            entries.add(entry);
+            pool.add("entries", entries);
+
+            JsonArray conditions = new JsonArray();
+            JsonObject condition = new JsonObject();
+            condition.addProperty("condition", "minecraft:survives_explosion");
+            conditions.add(condition);
+            pool.add("conditions", conditions);
+
+            pools.add(pool);
+            root.add("pools", pools);
+
+            String path = "data/" + ResourcefulSheepMod.MOD_ID + "/loot_table/blocks/" + variantId + "_wool.json";
+            resourceCache.put(path, GSON.toJson(root).getBytes(StandardCharsets.UTF_8));
+        }
+    }
+
+    private void generateWoolBlockTag() {
         JsonObject root = new JsonObject();
-        root.addProperty("replace", false); // false pour pas écraser
+        root.addProperty("replace", false);
 
         JsonArray values = new JsonArray();
         for (String variantId : ConfigSheepTypeManager.getSheepVariant().keySet()) {
-            String fullEntityId = ResourcefulSheepMod.MOD_ID + ":" + variantId;
-            values.add(fullEntityId);
+            JsonObject value = new JsonObject();
+            value.addProperty("id", ResourcefulSheepMod.MOD_ID + ":" + variantId + "_wool");
+            value.addProperty("required", false);
+            values.add(value);
         }
         root.add("values", values);
-        String path = "data/" + ResourcefulSheepMod.MOD_ID + "/tags/entity_type/sheep.json";
+
+        String path = "data/minecraft/tags/block/wool.json";
         resourceCache.put(path, GSON.toJson(root).getBytes(StandardCharsets.UTF_8));
     }
 
-    private void generateResources() {
+    private void generateSheepTags() {
+        JsonObject globalRoot = new JsonObject();
+        globalRoot.addProperty("replace", false);
+        JsonArray globalValues = new JsonArray();
+
+        for (SheepTypeData sheepTypeData : ConfigSheepTypeManager.getSheepTypes()) {
+            String specificTagName = sheepTypeData.SheepName() + "_sheep";
+
+            JsonObject specificRoot = new JsonObject();
+            specificRoot.addProperty("replace", false);
+            JsonArray specificValues = new JsonArray();
+
+            for (SheepTypeData.TierData tierData : sheepTypeData.SheepTier()) {
+                String fullEntityId = ResourcefulSheepMod.MOD_ID + ":" + sheepTypeData.SheepName() + "_tier_" + tierData.Tier();
+
+                JsonObject value = new JsonObject();
+                value.addProperty("id", fullEntityId);
+                value.addProperty("required", false);
+                specificValues.add(value);
+            }
+
+            specificRoot.add("values", specificValues);
+            String specificPath = "data/" + ResourcefulSheepMod.MOD_ID + "/tags/entity_type/" + specificTagName + ".json";
+            resourceCache.put(specificPath, GSON.toJson(specificRoot).getBytes(StandardCharsets.UTF_8));
+
+            JsonObject globalValue = new JsonObject();
+            globalValue.addProperty("id", "#" + ResourcefulSheepMod.MOD_ID + ":" + specificTagName);
+            globalValue.addProperty("required", false);
+            globalValues.add(globalValue);
+        }
+
+        globalRoot.add("values", globalValues);
+        String globalPath = "data/" + ResourcefulSheepMod.MOD_ID + "/tags/entity_type/all_sheep.json";
+        resourceCache.put(globalPath, GSON.toJson(globalRoot).getBytes(StandardCharsets.UTF_8));
+    }
+
+    private void generateSpawningData() {
         for (SheepSpawningData rule : ConfigSheepSpawningManager.getSheepSpawning()) {
             JsonObject spawner = new JsonObject();
             spawner.addProperty("type", ResourcefulSheepMod.MOD_ID + ":" + rule.sheepId());
@@ -116,7 +203,7 @@ public class DynamicServerDataPackProvider implements PackResources {
     @Nullable
     @Override
     public IoSupplier<InputStream> getResource(@NotNull PackType packType, @NotNull ResourceLocation location) {
-        if (packType == PackType.SERVER_DATA && location.getNamespace().equals(ResourcefulSheepMod.MOD_ID)) {
+        if (packType == PackType.SERVER_DATA && location.getNamespace().equals(ResourcefulSheepMod.MOD_ID) || location.getNamespace().equals("minecraft")) {
             String path = "data/" + location.getNamespace() + "/" + location.getPath();
             if (resourceCache.containsKey(path)) {
                 return () -> new ByteArrayInputStream(resourceCache.get(path));
@@ -127,7 +214,7 @@ public class DynamicServerDataPackProvider implements PackResources {
 
     @Override
     public void listResources(@NotNull PackType packType, @NotNull String namespace, @NotNull String path, @NotNull ResourceOutput resourceOutput) {
-        if (packType == PackType.SERVER_DATA && namespace.equals(ResourcefulSheepMod.MOD_ID)) {
+        if (packType == PackType.SERVER_DATA && namespace.equals(ResourcefulSheepMod.MOD_ID) || namespace.equals("minecraft")) {
             String prefix = "data/" + namespace + "/" + path;
             for (Map.Entry<String, byte[]> entry : resourceCache.entrySet()) {
                 if (entry.getKey().startsWith(prefix)) {
@@ -144,7 +231,7 @@ public class DynamicServerDataPackProvider implements PackResources {
     @NotNull
     @Override
     public Set<String> getNamespaces(@NotNull PackType type) {
-        return Set.of(ResourcefulSheepMod.MOD_ID);
+        return Set.of(ResourcefulSheepMod.MOD_ID, "minecraft");
     }
 
     @Nullable

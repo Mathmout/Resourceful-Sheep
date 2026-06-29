@@ -23,6 +23,9 @@ public class Config {
     public static ModConfigSpec.IntValue SHEEP_SCANNER_CONSUMPTION;
     public static ModConfigSpec.IntValue SHEEP_SCANNER_MAX_TRANSFER;
 
+    // Wools
+    public static ModConfigSpec.BooleanValue DISPLAY_WOOLS;
+
     static {
         // DNA Sequencer
         BUILDER.push("dna_sequencer");
@@ -86,6 +89,14 @@ public class Config {
                 .defineInRange("recharge_rate", 100, 0, Integer.MAX_VALUE);
 
         BUILDER.pop(); // Fin de section
+
+        BUILDER.push("display_wools");
+
+            DISPLAY_WOOLS = BUILDER
+                    .comment("Displays wool in creative inventory and in JEI")
+                    .define("display_wools", false);
+
+        BUILDER.pop();
     }
     static final ModConfigSpec SPEC = BUILDER.build();
 }

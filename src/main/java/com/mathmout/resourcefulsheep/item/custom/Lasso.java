@@ -150,7 +150,7 @@ public class Lasso extends Item {
         if (nbt.contains("Color", 1)) { // 1 is the ID for a Byte
             DyeColor dyeColor = DyeColor.byId(nbt.getByte("Color"));
             tooltips.add(Component.literal("Color: ").withStyle(ChatFormatting.GRAY)
-                    .append(Component.literal(TexteUtils.StringToText(dyeColor.getName())).withStyle(Style.EMPTY.withColor(dyeColor.getTextColor()))));
+                    .append(Component.literal(TexteUtils.stringToText(dyeColor.getName())).withStyle(Style.EMPTY.withColor(dyeColor.getTextColor()))));
         }
 
         // Custom Name

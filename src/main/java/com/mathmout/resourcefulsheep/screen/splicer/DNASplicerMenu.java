@@ -116,26 +116,26 @@ public class DNASplicerMenu extends AbstractContainerMenu {
     }
 
     public String getParent1() {
-        return blockEntity.getMom_id();
+        return blockEntity.getMomId();
     }
 
     public String getParent2() {
-        return blockEntity.getDad_id();
+        return blockEntity.getDadId();
     }
 
     private void addPlayerInventory(Inventory playerInventory) {
-        int Xstart = (304 - 18 * 9) / 2 + 1;
+        int startX = (304 - 18 * 9) / 2 + 1;
         for (int i = 0; i < 3; ++i) {
             for (int l = 0; l < 9; ++l) {
-                this.addSlot(new Slot(playerInventory, l + i * 9 + 9, Xstart + l * 18, 84 + i * 18));
+                this.addSlot(new Slot(playerInventory, l + i * 9 + 9, startX + l * 18, 84 + i * 18));
             }
         }
     }
 
     private void addPlayerHotbar(Inventory playerInventory) {
-        int Xstart = (304 - 18 * 9) / 2 + 1;
+        int startX = (304 - 18 * 9) / 2 + 1;
         for (int i = 0; i < 9; ++i) {
-            this.addSlot(new Slot(playerInventory, i, Xstart + i * 18, 142));
+            this.addSlot(new Slot(playerInventory, i, startX + i * 18, 142));
         }
     }
 
@@ -146,8 +146,8 @@ public class DNASplicerMenu extends AbstractContainerMenu {
     public int getScaledProgress() {
         int progress = getProgress();
         int maxProgress = getMaxProgress();
-        int ArrowNPlusSize = 21;
-        return maxProgress != 0 && progress != 0 ? progress * ArrowNPlusSize / maxProgress : 0;
+        int arrowNPlusSize = 21;
+        return maxProgress != 0 && progress != 0 ? progress * arrowNPlusSize / maxProgress : 0;
     }
 
     public boolean isCrafting() {
