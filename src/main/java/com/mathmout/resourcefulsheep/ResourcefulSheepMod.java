@@ -19,7 +19,6 @@ import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.ModContainer;
 
-// The value here should match an entry in the META-INF/neoforge.mods.toml file
 @Mod(ResourcefulSheepMod.MOD_ID)
 public class ResourcefulSheepMod {
     public static final String MOD_ID = "resourceful_sheep";
@@ -71,28 +70,43 @@ public class ResourcefulSheepMod {
 // TODO
 //
 // TAGS
-// Ajouter la possibilité d'utiliser les tags de mouton dans les json de sheep_spawning.
+// Ajouter la possibilité d'utiliser les tags de mouton dans les json de sheep_spawning.❌
 //
 // MACHINES
-// Faire en sorte que les machine puisse fonctionner sans énergie si la config est faite ainsi.
-// et adapter l'interface en conséquence.
-// Ajouter un bouton supprimer pour les cards dans le Splicer.
-// Possible problème en cas d'explosion s'une machine elle ne risuqe de ne pas droper prbl avec playerWillDestroy
+// Faire en sorte que les machine puisse fonctionner sans énergie si la config est faite ainsi
+// et adapter l'interface en conséquence et les tooltips. ✅
+// Ajouter un bouton supprimer pour les cards dans le Splicer. ✅
+// Possible problème en cas d'explosion d'une machine elle ne risque de ne pas droper prbl avec playerWillDestroy. ✅
+// Enhanced Splicer ❌
+// Si on fait Shif on peut voir l'energie au FE pres.❌
+//
+// Probleme avec la texture du bee sheep. ✅
+// Le lasso montre toute les info d'un mouton comme le Scanner... ❌
 //
 // ETA
-// Ajouter un indicateur sur le temps restant dans les machines.
+// Ajouter un indicateur sur le temps restant dans les machines.✅
+//
+// Suspicious egg
+// Petit bug sur la couleur de l'egg quand on fusion 2 ADN qui sont sencés rien donner.✅
 //
 // SHEEP SCANNER
-// Ajouter une vraie interface pour le SheepScanner.
-// Ajouter un mécanisme afin de lier un SheepScanner a un DNA Sequencer on peut utiliser les UUID.
+// Ajouter une vraie interface pour le SheepScanner. ✅
+// Ajouter un mécanisme afin de lier un SheepScanner a un DNA Sequencer on peut utiliser les UUID.❌
 //
 // CENTRIFUGE
-// Ajouter la centrifugeuse.
-// Changer l'organisation des catégories JEI.
+// Ajouter des laines pour tous les moutons. ✅
+// Ajouter la centrifugeuse.❌
+//
+// JEI
+// Changer l'organisation des catégories JEI par rapport a la centrifuge.❌
+// Faire en sorte qu'on puisse clicker sur un mouton dans JEI.❌
+//
+// Lasso
+// Changer le nom et la texture mais garder le focntionnement global.❌
 //
 // TEXTURES
-// Amériorer les algo pour les texture des moutons et des laines.
+// Amériorer les algo pour les texture des moutons et des laines.❌
 //
-// CAGE
-// Ajouter des cages pour enfermer des moutons pour qu'ils produisent de la laine dans une machine.
-// Répresenter un environment naturel dans la cage vitrée customisable.
+// CAGES
+// Ajouter des cages pour enfermer des moutons pour qu'ils produisent de la laine dans une machine.❌
+// Répresenter un environment naturel dans la cage vitrée customisable.❌

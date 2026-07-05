@@ -1,6 +1,7 @@
 package com.mathmout.resourcefulsheep.screen;
 
 import com.mathmout.resourcefulsheep.ResourcefulSheepMod;
+import com.mathmout.resourcefulsheep.screen.scanner.SheepScannerMenu;
 import com.mathmout.resourcefulsheep.screen.sequencer.DNASequencerMenu;
 import com.mathmout.resourcefulsheep.screen.splicer.DNASplicerMenu;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -20,6 +21,9 @@ public class ModMenuTypes {
 
     public static final DeferredHolder<MenuType<?>, MenuType<DNASplicerMenu>> DNA_SPLICER_MENU =
             MENUS.register("dna_splicer_menu", () -> IMenuTypeExtension.create(DNASplicerMenu::new));
+
+    public static final DeferredHolder<MenuType<?>, MenuType<SheepScannerMenu>> SHEEP_SCANNER_MENU =
+            MENUS.register("sheep_scanner_menu", () -> IMenuTypeExtension.create(SheepScannerMenu::new));
 
     public static void register(IEventBus eventBus) {
         MENUS.register(eventBus);

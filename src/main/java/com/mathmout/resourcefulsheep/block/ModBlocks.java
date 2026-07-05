@@ -27,17 +27,21 @@ public class ModBlocks {
             () -> new DNASequencerBlock(
                     BlockBehaviour.Properties.of() // propriété vierge
                             .strength(4f) // Solidité
+                            .explosionResistance(1200f)
                             .requiresCorrectToolForDrops()
                             .noOcclusion() // Empêche le X-Ray
-            ));
+            )
+    );
 
     public static final DeferredBlock<Block> DNA_SPLICER = registerBlock("dna_splicer",
             () -> new DNASplicerBlock(
                     BlockBehaviour.Properties.of() // propriété vierge
                             .strength(4f) // Solidité
+                            .explosionResistance(1200f)
                             .requiresCorrectToolForDrops()
                             .noOcclusion() // Empêche le X-Ray
-            ));
+            )
+    );
 
     public static void registerVariantWools() {
         for (SheepVariantData variant : ConfigSheepTypeManager.getSheepVariant().values()) {
@@ -48,7 +52,8 @@ public class ModBlocks {
                                     .strength(0.8f) // Comme la laine vanilla
                                     .sound(net.minecraft.world.level.block.SoundType.WOOL)
                                     .ignitedByLava() // Ça brûle !
-                    ));
+                    )
+            );
 
             RESOURCEFUL_WOOL_BLOCKS.put(variant.Id(), woolBlock);
         }

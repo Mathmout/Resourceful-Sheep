@@ -1,5 +1,6 @@
 package com.mathmout.resourcefulsheep.screen.sequencer;
 
+import com.mathmout.resourcefulsheep.Config;
 import com.mathmout.resourcefulsheep.ResourcefulSheepMod;
 import com.mathmout.resourcefulsheep.screen.DNAScreenRenderer;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -64,15 +65,17 @@ public class DNASequencerScreen extends AbstractContainerScreen<DNASequencerMenu
         }
 
         // Energy
-        guiGraphics.blit(WIDGETS, x + 153, y + 13, 12, 19, 11, 60);
+        if (Config.DNA_SEQUENCER_CONSUMPTION.get() != 0) {
+            guiGraphics.blit(WIDGETS, x + 153, y + 13, 12, 19, 11, 60);
 
-        int stored = menu.getEnergy();
-        int max = menu.getMaxEnergy();
-        if (max > 0) {
-            int barHeight = 60;
-            int scaledHeight = Math.min((int) (((float) stored / max) * barHeight), barHeight);
-            int yOffset = barHeight - scaledHeight;
-            guiGraphics.blit(WIDGETS, x + 153, y + 13 + yOffset, 0, 19 + yOffset, 11, scaledHeight);
+            int stored = menu.getEnergy();
+            int max = menu.getMaxEnergy();
+            if (max > 0) {
+                int barHeight = 60;
+                int scaledHeight = Math.min((int) (((float) stored / max) * barHeight), barHeight);
+                int yOffset = barHeight - scaledHeight;
+                guiGraphics.blit(WIDGETS, x + 153, y + 13 + yOffset, 0, 19 + yOffset, 11, scaledHeight);
+            }
         }
     }
 
@@ -89,9 +92,17 @@ public class DNASequencerScreen extends AbstractContainerScreen<DNASequencerMenu
         super.render(guiGraphics, mouseX, mouseY, partialTick);
         renderTooltip(guiGraphics, mouseX, mouseY);
 
-        if(isHovering(153, 13, 11, 60, mouseX, mouseY)) {
-            DNAScreenRenderer.renderEnergyValue(guiGraphics, font, menu.getMaxEnergy(), menu.getEnergy(), mouseX, mouseY);
+        if (Config.DNA_SEQUENCER_CONSUMPTION.get() != 0) {
+            if (isHovering(153, 13, 11, 60, mouseX, mouseY)) {
+                DNAScreenRenderer.renderEnergyValue(guiGraphics, font, menu.getMaxEnergy(), menu.getEnergy(), mouseX, mouseY);
+            }
         }
+        // Time left →
+        int arrowX = imageWidth / 2 - 11;
+        if (isHovering(arrowX, 36, 22, 15, mouseX, mouseY)) {
+            DNAScreenRenderer.renderProgressTooltip(guiGraphics, font, menu.getProgress(), menu.getMaxProgress(), mouseX, mouseY);
+        }
+
     }
 
     @Override

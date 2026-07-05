@@ -282,36 +282,71 @@ public class DynamicTexturesGenerator {
         List<BufferedImage> images = new ArrayList<>();
         Set<ResourceLocation> texturePathsToLoad = new HashSet<>();
 
-        ResourceLocation itemModelLoc = ResourceLocation.fromNamespaceAndPath(itemKey.getNamespace(), "models/item/" + itemKey.getPath() + ".json");
-        ResourceLocation blockModelLoc = ResourceLocation.fromNamespaceAndPath(itemKey.getNamespace(), "models/block/" + itemKey.getPath() + ".json");
+        // On commence par chercher le modèle de l'item
+        ResourceLocation currentModelLoc = ResourceLocation.fromNamespaceAndPath(itemKey.getNamespace(), "models/item/" + itemKey.getPath() + ".json");
 
-        Optional<Resource> modelRes = resourceManager.getResource(itemModelLoc);
-        if (modelRes.isEmpty()) {
-            modelRes = resourceManager.getResource(blockModelLoc);
-        }
+        int depth = 0;
+        // Boucle pour remonter les "parents" (limite de 10 pour éviter les boucles infinies)
+        while (depth < 10) {
+            depth++;
+            Optional<Resource> modelRes = resourceManager.getResource(currentModelLoc);
 
-        if (modelRes.isPresent()) {
-            try (InputStream is = modelRes.get().open()) {
-                JsonObject modelJson = JsonParser.parseReader(new InputStreamReader(is)).getAsJsonObject();
-                if (modelJson.has("textures")) {
-                    JsonObject textures = modelJson.getAsJsonObject("textures");
-                    for (String key : textures.keySet()) {
-                        String texPath = textures.get(key).getAsString();
-                        ResourceLocation texLoc = ResourceLocation.parse(texPath);
-                        texturePathsToLoad.add(ResourceLocation.fromNamespaceAndPath(texLoc.getNamespace(), "textures/" + texLoc.getPath() + ".png"));
+            // Fallback, si l'item n'a pas de modèle, on tente direct en tant que bloc
+            if (modelRes.isEmpty() && depth == 1) {
+                currentModelLoc = ResourceLocation.fromNamespaceAndPath(itemKey.getNamespace(), "models/block/" + itemKey.getPath() + ".json");
+                modelRes = resourceManager.getResource(currentModelLoc);
+            }
+
+            if (modelRes.isPresent()) {
+                try (InputStream is = modelRes.get().open()) {
+                    JsonObject modelJson = JsonParser.parseReader(new InputStreamReader(is)).getAsJsonObject();
+
+                    if (modelJson.has("textures")) {
+                        JsonObject textures = modelJson.getAsJsonObject("textures");
+                        for (String key : textures.keySet()) {
+                            String texPath = textures.get(key).getAsString();
+
+                            // On ignore les variables qui pointent vers d'autres variables (ex: "#all")
+                            if (texPath.startsWith("#")) continue;
+
+                            try {
+                                ResourceLocation texLoc = ResourceLocation.parse(texPath);
+                                texturePathsToLoad.add(ResourceLocation.fromNamespaceAndPath(texLoc.getNamespace(), "textures/" + texLoc.getPath() + ".png"));
+                            } catch (Exception e) {
+                                LOGGER.warn("[ResourcefulSheep] Path ignored : {}", texPath);
+                            }
+                        }
+                        // On a trouvé les textures, on arrête de chercher !
+                        break;
                     }
+                    // S'il n'y a pas de textures, on regarde le parent et on recommence.
+                    else if (modelJson.has("parent")) {
+                        String parentPath = modelJson.get("parent").getAsString();
+                        ResourceLocation parentLoc = ResourceLocation.parse(parentPath);
+                        // On modifie le fichier actuel pour aller lire le parent au prochain tour de boucle
+                        currentModelLoc = ResourceLocation.fromNamespaceAndPath(parentLoc.getNamespace(), "models/" + parentLoc.getPath() + ".json");
+                    }
+                    else {
+                        // pas de textures, ni de parent on arrete.
+                        break;
+                    }
+                } catch (Exception e) {
+                    LOGGER.warn("[ResourcefulSheep] JSON reading error for {}", currentModelLoc);
+                    break;
                 }
-            } catch (Exception e) {
-                LOGGER.warn("[ResourcefulSheep] Failed to parse model JSON for {}", itemKey);
+            } else {
+                break; // Fichier introuvable
             }
         }
 
+        // Fallback si le JSON ne nous a vraiment rien donné
         if (texturePathsToLoad.isEmpty()) {
             String name = itemKey.getPath();
             texturePathsToLoad.add(ResourceLocation.fromNamespaceAndPath(itemKey.getNamespace(), "textures/item/" + name + ".png"));
             texturePathsToLoad.add(ResourceLocation.fromNamespaceAndPath(itemKey.getNamespace(), "textures/block/" + name + ".png"));
         }
 
+        // On charge toutes les images PNG trouvées !
         for (ResourceLocation loc : texturePathsToLoad) {
             if (loc.getPath().contains("missingno")) continue;
             Optional<Resource> resource = resourceManager.getResource(loc);
@@ -319,11 +354,10 @@ public class DynamicTexturesGenerator {
                 try (InputStream inputStream = resource.get().open()) {
                     images.add(ImageIO.read(inputStream));
                 } catch (IOException e) {
-                    LOGGER.warn("[ResourcefulSheep] Failed to read texture stream for: {}", loc);
+                    LOGGER.warn("[ResourcefulSheep] Cannot read the image : {}", loc);
                 }
             }
         }
-
         return images;
     }
 

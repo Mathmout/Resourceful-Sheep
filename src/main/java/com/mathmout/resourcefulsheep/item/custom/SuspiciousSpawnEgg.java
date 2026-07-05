@@ -172,6 +172,10 @@ public class SuspiciousSpawnEgg extends Item {
                 addIdSafe(list, p2);
             }
         }
+        if (list.isEmpty()) {
+            addIdSafe(list, p1);
+            addIdSafe(list, p2);
+        }
 
         return list;
     }

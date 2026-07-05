@@ -61,6 +61,14 @@ public class DNASequencerMenu extends AbstractContainerMenu {
         return maxProgress != 0 && progress != 0 ? progress * progressArrowSize / maxProgress : 0;
     }
 
+    public int getProgress() {
+        return data.get(0);
+    }
+
+    public int getMaxProgress() {
+        return data.get(1);
+    }
+
     public int getEnergy() {
         return this.data.get(2);
     }

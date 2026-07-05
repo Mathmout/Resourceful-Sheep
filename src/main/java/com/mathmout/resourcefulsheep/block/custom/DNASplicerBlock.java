@@ -137,14 +137,16 @@ public class DNASplicerBlock extends BaseEntityBlock {
                 if (Screen.hasShiftDown()) {
 
                     // Energy
-                    int storedEnergy = data.contains("energy") ? data.getInt("energy") : 0;
-                    int maxEnergy = Config.DNA_SPLICER_CAPACITY.get();
+                    if (Config.DNA_SPLICER_CONSUMPTION.get() > 0) {
+                        int storedEnergy = data.contains("energy") ? data.getInt("energy") : 0;
+                        int maxEnergy = Config.DNA_SPLICER_CAPACITY.get();
 
-                    String[] energyStored = TexteUtils.formatEnergy(storedEnergy);
-                    String[] energyMax = TexteUtils.formatEnergy(maxEnergy);
+                        String[] energyStored = TexteUtils.formatEnergy(storedEnergy);
+                        String[] energyMax = TexteUtils.formatEnergy(maxEnergy);
 
-                    tooltipComponents.add(Component.literal("Energy : ").withStyle(ChatFormatting.DARK_RED)
-                            .append(Component.literal(energyStored[0] + energyStored[1] + " / " + energyMax[0] + energyMax[1]).withStyle(ChatFormatting.GRAY)));
+                        tooltipComponents.add(Component.literal("Energy : ").withStyle(ChatFormatting.DARK_RED)
+                                .append(Component.literal(energyStored[0] + energyStored[1] + " / " + energyMax[0] + energyMax[1]).withStyle(ChatFormatting.GRAY)));
+                    }
 
                     // Inventory
                     boolean hasEgg = false;

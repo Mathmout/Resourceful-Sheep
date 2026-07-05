@@ -1,7 +1,7 @@
 package com.mathmout.resourcefulsheep.item.custom;
 
+import com.mathmout.resourcefulsheep.ResourcefulSheepMod;
 import com.mathmout.resourcefulsheep.item.ModDataComponents;
-import com.mathmout.resourcefulsheep.utils.TexteUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
@@ -10,10 +10,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.AgeableMob;
-import net.minecraft.world.entity.FlyingMob;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ambient.AmbientCreature;
 import net.minecraft.world.entity.animal.AbstractGolem;
 import net.minecraft.world.entity.animal.WaterAnimal;
@@ -100,13 +97,25 @@ public class Syringe extends Item {
 
     @Override
     public void appendHoverText(@NotNull ItemStack stack, @NotNull TooltipContext context, @NotNull List<Component> tooltipComponents, @NotNull TooltipFlag tooltipFlag) {
+
         // Full
         if (stack.has(ModDataComponents.SYRINGE_CONTENT.get())) {
             CompoundTag tag = stack.get(ModDataComponents.SYRINGE_CONTENT.get());
             if (tag != null && tag.contains("id")){
                 String entityId = tag.getString("id");
-                tooltipComponents.add(Component.literal("Contains DNA : ").withStyle(ChatFormatting.GREEN)
-                    .append(Component.literal(TexteUtils.getPrettyName(entityId)).withStyle(ChatFormatting.GRAY)));
+                Component entityName;
+
+                if (entityId.startsWith(ResourcefulSheepMod.MOD_ID + ":")) {
+                    entityName = Component.translatable("entity." + ResourcefulSheepMod.MOD_ID + ".resourceful_sheep");
+                }
+                else {
+                    entityName = EntityType.byString(entityId)
+                            .map(EntityType::getDescription)
+                            .orElse(Component.literal(entityId));
+                }
+
+                tooltipComponents.add(Component.literal("Contains DNA :").withStyle(ChatFormatting.GREEN));
+                tooltipComponents.add(Component.literal("  ").append(entityName.copy().withStyle(ChatFormatting.GRAY)));
             }
         }
         // Empty

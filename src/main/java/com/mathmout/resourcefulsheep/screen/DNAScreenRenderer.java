@@ -255,4 +255,20 @@ public static void renderDnaList(GuiGraphics guiGraphics, int panelX, int panelY
                         .append(Component.literal(energyMax[1]).withStyle(ChatFormatting.GOLD)),
                 mouseX, mouseY);
     }
+
+    public static void renderProgressTooltip(GuiGraphics guiGraphics, Font font, int progress, int maxProgress, int mouseX, int mouseY) {
+        // On s'assure que la machine est bien en train de travailler
+        if (progress > 0 && maxProgress > 0 && progress < maxProgress) {
+            int remainingTicks = maxProgress - progress;
+            guiGraphics.renderTooltip(font, Component.literal(formatTicksToTime(remainingTicks)).withStyle(ChatFormatting.WHITE), mouseX, mouseY);
+        }
+    }
+
+    // Conversion des Ticks
+    private static String formatTicksToTime(int ticks) {
+        int totalSeconds = ticks / 20;
+        int minutes = totalSeconds / 60;
+        int seconds = totalSeconds % 60;
+        return minutes > 0 ? minutes + "m " + seconds + "s" : seconds + "s";
+    }
 }

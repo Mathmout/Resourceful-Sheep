@@ -1,13 +1,11 @@
 package com.mathmout.resourcefulsheep.item.custom;
 
 import com.mathmout.resourcefulsheep.Config;
-import com.mathmout.resourcefulsheep.config.sheeptypes.ConfigSheepTypeManager;
 import com.mathmout.resourcefulsheep.entity.custom.ResourcefulSheepEntity;
-import com.mathmout.resourcefulsheep.entity.custom.SheepVariantData;
 import com.mathmout.resourcefulsheep.item.ModDataComponents;
+import com.mathmout.resourcefulsheep.screen.scanner.SheepScannerMenu;
 import com.mathmout.resourcefulsheep.utils.TexteUtils;
 import net.minecraft.ChatFormatting;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -16,14 +14,17 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.animal.Sheep;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.SimpleContainerData;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -34,139 +35,105 @@ public class SheepScanner extends Item {
         super(properties.stacksTo(1));
     }
 
-    // TODO
     @Override
-    public @NotNull InteractionResult useOn(@NotNull UseOnContext context) {
-        return super.useOn(context);
+    public @NotNull InteractionResultHolder<ItemStack> use(Level level, Player player, @NotNull InteractionHand usedHand) {
+        ItemStack stack = player.getItemInHand(usedHand);
+
+        if (!level.isClientSide()) {
+            CompoundTag tag = stack.get(ModDataComponents.SHEEP_SCANNER_DATA.get());
+            if (tag != null && tag.contains("scanned_sheep")) {
+                String sheepId = tag.getString("scanned_sheep");
+
+                SimpleContainerData data = new SimpleContainerData(2);
+                data.set(0, getStoredEnergy(stack));
+                data.set(1, Config.SHEEP_SCANNER_CAPACITY.get());
+
+                // On ouvre le Menu et on envoie l'ID au client via le buffer
+                player.openMenu(new SimpleMenuProvider(
+                        (containerId, playerInventory, p) -> new SheepScannerMenu(containerId, playerInventory, sheepId, data),
+                        Component.literal("Sheep Scanner")
+                ), buf -> buf.writeUtf(sheepId));
+
+            } else {
+                player.displayClientMessage(
+                        Component.literal("No sheep scanned yet!").withStyle(ChatFormatting.RED),
+                        true
+                );
+            }
+        }
+
+        return InteractionResultHolder.sidedSuccess(stack, level.isClientSide());
     }
 
     @Override
     public @NotNull InteractionResult interactLivingEntity(@NotNull ItemStack pStack, @NotNull Player pPlayer,
                                                            @NotNull LivingEntity pInteractionTarget, @NotNull InteractionHand pHand) {
+
+        if (pPlayer.getCooldowns().isOnCooldown(this)) {
+            return InteractionResult.PASS;
+        }
+
         if (pInteractionTarget instanceof Sheep sheep) {
-
             int currentEnergy = getStoredEnergy(pStack);
-            if (currentEnergy < Config.SHEEP_SCANNER_CONSUMPTION.get()) {
-                return InteractionResult.FAIL;
-            }
+            int sheepScannerConsumption = Config.SHEEP_SCANNER_CONSUMPTION.get();
+            if (currentEnergy >= sheepScannerConsumption || sheepScannerConsumption == 0) {
 
-            if (pPlayer.level().isClientSide) {
-                Component message;
-                if (sheep instanceof ResourcefulSheepEntity resourcefulSheep) {
-                    message = buildResourcefulSheepInfoComponent(resourcefulSheep);
-                } else {
-                    message = buildVanillaSheepInfoComponent(sheep);
+                if (!pPlayer.level().isClientSide()) {
+                    setStoredEnergy(pStack, currentEnergy - Config.SHEEP_SCANNER_CONSUMPTION.get());
+                    CompoundTag tag = pStack.getOrDefault(ModDataComponents.SHEEP_SCANNER_DATA.get(), new CompoundTag()).copy();
+                    if (sheep instanceof ResourcefulSheepEntity resourcefulSheep) {
+                        tag.putString("scanned_sheep", resourcefulSheep.getSheepVariantData().Id());
+                        pStack.set(ModDataComponents.SHEEP_SCANNER_DATA.get(), tag);
+
+                        pPlayer.displayClientMessage(
+                                Component.literal("Sheep scanned successfully !").withStyle(ChatFormatting.GREEN),
+                                true
+                        );
+                    } else {
+                        MutableComponent mutableComponent = Component.literal("");
+
+                        DyeColor dyeColor = sheep.getColor();
+                        String colorName = TexteUtils.stringToText(dyeColor.getName());
+                        MutableComponent line2 = Component.literal("It's just a ").withStyle(ChatFormatting.GRAY)
+                                .append(Component.literal(colorName).withStyle(Style.EMPTY.withColor(dyeColor.getTextColor())))
+                                .append(Component.literal(" sheep.").withStyle(ChatFormatting.GRAY));
+                        mutableComponent.append(line2);
+
+                        pPlayer.displayClientMessage(mutableComponent, true);
+                    }
                 }
-                pPlayer.sendSystemMessage(message);
-            }
 
-            if (!pPlayer.level().isClientSide) {
-                setStoredEnergy(pStack, currentEnergy - Config.SHEEP_SCANNER_CONSUMPTION.get());
-            }
-            pPlayer.getCooldowns().addCooldown(this, 20);
+                pPlayer.getCooldowns().addCooldown(this, 20);
+                pPlayer.level().playSound(pPlayer, pPlayer.blockPosition(), SoundEvents.UI_BUTTON_CLICK.value(), net.minecraft.sounds.SoundSource.PLAYERS, 1.0f, 1.0f);
 
-            pPlayer.playSound(SoundEvents.UI_BUTTON_CLICK.value(), 1.0F, 1.0F);
-            return InteractionResult.SUCCESS;
+            } else {
+                if (!pPlayer.level().isClientSide()) {
+                    pPlayer.displayClientMessage(
+                            Component.literal("Not enough energy !").withStyle(ChatFormatting.RED),
+                            true
+                    );
+                }
+            }
+            return InteractionResult.sidedSuccess(pPlayer.level().isClientSide());
         }
         return InteractionResult.PASS;
     }
 
-    private Component buildResourcefulSheepInfoComponent(ResourcefulSheepEntity sheep) {
-        String variantId = BuiltInRegistries.ENTITY_TYPE.getKey(sheep.getType()).getPath();
-        SheepVariantData variant = ConfigSheepTypeManager.getSheepVariant().get(variantId);
-
-        if (variant == null) {
-            return Component.literal("Unknown Sheep Variant").withStyle(ChatFormatting.RED);
-        }
-
-        MutableComponent mutableComponent = Component.literal("");
-
-        // Header
-        mutableComponent.append(Component.literal("=== Sheep Scanner Result ===").withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD))
-                        .append("\n");
-
-
-        // Name
-        mutableComponent.append(Component.literal(TexteUtils.stringToText(variant.Name()) + " Resourceful Sheep")
-                        .withStyle(Style.EMPTY.withColor(Integer.parseInt(variant.EggColorSpotsNTitle().substring(1), 16))))
-                        .append("\n");
-        // Tier.
-        mutableComponent.append(Component.literal("Tier : ").withStyle(ChatFormatting.RED)
-                        .append(Component.literal(String.valueOf(variant.Tier())).withStyle(ChatFormatting.LIGHT_PURPLE))
-                        .append("\n"));
-
-        // Drops.
-        mutableComponent.append(Component.literal("Drops :").withStyle(ChatFormatting.BLUE)).append("\n");
-
-        List<SheepVariantData.DroppedItems> drops = variant.DroppedItems();
-
-        if (drops != null && !drops.isEmpty()) {
-            for (SheepVariantData.DroppedItems dropData : drops) {
-                if( dropData.ItemId().equals("minecraft:air")) {
-                    mutableComponent.append(Component.literal(" - None").withStyle(ChatFormatting.GRAY)).append("\n");
-                }else {
-                    String itemName = TexteUtils.getPrettyName(dropData.ItemId());
-                    String amountString;
-                    if (dropData.MinDrops() == dropData.MaxDrops()) {
-                        amountString = String.valueOf(dropData.MinDrops());
-                    } else {
-                        amountString = dropData.MinDrops() + " to " + dropData.MaxDrops();
-                    }
-
-                    // Construction de la ligne : " - NomItem : Quantité"
-                    MutableComponent dropLine = Component.literal("- ").withStyle(ChatFormatting.DARK_GRAY)
-                            .append(Component.literal(itemName).withStyle(ChatFormatting.YELLOW))
-                            .append(Component.literal(" : ").withStyle(ChatFormatting.GRAY))
-                            .append(Component.literal(amountString).withStyle(ChatFormatting.DARK_AQUA));
-
-                    mutableComponent.append(dropLine).append("\n");
-                }
-            }
-        } else {
-            mutableComponent.append(Component.literal(" - None").withStyle(ChatFormatting.GRAY)).append("\n");
-        }
-
-        // 4. Couleur
-        DyeColor dyeColor = sheep.getColor();
-        String colorName = dyeColor.getName().substring(0, 1).toUpperCase() + dyeColor.getName().substring(1);
-        MutableComponent lineColor = Component.literal("Color : ").withStyle(ChatFormatting.GRAY)
-                .append(Component.literal(TexteUtils.stringToText(colorName)).withStyle(Style.EMPTY.withColor(dyeColor.getTextColor())));
-        mutableComponent.append(lineColor);
-
-        return mutableComponent;
-    }
-
-    private Component buildVanillaSheepInfoComponent(Sheep sheep) {
-        MutableComponent mainComponent = Component.literal("");
-
-        // Header.
-        MutableComponent header = Component.literal("=== Sheep Scanner Result ===").withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD);
-        mainComponent.append(header).append("\n");
-
-        // Description
-        DyeColor dyeColor = sheep.getColor();
-        String colorName = TexteUtils.stringToText(dyeColor.getName());
-        MutableComponent line2 = Component.literal("It's just a ").withStyle(ChatFormatting.GRAY)
-                .append(Component.literal(colorName).withStyle(Style.EMPTY.withColor(dyeColor.getTextColor())))
-                .append(Component.literal(" sheep.").withStyle(ChatFormatting.GRAY));
-        mainComponent.append(line2);
-        return mainComponent;
-    }
-
     @Override
-    public void appendHoverText(@NotNull ItemStack stack, Item.@NotNull TooltipContext context, List<Component> tooltipComponents, @NotNull TooltipFlag tooltipFlag) {
+    public void appendHoverText(@NotNull ItemStack stack, Item.@NotNull TooltipContext context, @NotNull List<Component> tooltipComponents, @NotNull TooltipFlag tooltipFlag) {
         String[] energyStored = TexteUtils.formatEnergy(getStoredEnergy(stack));
         String[] energyMax = TexteUtils.formatEnergy(Config.SHEEP_SCANNER_CAPACITY.get());
 
-        tooltipComponents.add(Component.literal("Energy : ").withStyle(ChatFormatting.DARK_RED)
-                .append(Component.literal(energyStored[0] + energyStored[1] + "/" + energyMax[0] + energyMax[1]).withStyle(ChatFormatting.GRAY)));
+        if (Config.SHEEP_SCANNER_CONSUMPTION.get() > 0) {
+            tooltipComponents.add(Component.literal("Energy : ").withStyle(ChatFormatting.DARK_RED)
+                    .append(Component.literal(energyStored[0] + energyStored[1] + "/" + energyMax[0] + energyMax[1]).withStyle(ChatFormatting.GRAY)));
+        }
 
         tooltipComponents.add(Component.literal("Right click on a sheep to scan it.").withStyle(ChatFormatting.GRAY));
         super.appendHoverText(stack, context, tooltipComponents, tooltipFlag);
     }
 
     // Energy
-
     @Override
     public boolean isBarVisible(@NotNull ItemStack stack) {
         return Config.SHEEP_SCANNER_CONSUMPTION.get() > 0;
@@ -203,5 +170,6 @@ public class SheepScanner extends Item {
         tag.putInt("energy", clampedEnergy);
 
         // On sauvegarde le tag dans le composant
-        stack.set(ModDataComponents.SHEEP_SCANNER_DATA.get(), tag);    }
+        stack.set(ModDataComponents.SHEEP_SCANNER_DATA.get(), tag);
+    }
 }

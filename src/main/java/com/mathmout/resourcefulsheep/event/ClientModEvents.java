@@ -10,6 +10,7 @@ import com.mathmout.resourcefulsheep.item.ModDataComponents;
 import com.mathmout.resourcefulsheep.item.ModItems;
 import com.mathmout.resourcefulsheep.item.custom.ResourcefulWoolItem;
 import com.mathmout.resourcefulsheep.item.custom.SuspiciousSpawnEgg;
+import com.mathmout.resourcefulsheep.screen.scanner.SheepScannerScreen;
 import com.mathmout.resourcefulsheep.screen.sequencer.DNASequencerScreen;
 import com.mathmout.resourcefulsheep.screen.ModMenuTypes;
 import com.mathmout.resourcefulsheep.screen.splicer.DNASplicerScreen;
@@ -111,6 +112,7 @@ public class ClientModEvents {
     public static void registerScreens(RegisterMenuScreensEvent event) {
         event.register(ModMenuTypes.DNA_SEQUENCER_MENU.get(), DNASequencerScreen::new);
         event.register(ModMenuTypes.DNA_SPLICER_MENU.get(), DNASplicerScreen::new);
+        event.register(ModMenuTypes.SHEEP_SCANNER_MENU.get(), SheepScannerScreen::new);
     }
 
     // ---------------------------------------------------------

@@ -1,5 +1,6 @@
 package com.mathmout.resourcefulsheep.screen.splicer;
 
+import com.mathmout.resourcefulsheep.Config;
 import com.mathmout.resourcefulsheep.ResourcefulSheepMod;
 import com.mathmout.resourcefulsheep.config.dnacrossbreeding.ConfigDNACrossbreedingManager;
 import com.mathmout.resourcefulsheep.config.dnacrossbreeding.SheepCrossbreeding;
@@ -21,6 +22,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
         import java.util.List;
+import java.util.Objects;
 
 public class DNASplicerScreen extends AbstractContainerScreen<DNASplicerMenu> {
 
@@ -62,14 +64,12 @@ public class DNASplicerScreen extends AbstractContainerScreen<DNASplicerMenu> {
         super.containerTick();
         tickCounter++;
 
-        // Animation du cycle des résultats
         if (tickCounter % 40 == 0) {
             if (!possibleResults.isEmpty()) {
                 currentResultIndex = (currentResultIndex + 1) % possibleResults.size();
             }
         }
 
-        // Optimisation : On ne met à jour la liste QUE si les parents ont changé
         String currentP1 = menu.getParent1();
         String currentP2 = menu.getParent2();
 
@@ -96,7 +96,7 @@ public class DNASplicerScreen extends AbstractContainerScreen<DNASplicerMenu> {
         // DNA
         guiGraphics.blit(WIDGETS, x - 83, y, 176, 0, 80 , 176);
 
-        // Cards vide
+        // Cards vides
         int space = (imageWidth - 3 * CARD_WIDTH) / 4 ;
         guiGraphics.blit(WIDGETS, x + space + 10, y + 41 - CARD_HEIGHT / 2, 113,41, CARD_WIDTH, CARD_HEIGHT);
         guiGraphics.blit(WIDGETS, x + 2 * space + CARD_WIDTH, y + 41 - CARD_HEIGHT / 2, 113,41, CARD_WIDTH, CARD_HEIGHT);
@@ -131,16 +131,25 @@ public class DNASplicerScreen extends AbstractContainerScreen<DNASplicerMenu> {
         }
 
         // Energy
-        guiGraphics.blit(WIDGETS, x + (space + 10) / 2 - 5, y + 13, 12, 19, 11, 60);
-
-        int stored = menu.getEnergy();
-        int max = menu.getMaxEnergy();
-        if (max > 0) {
+        if (Config.DNA_SPLICER_CONSUMPTION.get() != 0) {
+            guiGraphics.blit(WIDGETS, x + (space + 10) / 2 - 5, y + 13, 12, 19, 11, 60);
+            int stored = menu.getEnergy();
+            int max = menu.getMaxEnergy();
             int barHeight = 60;
             int scaledHeight = Math.min((int) (((float) stored / max) * barHeight), barHeight);
             int yOffset = barHeight - scaledHeight;
             guiGraphics.blit(WIDGETS, x + (space + 10) / 2 - 5, y + 13 + yOffset, 0, 19 + yOffset, 11, scaledHeight);
         }
+
+        // Poubelles
+        if (!Objects.equals(menu.getParent1(), "")){
+            guiGraphics.blit(WIDGETS, x + space + 10 + CARD_WIDTH / 2 - 4, y + 42 + CARD_HEIGHT / 2, 24,41, 9, 9);
+        }
+
+        if (!Objects.equals(menu.getParent2(), "")){
+            guiGraphics.blit(WIDGETS, x + 2 * space + (3 * CARD_WIDTH)/2 - 4, y + 42 + CARD_HEIGHT / 2, 24,41, 9, 9);
+        }
+
 
         this.isHoveringPanel = mouseX >= panelX && mouseX < panelX + 80 && mouseY >= y && mouseY < y + 176;
 
@@ -158,6 +167,7 @@ public class DNASplicerScreen extends AbstractContainerScreen<DNASplicerMenu> {
 
     @Override
     public void render(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+        int space = (imageWidth - 3 * CARD_WIDTH) / 4 ;
         renderBackground(guiGraphics, mouseX, mouseY, partialTick);
         super.render(guiGraphics, mouseX, mouseY, partialTick);
         renderTooltip(guiGraphics, mouseX, mouseY);
@@ -169,25 +179,50 @@ public class DNASplicerScreen extends AbstractContainerScreen<DNASplicerMenu> {
             RenderSystem.enableDepthTest();
         }
 
-        if(isHovering(((imageWidth - 3 * CARD_WIDTH) / 4 + 10) / 2 - 5, 13, 11, 60, mouseX, mouseY)) {
-            DNAScreenRenderer.renderEnergyValue(guiGraphics, font, menu.getMaxEnergy(), menu.getEnergy(), mouseX, mouseY);
+        // Energy
+        if (Config.DNA_SPLICER_CONSUMPTION.get() != 0) {
+            if (isHovering(((imageWidth - 3 * CARD_WIDTH) / 4 + 10) / 2 - 5, 13, 11, 60, mouseX, mouseY)) {
+                DNAScreenRenderer.renderEnergyValue(guiGraphics, font, menu.getMaxEnergy(), menu.getEnergy(), mouseX, mouseY);
+            }
+        }
+
+        // Time left +
+        int plusX = space + 10 + CARD_WIDTH + (2 * space + CARD_WIDTH - (space + 10 + CARD_WIDTH)) / 2 - 4;
+        if (isHovering(plusX, 37, 9, 9, mouseX, mouseY)) {
+            DNAScreenRenderer.renderProgressTooltip(guiGraphics, font, menu.getProgress(), menu.getMaxProgress(), mouseX, mouseY);
+        }
+
+        // Time left →
+        int arrowX = 2 * space + 2 * CARD_WIDTH + (3 * space + 2 * CARD_WIDTH - 10 - (2 * space + 2 * CARD_WIDTH)) / 2 - 6;
+        if (isHovering(arrowX, 37, 12, 9, mouseX, mouseY)) {
+            DNAScreenRenderer.renderProgressTooltip(guiGraphics, font, menu.getProgress(), menu.getMaxProgress(), mouseX, mouseY);
         }
     }
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         if (button == 0) { // Clic Gauche
-            int x = (width - imageWidth) / 2;
-            int y = (height - imageHeight) / 2;
+            int space = (imageWidth - 3 * CARD_WIDTH) / 4;
 
             // 1. Vérifier si on clique dans la liste
-            if (mouseX >= x - 83 && mouseX < x && mouseY >= y && mouseY < y + 176) {
+            if (isHovering(-83, 0, 83, 176, mouseX, mouseY)) {
                 String clickedDna = getDnaAtPosition(mouseX, mouseY);
                 if (clickedDna != null) {
                     this.draggingDna = clickedDna;
                     this.isDragging = true;
                     return true;
                 }
+            }
+            // Parent 1
+            if (!menu.getParent1().isEmpty() && isHovering(space + 10 + CARD_WIDTH / 2 - 4, 42 + CARD_HEIGHT / 2, 9, 9, mouseX, mouseY)) {
+                PacketDistributor.sendToServer(new SetDnaParentPayload(menu.blockEntity.getBlockPos(), 1, ""));
+                return true;
+            }
+
+            // Parent 2
+            if (!menu.getParent2().isEmpty() && isHovering(2 * space + (3 * CARD_WIDTH) / 2 - 4, 42 + CARD_HEIGHT / 2, 9, 9, mouseX, mouseY)) {
+                PacketDistributor.sendToServer(new SetDnaParentPayload(menu.blockEntity.getBlockPos(), 2, ""));
+                return true;
             }
         }
         return super.mouseClicked(mouseX, mouseY, button);
