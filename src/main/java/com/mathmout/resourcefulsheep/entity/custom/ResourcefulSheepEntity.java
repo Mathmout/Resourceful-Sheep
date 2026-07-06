@@ -142,42 +142,9 @@ public class ResourcefulSheepEntity extends Sheep {
 
                     if (count <= 0) continue;
 
-                    // TAG
-                    if (rawId.startsWith("#")) {
-                        try {
-                            ResourceLocation tagLoc = ResourceLocation.parse(rawId.substring(1));
-                            TagKey<Item> tagKey = TagKey.create(Registries.ITEM, tagLoc);
-
-                            // On récupère tous les items valides du tag
-                            var tagResult = BuiltInRegistries.ITEM.getTag(tagKey);
-
-                            if (tagResult.isPresent()) {
-                                List<Item> validItems = tagResult.get().stream()
-                                        .map(Holder::value)
-                                        .toList();
-                                if (!validItems.isEmpty()) {
-                                    Map<Item, Integer> itemsToDrop = new HashMap<>();
-
-                                    for (int i = 0; i < count; i++) {
-                                        Item randomItem = validItems.get(ThreadLocalRandom.current().nextInt(validItems.size()));
-                                        itemsToDrop.put(randomItem, itemsToDrop.getOrDefault(randomItem, 0) + 1);
-                                    }
-
-                                    for (Map.Entry<Item, Integer> entry : itemsToDrop.entrySet()) {
-                                        drops.add(new ItemStack(entry.getKey(), entry.getValue()));
-                                    }
-                                }
-                            }
-                        } catch (Exception ignored) {
-
-                        }
-                    }
-                    // ID
-                    else {
-                        Item droppedItem = BuiltInRegistries.ITEM.get(ResourceLocation.tryParse(rawId));
-                        if (droppedItem != Items.AIR) {
-                            drops.add(new ItemStack(droppedItem, count));
-                        }
+                    Item droppedItem = BuiltInRegistries.ITEM.get(ResourceLocation.tryParse(rawId));
+                    if (droppedItem != Items.AIR) {
+                        drops.add(new ItemStack(droppedItem, count));
                     }
                 }
             }

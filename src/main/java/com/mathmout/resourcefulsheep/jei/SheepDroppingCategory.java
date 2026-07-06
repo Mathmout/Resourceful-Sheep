@@ -86,33 +86,12 @@ public class SheepDroppingCategory implements IRecipeCategory<SheepVariantData> 
             int average = (droppedItems.MinDrops() + droppedItems.MaxDrops()) / 2;
             if (average == 0) average = 1;
 
-            // TAG
-            if (itemId.startsWith("#")) {
-                try {
-                    ResourceLocation tagLoc = ResourceLocation.parse(itemId.substring(1));
-                    TagKey<Item> tagKey = TagKey.create(Registries.ITEM, tagLoc);
-
-                    var tagWrapper = BuiltInRegistries.ITEM.getTag(tagKey);
-
-                    if (tagWrapper.isPresent()) {
-                        for (Holder<Item> itemHolder : tagWrapper.get()) {
-                            ItemStack stack = new ItemStack(itemHolder.value());
-                            stack.setCount(average);
-                            stacksToAdd.add(stack);
-                        }
-                    }
-                } catch (Exception ignored) {
-
-                }
-            }
             // Item ID
-            else {
-                Item item = BuiltInRegistries.ITEM.get(ResourceLocation.parse(itemId));
-                if (item != Items.AIR) {
-                    ItemStack stack = new ItemStack(item);
-                    stack.setCount(average);
-                    stacksToAdd.add(stack);
-                }
+            Item item = BuiltInRegistries.ITEM.get(ResourceLocation.parse(itemId));
+            if (item != Items.AIR) {
+                ItemStack stack = new ItemStack(item);
+                stack.setCount(average);
+                stacksToAdd.add(stack);
             }
             // SLOT
             if (!stacksToAdd.isEmpty()) {

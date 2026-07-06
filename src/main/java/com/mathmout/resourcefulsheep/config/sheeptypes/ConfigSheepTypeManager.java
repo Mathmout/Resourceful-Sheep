@@ -191,11 +191,7 @@ public class ConfigSheepTypeManager {
                     if (tier.DroppedItems() != null) {
                         for (SheepTypeData.TierData.DroppedItem dropData : tier.DroppedItems()) {
                             String itemId = dropData.ItemId();
-                            if (itemId.startsWith("#")) {
-                                if (ResourceLocation.tryParse(itemId.substring(1)) == null) {
-                                    LOGGER.warn("[ResourcefulSheep] Config Warning : Invalid Tag format '{}'", itemId);
-                                }
-                            } else if (!BuiltInRegistries.ITEM.containsKey(ResourceLocation.parse(itemId))) {
+                            if (!BuiltInRegistries.ITEM.containsKey(ResourceLocation.parse(itemId))) {
                                 LOGGER.warn("[ResourcefulSheep] Config Warning SheepType : DroppedItem '{}' in Tier {} for {} sheep not found in Item Registry.", itemId, tier.Tier(), sheepName);
                             }
                         }

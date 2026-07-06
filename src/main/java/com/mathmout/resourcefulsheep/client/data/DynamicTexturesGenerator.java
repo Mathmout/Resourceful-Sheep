@@ -73,30 +73,29 @@ public class DynamicTexturesGenerator {
     }
 
     public static void triggerGeneration() {
-        // 1. Si tout est déjà prêt, on passe directement.
+        // Si tout est déjà prêt, on passe directement.
         if (isGenerated) return;
 
-        // 2. L'ASTUCE MAGIQUE : Si le thread qui demande une texture est CELUI qui
-        // est actuellement en train de les générer, on le laisse passer sans rien
-        // bloquer pour qu'il puisse récupérer ses images de base (évite la boucle infinie).
+        // Si le thread qui demande une texture est CELUI qui est actuellement en train de les générer, on le laisse passer
+        // sans rien bloquer pour qu'il puisse récupérer ses images de base (évite la boucle infinie).
         if (Thread.currentThread() == generatingThread) return;
 
-        // 3. Les AUTRES threads (qui chargent les textures du jeu) vont s'entasser ici et ATTENDRE.
+        // 3. Les autres threads qui chargent les textures du jeu vont s'entasser ici et patienter.
         synchronized(LOCK) {
-            // Quand la porte s'ouvre enfin, on vérifie si le premier thread a fini le travail.
+            // On vérifie si le premier thread a fini le travail.
             if (isGenerated) return;
 
-            // On verrouille officiellement cette tâche pour CE thread précis.
+            // On verrouille la tâche pour ce thread précis.
             generatingThread = Thread.currentThread();
 
-            ResourceManager rm = Minecraft.getInstance().getResourceManager();
+            ResourceManager resourceManager = Minecraft.getInstance().getResourceManager();
             try {
-                new DynamicTexturesGenerator().generateAllTextures(rm);
-                isGenerated = true; // On marque comme terminé pour libérer tous les autres threads !
+                new DynamicTexturesGenerator().generateAllTextures(resourceManager);
+                isGenerated = true; // On marque comme terminé pour libérer les autres threads.
             } catch (Exception e) {
                 LOGGER.error("[ResourcefulSheep] Erreur lors de la génération dynamique", e);
             } finally {
-                generatingThread = null; // On rend les clés
+                generatingThread = null; // On rend la main.
             }
         }
     }

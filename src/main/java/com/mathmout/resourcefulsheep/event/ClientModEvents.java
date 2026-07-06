@@ -54,7 +54,7 @@ import java.util.Optional;
 // Lancement du jeu
 @EventBusSubscriber(modid = ResourcefulSheepMod.MOD_ID, value = Dist.CLIENT)
 public class ClientModEvents {
-// ---------------------------------------------------------
+    // ---------------------------------------------------------
     // 1. COULEURS ET RENDUS
     // ---------------------------------------------------------
 

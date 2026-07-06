@@ -85,7 +85,7 @@ public class ModItems {
             ));
 
 
-    // 1. La méthode pour les œufs
+    // La méthode pour les œufs
     public static void registerVariantSpawnEggs() {
         for (SheepVariantData variant : ConfigSheepTypeManager.getSheepVariant().values()) {
             DeferredItem<CustomDeferredSpawnEggItem> spawnEgg = ITEMS.registerItem(
@@ -135,7 +135,7 @@ public class ModItems {
                 int tierEndIndex1 = id1.indexOf('_', tierStartIndex1);
                 int tierEndIndex2 = id2.indexOf('_', tierStartIndex2);
 
-                // Sécurité : si la chaîne s'arrête au numéro (peu probable mais prudent)
+                // Si la chaîne s'arrête au numéro
                 if (tierEndIndex1 == -1) tierEndIndex1 = id1.length();
                 if (tierEndIndex2 == -1) tierEndIndex2 = id2.length();
 

@@ -78,10 +78,10 @@ public class ResourcefulSheepMod {
 // Ajouter un bouton supprimer pour les cards dans le Splicer. ✅
 // Possible problème en cas d'explosion d'une machine elle ne risque de ne pas droper prbl avec playerWillDestroy. ✅
 // Enhanced Splicer ❌
+// Ajouter une bar de recherche dans les interfaces.❌
 // Si on fait Shif on peut voir l'energie au FE pres.❌
 //
 // Probleme avec la texture du bee sheep. ✅
-// Le lasso montre toute les info d'un mouton comme le Scanner... ❌
 //
 // ETA
 // Ajouter un indicateur sur le temps restant dans les machines.✅
@@ -91,7 +91,7 @@ public class ResourcefulSheepMod {
 //
 // SHEEP SCANNER
 // Ajouter une vraie interface pour le SheepScanner. ✅
-// Ajouter un mécanisme afin de lier un SheepScanner a un DNA Sequencer on peut utiliser les UUID.❌
+// Ajouter un mécanisme afin de lier un SheepScanner a un DNA Sequencer.✅
 //
 // CENTRIFUGE
 // Ajouter des laines pour tous les moutons. ✅
@@ -103,6 +103,7 @@ public class ResourcefulSheepMod {
 //
 // Lasso
 // Changer le nom et la texture mais garder le focntionnement global.❌
+// Repenser les tooltips pcq les info dovent uniquement être données par le Scanner. ❌
 //
 // TEXTURES
 // Amériorer les algo pour les texture des moutons et des laines.❌

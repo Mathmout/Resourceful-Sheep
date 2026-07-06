@@ -161,7 +161,9 @@ public class Lasso extends Item {
                     tooltips.add(Component.literal("Name: ").withStyle(ChatFormatting.GOLD)
                             .append(customName.copy().withStyle(ChatFormatting.GREEN)));
                 }
-            } catch (Exception ignored) {}
+            } catch (Exception ignored) {
+
+            }
         }
     }
 

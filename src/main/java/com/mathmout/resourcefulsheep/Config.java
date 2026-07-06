@@ -93,7 +93,7 @@ public class Config {
         BUILDER.push("display_wools");
 
             DISPLAY_WOOLS = BUILDER
-                    .comment("Displays wool in creative inventory and in JEI")
+                    .comment("Displays wools in creative inventory and in JEI")
                     .define("display_wools", false);
 
         BUILDER.pop();
