@@ -18,11 +18,15 @@ You start with an Iron Syringe, but it can be upgraded to Diamond and Netherite 
 You can find a diamond smithing template in two ways:
 
 1. **Loot:** Found randomly in chests inside Shepherd village houses.
-2. **Trading:** A Level 3 Shepherd Villager has about a **26% chance** to sell it to you for Emeralds.
+2. **Trading:** A Level 3 Shepherd Villager has about a **26% chance** to sell it to you for Emeralds in vanilla.
 
 ---
 
-## 🔬 The DNA Sequencer
+## ⚙️ Machines
+
+All machines are completely immune to explosions. Your genetics lab is safe!
+
+### 🔬 The DNA Sequencer
 
 Once you have a filled Syringe, you need to analyze it.
 Place the filled Syringe into the **DNA Sequencer**. Provide the machine with FE, and it will begin analyzing the DNA.
@@ -31,7 +35,7 @@ Once finished, the sequence is saved in the machine's internal memory.
 
 ---
 
-## 🧬 The DNA Splicer
+### 🧬 The DNA Splicer
 
 The **DNA Splicer** is where the magic happens. This machine takes two different DNA sequences and attempts to splice them together to create a new mutation. With the default config this machine needs to be adjacent to a DNA Sequencer. 
 
@@ -43,4 +47,13 @@ Check the **Crossbreeding Category in JEI** to see which DNA combinations produc
 
 When the DNA Splicer finishes its operation, it will output a **Suspicious Spawn Egg**.
 
-However, you won't know if the mutation was a success or a failure just by looking at it! Simply place this egg on the ground to hatch it and reveal your creation. Will it be a brand new, powerful genetic mutation, or a failed experiment?
+However, you won't know if the mutation was a success or a failure just by looking at it! Simply place this egg on the ground to hatch it and reveal your creation. Will it be a brand new, powerful genetic mutation, or a failed experiment.
+
+---
+
+## 📱 The Sheep Scanner
+
+The **Sheep Scanner** is a portable device used to identify the exact genetic makeup of a sheep.
+It shows the sheep's Tier and the resources it drops.
+
+The Scanner is a powerful tool, but it lacks a built-in database. You **must** first discover and analyze a sheep's DNA in the **DNA Sequencer** before your Scanner can recognize it in the field! Shift right-click to synchronize with the Sequencer.

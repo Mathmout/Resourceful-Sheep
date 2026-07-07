@@ -28,14 +28,19 @@ This is the main configuration file. Each file defines a sheep type and creates 
     * **Tags**: You can use tags (only for the input block), example: `"#c:cobblestone": "minecraft:air"`.
     * **Destruction**: Use `"minecraft:air"` as the result to destroy the block completely, like eating short grass.
 
+
 ### 1.2 Tiers & Drops Settings
 
 In the `SheepTier` list, you define the progression. Each tier creates a unique sheep variant (Example: `andesite_tier_1`).
 
 * `Tier`: An integer defining the tier level.
 * `DroppedItems`: A list of items dropped when sheared. You can have multiple different items per tier.
-    * `ItemId`: The item ID (e.g., `"minecraft:diamond"`). This fully supports **Tags** (e.g., `"#forge:ingots/iron"`).
+    * `ItemId`: The item ID (e.g., `"minecraft:diamond"`).
+      Starting from version 1.5.0, **Tags are no longer supported** here. You must use specific item IDs.
     * `MinDrops` / `MaxDrops`: The quantity range.
+
+!!! info "Common Sheep Tags"
+    For easier targeting and organization, all sheep variants of the same type share a common tag (for example: `#resourceful_sheep:diamond_sheep`).
 
 ### 1.3 Sheep Type JSON file Example
 

@@ -44,3 +44,8 @@ markdown_extensions:
   - pymdownx.details
   - pymdownx.superfences
   - attr_list
+
+# Configuration du versioning avec Mike
+extra:
+  version:
+    provider: mike
