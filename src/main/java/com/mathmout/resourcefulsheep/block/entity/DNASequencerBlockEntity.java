@@ -57,7 +57,7 @@ public class DNASequencerBlockEntity extends BlockEntity implements MenuProvider
     };
 
     // Energy
-    public final ModEnergyStorage energyStorage = new ModEnergyStorage(Config.DNA_SEQUENCER_CAPACITY.get(), Config.DNA_SEQUENCER_CONSUMPTION.get()){
+    public final ModEnergyStorage energyStorage = new ModEnergyStorage(Config.DNA_SEQUENCER_CAPACITY.get(), Config.DNA_SEQUENCER_TRANSFER.get()){
         @Override
         public void onEnergyChanged() {
             setChanged();

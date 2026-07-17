@@ -49,7 +49,7 @@ public class DNASplicerBlockEntity extends BlockEntity implements MenuProvider {
     };
 
     // Energy Storage
-    public final ModEnergyStorage energyStorage = new ModEnergyStorage(Config.DNA_SPLICER_CAPACITY.get(), Config.DNA_SPLICER_CONSUMPTION.get()){
+    public final ModEnergyStorage energyStorage = new ModEnergyStorage(Config.DNA_SPLICER_CAPACITY.get(), Config.DNA_SPLICER_TRANSFER.get()){
         @Override
         public void onEnergyChanged() {
             setChanged();

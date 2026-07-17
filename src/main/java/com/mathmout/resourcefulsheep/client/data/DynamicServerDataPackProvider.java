@@ -5,6 +5,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.mathmout.resourcefulsheep.ResourcefulSheepMod;
+import com.mathmout.resourcefulsheep.block.custom.centrifuge.CentrifugeTier;
 import com.mathmout.resourcefulsheep.config.sheeptypes.ConfigSheepTypeManager;
 import com.mathmout.resourcefulsheep.config.sheeptypes.SheepTypeData;
 import com.mathmout.resourcefulsheep.config.spawning.ConfigSheepSpawningManager;
@@ -35,6 +36,57 @@ public class DynamicServerDataPackProvider implements PackResources {
         generateSheepTags();
         generateWoolBlockTag();
         generateWoolLootTables();
+        generateCentrifugeLootTables();
+    }
+
+    private void generateCentrifugeLootTables() {
+        for (CentrifugeTier tier : CentrifugeTier.values()) {
+            String prefix = tier.name().toLowerCase() + "_centrifuge_";
+
+            List<String> blockNames = new ArrayList<>(List.of(
+                    prefix + "casing",
+                    prefix + "controller",
+                    prefix + "item_in_port",
+                    prefix + "item_out_port",
+                    prefix + "energy_port"
+            ));
+
+            // On utilise bien "fluid_port" sans le "out" comme tu l'as corrigé !
+            if (tier != CentrifugeTier.BASIC) {
+                blockNames.add(prefix + "fluid_port");
+            }
+
+            for (String blockName : blockNames) {
+                JsonObject lootTable = new JsonObject();
+                lootTable.addProperty("type", "minecraft:block");
+
+                JsonArray pools = new JsonArray();
+                JsonObject pool = new JsonObject();
+                pool.addProperty("rolls", 1);
+
+                // L'item à dropper (le bloc lui-même)
+                JsonArray entries = new JsonArray();
+                JsonObject entry = new JsonObject();
+                entry.addProperty("type", "minecraft:item");
+                entry.addProperty("name", ResourcefulSheepMod.MOD_ID + ":" + blockName);
+                entries.add(entry);
+                pool.add("entries", entries);
+
+                // Condition : survit aux explosions (comportement vanilla classique)
+                JsonArray conditions = new JsonArray();
+                JsonObject condition = new JsonObject();
+                condition.addProperty("condition", "minecraft:survives_explosion");
+                conditions.add(condition);
+                pool.add("conditions", conditions);
+
+                pools.add(pool);
+                lootTable.add("pools", pools);
+
+                // Le chemin d'une Loot Table de bloc est toujours data/mod_id/loot_tables/blocks/nom_du_bloc.json
+                String path = "data/" + ResourcefulSheepMod.MOD_ID + "/loot_tables/blocks/" + blockName + ".json";
+                resourceCache.put(path, GSON.toJson(lootTable).getBytes(StandardCharsets.UTF_8));
+            }
+        }
     }
 
     private void generateWoolLootTables() {

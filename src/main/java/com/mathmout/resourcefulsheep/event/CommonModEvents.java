@@ -168,6 +168,35 @@ public class CommonModEvents {
                 (itemStack, context) -> new SheepScannerEnergyStorage(itemStack), // On instancie notre wrapper
                 ModItems.SHEEP_SCANNER.get()
         );
+
+        // Centrifuge
+        // Energy
+        event.registerBlockEntity(
+                Capabilities.EnergyStorage.BLOCK,
+                ModBlockEntities.CENTRIFUGE_ENERGY_PORT_BLOCK_ENTITY.get(),
+                (portEntity, side) -> portEntity.getControllerEnergy().orElse(null)
+        );
+
+        // Items Input
+        event.registerBlockEntity(
+                Capabilities.ItemHandler.BLOCK,
+                ModBlockEntities.CENTRIFUGE_ITEM_IN_PORT_BLOCK_ENTITY.get(),
+                (portEntity, side) -> portEntity.getInsertInventory().orElse(null)
+        );
+
+        // Items Output
+        event.registerBlockEntity(
+                Capabilities.ItemHandler.BLOCK,
+                ModBlockEntities.CENTRIFUGE_ITEM_OUT_PORT_BLOCK_ENTITY.get(),
+                (portEntity, side) -> portEntity.getExtractInventory().orElse(null)
+        );
+
+        // Fluides
+        event.registerBlockEntity(
+                Capabilities.FluidHandler.BLOCK,
+                ModBlockEntities.CENTRIFUGE_FLUID_PORT_BLOCK_ENTITY.get(),
+                (portEntity, side) -> portEntity.getFluidHandler().orElse(null)
+        );
     }
 
     @SubscribeEvent

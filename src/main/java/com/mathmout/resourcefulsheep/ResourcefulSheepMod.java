@@ -41,6 +41,7 @@ public class ResourcefulSheepMod {
         // Blocks
         ModBlocks.register(modEventBus);
         ModBlocks.registerVariantWools();
+        ModBlocks.registerCentrifugeBlocks();
 
         // Items
         ModItems.registerVariantSpawnEggs();
@@ -78,7 +79,7 @@ public class ResourcefulSheepMod {
 // Ajouter un bouton supprimer pour les cards dans le Splicer. ✅
 // Possible problème en cas d'explosion d'une machine elle ne risque de ne pas droper prbl avec playerWillDestroy. ✅
 // Enhanced Splicer ❌
-// Ajouter une bar de recherche dans les interfaces.❌
+// Ajouter une bar de recherche dans les interfaces pour les ADN.❌
 // Si on fait Shif on peut voir l'energie au FE pres.❌
 //
 // Probleme avec la texture du bee sheep. ✅
@@ -100,6 +101,7 @@ public class ResourcefulSheepMod {
 // JEI
 // Changer l'organisation des catégories JEI par rapport a la centrifuge.❌
 // Faire en sorte qu'on puisse clicker sur un mouton dans JEI.❌
+// Dans la category du splicer afficher les resultats en cas d'échec.
 //
 // Lasso
 // Changer le nom et la texture mais garder le focntionnement global.❌

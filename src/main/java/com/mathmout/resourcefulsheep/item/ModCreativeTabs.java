@@ -49,6 +49,12 @@ public class ModCreativeTabs {
                                 output.accept(wool.get());
                             }
                         }
+                        ModBlocks.CENTRIFUGE_CASINGS.values().forEach(block -> output.accept(block.get()));
+                        ModBlocks.CENTRIFUGE_CONTROLLERS.values().forEach(block -> output.accept(block.get()));
+                        ModBlocks.CENTRIFUGE_ITEM_IN_PORTS.values().forEach(block -> output.accept(block.get()));
+                        ModBlocks.CENTRIFUGE_ITEM_OUT_PORTS.values().forEach(block -> output.accept(block.get()));
+                        ModBlocks.CENTRIFUGE_ENERGY_PORTS.values().forEach(block -> output.accept(block.get()));
+                        ModBlocks.CENTRIFUGE_FLUID_PORTS.values().forEach(block -> output.accept(block.get()));
                     })
                         .build());
 

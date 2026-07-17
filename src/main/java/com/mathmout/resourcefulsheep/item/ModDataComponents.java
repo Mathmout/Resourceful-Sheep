@@ -55,6 +55,13 @@ public class ModDataComponents {
                     .networkSynchronized(ByteBufCodecs.COMPOUND_TAG)
                     .build());
 
+    // Centrifuge
+    public static final Supplier<DataComponentType<CompoundTag>> CENTRIFUGE_DATA = DATA_COMPONENTS.register("centrifuge_data", () ->
+            DataComponentType.<CompoundTag>builder()
+                    .persistent(CompoundTag.CODEC)
+                    .networkSynchronized(ByteBufCodecs.COMPOUND_TAG)
+                    .build());
+
     public static void register(IEventBus eventBus) {
         DATA_COMPONENTS.register(eventBus);
     }

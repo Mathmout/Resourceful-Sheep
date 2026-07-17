@@ -2,6 +2,29 @@
   "replace": false,
   "values": [
     "resourceful_sheep:dna_sequencer",
-    "resourceful_sheep:dna_splicer"
+    "resourceful_sheep:dna_splicer",
+    "resourceful_sheep:basic_centrifuge_casing",
+    "resourceful_sheep:basic_centrifuge_controller",
+    "resourceful_sheep:basic_centrifuge_item_in_port",
+    "resourceful_sheep:basic_centrifuge_item_out_port",
+    "resourceful_sheep:basic_centrifuge_energy_port",
+    "resourceful_sheep:advanced_centrifuge_casing",
+    "resourceful_sheep:advanced_centrifuge_controller",
+    "resourceful_sheep:advanced_centrifuge_item_in_port",
+    "resourceful_sheep:advanced_centrifuge_item_out_port",
+    "resourceful_sheep:advanced_centrifuge_energy_port",
+    "resourceful_sheep:advanced_centrifuge_fluid_port",
+    "resourceful_sheep:elite_centrifuge_casing",
+    "resourceful_sheep:elite_centrifuge_controller",
+    "resourceful_sheep:elite_centrifuge_item_in_port",
+    "resourceful_sheep:elite_centrifuge_item_out_port",
+    "resourceful_sheep:elite_centrifuge_energy_port",
+    "resourceful_sheep:elite_centrifuge_fluid_port",
+    "resourceful_sheep:ultimate_centrifuge_casing",
+    "resourceful_sheep:ultimate_centrifuge_controller",
+    "resourceful_sheep:ultimate_centrifuge_item_in_port",
+    "resourceful_sheep:ultimate_centrifuge_item_out_port",
+    "resourceful_sheep:ultimate_centrifuge_energy_port",
+    "resourceful_sheep:ultimate_centrifuge_fluid_port"
   ]
 }

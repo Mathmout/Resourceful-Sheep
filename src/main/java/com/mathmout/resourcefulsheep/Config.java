@@ -26,6 +26,31 @@ public class Config {
     // Wools
     public static ModConfigSpec.BooleanValue DISPLAY_WOOLS;
 
+    // Centrifuge
+    public static ModConfigSpec.IntValue CENTRIFUGE_BASIC_SPEED;
+    public static ModConfigSpec.IntValue CENTRIFUGE_BASIC_ENERGY_CAPACITY;
+    public static ModConfigSpec.IntValue CENTRIFUGE_BASIC_ENERGY_CONSUMPTION;
+    public static ModConfigSpec.IntValue CENTRIFUGE_BASIC_FLUID_CAPACITY;
+    public static ModConfigSpec.IntValue CENTRIFUGE_BASIC_ENERGY_TRANSFER;
+
+    public static ModConfigSpec.IntValue CENTRIFUGE_ADVANCED_SPEED;
+    public static ModConfigSpec.IntValue CENTRIFUGE_ADVANCED_ENERGY_CAPACITY;
+    public static ModConfigSpec.IntValue CENTRIFUGE_ADVANCED_ENERGY_CONSUMPTION;
+    public static ModConfigSpec.IntValue CENTRIFUGE_ADVANCED_FLUID_CAPACITY;
+    public static ModConfigSpec.IntValue CENTRIFUGE_ADVANCED_ENERGY_TRANSFER;
+
+    public static ModConfigSpec.IntValue CENTRIFUGE_ELITE_SPEED;
+    public static ModConfigSpec.IntValue CENTRIFUGE_ELITE_ENERGY_CAPACITY;
+    public static ModConfigSpec.IntValue CENTRIFUGE_ELITE_ENERGY_CONSUMPTION;
+    public static ModConfigSpec.IntValue CENTRIFUGE_ELITE_FLUID_CAPACITY;
+    public static ModConfigSpec.IntValue CENTRIFUGE_ELITE_ENERGY_TRANSFER;
+
+    public static ModConfigSpec.IntValue CENTRIFUGE_ULTIMATE_SPEED;
+    public static ModConfigSpec.IntValue CENTRIFUGE_ULTIMATE_ENERGY_CAPACITY;
+    public static ModConfigSpec.IntValue CENTRIFUGE_ULTIMATE_ENERGY_CONSUMPTION;
+    public static ModConfigSpec.IntValue CENTRIFUGE_ULTIMATE_FLUID_CAPACITY;
+    public static ModConfigSpec.IntValue CENTRIFUGE_ULTIMATE_ENERGY_TRANSFER;
+
     static {
         // DNA Sequencer
         BUILDER.push("dna_sequencer");
@@ -97,6 +122,111 @@ public class Config {
                     .define("display_wools", false);
 
         BUILDER.pop();
+
+        // --- CENTRIFUGE ---
+        BUILDER.push("centrifuge");
+
+        // BASIC TIER
+        BUILDER.push("basic_tier");
+
+        CENTRIFUGE_BASIC_SPEED = BUILDER
+                .comment("Time required to process items (in ticks)")
+                .defineInRange("speed", 100, 1, Integer.MAX_VALUE);
+
+        CENTRIFUGE_BASIC_ENERGY_CAPACITY = BUILDER
+                .comment("Max energy capacity (FE)")
+                .defineInRange("energy_capacity", 10_000_000, 0, Integer.MAX_VALUE);
+
+        CENTRIFUGE_BASIC_ENERGY_CONSUMPTION = BUILDER
+                .comment("Energy consumed per operation (FE/t)")
+                .defineInRange("energy_consumption", 10000, 0, Integer.MAX_VALUE);
+
+        CENTRIFUGE_BASIC_FLUID_CAPACITY = BUILDER
+                .comment("Max fluid capacity (mB)")
+                .defineInRange("fluid_capacity", 10000, 0, Integer.MAX_VALUE);
+
+        CENTRIFUGE_BASIC_ENERGY_TRANSFER = BUILDER
+                .comment("Max energy transfer rate per tick (FE/t)")
+                .defineInRange("energy_transfer", 20_000, 0, Integer.MAX_VALUE);
+
+        BUILDER.pop();
+
+        // ADVANCED TIER
+        BUILDER.push("advanced_tier");
+
+        CENTRIFUGE_ADVANCED_SPEED = BUILDER
+                .comment("Time required to process items (in ticks)")
+                .defineInRange("speed", 80, 1, Integer.MAX_VALUE);
+
+        CENTRIFUGE_ADVANCED_ENERGY_CAPACITY = BUILDER
+                .comment("Max energy capacity (FE)")
+                .defineInRange("energy_capacity", 20_000_000, 0, Integer.MAX_VALUE);
+
+        CENTRIFUGE_ADVANCED_ENERGY_CONSUMPTION = BUILDER
+                .comment("Energy consumed per operation (FE/t)")
+                .defineInRange("energy_consumption", 30000, 0, Integer.MAX_VALUE);
+
+        CENTRIFUGE_ADVANCED_FLUID_CAPACITY = BUILDER
+                .comment("Max fluid capacity (mB)")
+                .defineInRange("fluid_capacity", 20000, 0, Integer.MAX_VALUE);
+
+        CENTRIFUGE_ADVANCED_ENERGY_TRANSFER = BUILDER
+                .comment("Max energy transfer rate per tick (FE/t)")
+                .defineInRange("energy_transfer", 40_000, 0, Integer.MAX_VALUE);
+
+        BUILDER.pop();
+
+        // ELITE TIER
+        BUILDER.push("elite_tier");
+
+        CENTRIFUGE_ELITE_SPEED = BUILDER
+                .comment("Time required to process items (in ticks)")
+                .defineInRange("speed", 50, 1, Integer.MAX_VALUE);
+
+        CENTRIFUGE_ELITE_ENERGY_CAPACITY = BUILDER
+                .comment("Max energy capacity (FE)")
+                .defineInRange("energy_capacity", 50_000_000, 0, Integer.MAX_VALUE);
+
+        CENTRIFUGE_ELITE_ENERGY_CONSUMPTION = BUILDER
+                .comment("Energy consumed per operation (FE/t)")
+                .defineInRange("energy_consumption", 50000, 0, Integer.MAX_VALUE);
+
+        CENTRIFUGE_ELITE_FLUID_CAPACITY = BUILDER
+                .comment("Max fluid capacity (mB)")
+                .defineInRange("fluid_capacity", 50000, 0, Integer.MAX_VALUE);
+
+        CENTRIFUGE_ELITE_ENERGY_TRANSFER = BUILDER
+                .comment("Max energy transfer rate per tick (FE/t)")
+                .defineInRange("energy_transfer", 100_000, 0, Integer.MAX_VALUE);
+
+        BUILDER.pop();
+
+        // ULTIMATE TIER
+        BUILDER.push("ultimate_tier");
+
+        CENTRIFUGE_ULTIMATE_SPEED = BUILDER
+                .comment("Time required to process items (in ticks)")
+                .defineInRange("speed", 20, 1, Integer.MAX_VALUE);
+
+        CENTRIFUGE_ULTIMATE_ENERGY_CAPACITY = BUILDER
+                .comment("Max energy capacity (FE)")
+                .defineInRange("energy_capacity", 100_000_000, 0, Integer.MAX_VALUE);
+
+        CENTRIFUGE_ULTIMATE_ENERGY_CONSUMPTION = BUILDER
+                .comment("Energy consumed per operation (FE/t)")
+                .defineInRange("energy_consumption", 90000, 0, Integer.MAX_VALUE);
+
+        CENTRIFUGE_ULTIMATE_FLUID_CAPACITY = BUILDER
+                .comment("Max fluid capacity (mB)")
+                .defineInRange("fluid_capacity", 100000, 0, Integer.MAX_VALUE);
+
+        CENTRIFUGE_ULTIMATE_ENERGY_TRANSFER = BUILDER
+                .comment("Max energy transfer rate per tick (FE/t)")
+                .defineInRange("energy_transfer", 200_000, 0, Integer.MAX_VALUE);
+
+        BUILDER.pop();
+
+        BUILDER.pop(); // Fin de la section centrifuge
     }
     static final ModConfigSpec SPEC = BUILDER.build();
 }
