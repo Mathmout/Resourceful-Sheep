@@ -1,7 +1,7 @@
 package com.mathmout.resourcefulsheep.utils;
 
 import com.mathmout.resourcefulsheep.ResourcefulSheepMod;
-import com.mathmout.resourcefulsheep.screen.DNAScreenRenderer;
+import com.mathmout.resourcefulsheep.screen.ScreenRenderer;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
@@ -9,6 +9,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.level.material.Fluid;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -63,9 +64,14 @@ public class TexteUtils {
                     EntityType<?> entityType = BuiltInRegistries.ENTITY_TYPE.get(loc);
                     return entityType.getDescription().getString();
                 }
+                // FLUID
+                if (BuiltInRegistries.FLUID.containsKey(loc)) {
+                    Fluid fluid = BuiltInRegistries.FLUID.get(loc);
+                    return fluid.getFluidType().getDescriptionId();
+                }
             }
         }
-            return stringToText(id);
+        return stringToText(id);
     }
 
     public static String[] formatEnergy(int energy) {
@@ -99,11 +105,11 @@ public class TexteUtils {
             String fullId1 = id1.contains(":") ? id1 : "resourceful_sheep:" + id1;
             String fullId2 = id2.contains(":") ? id2 : "resourceful_sheep:" + id2;
 
-            LivingEntity e1 = DNAScreenRenderer.getEntity(fullId1);
-            LivingEntity e2 = DNAScreenRenderer.getEntity(fullId2);
+            LivingEntity e1 = ScreenRenderer.getEntity(fullId1);
+            LivingEntity e2 = ScreenRenderer.getEntity(fullId2);
 
-            String name1 = DNAScreenRenderer.getDisplayName(fullId1, e1);
-            String name2 = DNAScreenRenderer.getDisplayName(fullId2, e2);
+            String name1 = ScreenRenderer.getDisplayName(fullId1, e1);
+            String name2 = ScreenRenderer.getDisplayName(fullId2, e2);
 
             return name1.compareToIgnoreCase(name2);
         });
@@ -122,12 +128,11 @@ public class TexteUtils {
             }
 
             String fullId = id.contains(":") ? id : ResourcefulSheepMod.MOD_ID + ":" + id;
-            LivingEntity entity = DNAScreenRenderer.getEntity(fullId);
-            String name = DNAScreenRenderer.getDisplayName(fullId, entity);
+            LivingEntity entity = ScreenRenderer.getEntity(fullId);
+            String name = ScreenRenderer.getDisplayName(fullId, entity);
 
             tooltipComponents.add(Component.literal(" - " + name).withStyle(ChatFormatting.GRAY));
             count++;
         }
     }
 }
-

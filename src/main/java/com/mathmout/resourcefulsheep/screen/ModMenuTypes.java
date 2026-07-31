@@ -1,6 +1,7 @@
 package com.mathmout.resourcefulsheep.screen;
 
 import com.mathmout.resourcefulsheep.ResourcefulSheepMod;
+import com.mathmout.resourcefulsheep.screen.centrifuge.CentrifugeMenu;
 import com.mathmout.resourcefulsheep.screen.scanner.SheepScannerMenu;
 import com.mathmout.resourcefulsheep.screen.sequencer.DNASequencerMenu;
 import com.mathmout.resourcefulsheep.screen.splicer.DNASplicerMenu;
@@ -24,6 +25,9 @@ public class ModMenuTypes {
 
     public static final DeferredHolder<MenuType<?>, MenuType<SheepScannerMenu>> SHEEP_SCANNER_MENU =
             MENUS.register("sheep_scanner_menu", () -> IMenuTypeExtension.create(SheepScannerMenu::new));
+
+    public static final DeferredHolder<MenuType<?>, MenuType<CentrifugeMenu>> CENTRIFUGE_MENU =
+            MENUS.register("centrifuge_menu", () -> IMenuTypeExtension.create(CentrifugeMenu::new));
 
     public static void register(IEventBus eventBus) {
         MENUS.register(eventBus);

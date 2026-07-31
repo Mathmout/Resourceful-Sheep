@@ -7,7 +7,7 @@ import com.mathmout.resourcefulsheep.config.dnacrossbreeding.SheepCrossbreeding;
 import com.mathmout.resourcefulsheep.config.mutations.ConfigSheepMutationManager;
 import com.mathmout.resourcefulsheep.config.mutations.SheepMutation;
 import com.mathmout.resourcefulsheep.network.SetDnaParentPayload;
-import com.mathmout.resourcefulsheep.screen.DNAScreenRenderer;
+import com.mathmout.resourcefulsheep.screen.ScreenRenderer;
 import com.mathmout.resourcefulsheep.utils.TexteUtils;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.GuiGraphics;
@@ -153,14 +153,14 @@ public class DNASplicerScreen extends AbstractContainerScreen<DNASplicerMenu> {
 
         this.isHoveringPanel = mouseX >= panelX && mouseX < panelX + 80 && mouseY >= y && mouseY < y + 176;
 
-        DNAScreenRenderer.renderDnaList(guiGraphics, x - 75, y + 8, font, scrollOffset, this.menu.getNeighborDnaList());
+        ScreenRenderer.renderDnaList(guiGraphics, x - 75, y + 8, font, scrollOffset, this.menu.getNeighborDnaList());
     }
 
     private void renderDnaCard(GuiGraphics guiGraphics, int x, int y, String dnaId, String color) {
         if (dnaId != null && !dnaId.isEmpty()) {
-            LivingEntity entity = DNAScreenRenderer.getEntity(dnaId);
+            LivingEntity entity = ScreenRenderer.getEntity(dnaId);
             if (entity != null) {
-                DNAScreenRenderer.renderCard(guiGraphics, x, y, entity, dnaId, font, color);
+                ScreenRenderer.renderCard(guiGraphics, x, y, entity, dnaId, font, color);
             }
         }
     }
@@ -182,20 +182,20 @@ public class DNASplicerScreen extends AbstractContainerScreen<DNASplicerMenu> {
         // Energy
         if (Config.DNA_SPLICER_CONSUMPTION.get() != 0) {
             if (isHovering(((imageWidth - 3 * CARD_WIDTH) / 4 + 10) / 2 - 5, 13, 11, 60, mouseX, mouseY)) {
-                DNAScreenRenderer.renderEnergyValue(guiGraphics, font, menu.getMaxEnergy(), menu.getEnergy(), mouseX, mouseY);
+                ScreenRenderer.renderEnergyValue(guiGraphics, font, menu.getMaxEnergy(), menu.getEnergy(), mouseX, mouseY);
             }
         }
 
         // Time left +
         int plusX = space + 10 + CARD_WIDTH + (2 * space + CARD_WIDTH - (space + 10 + CARD_WIDTH)) / 2 - 4;
         if (isHovering(plusX, 37, 9, 9, mouseX, mouseY)) {
-            DNAScreenRenderer.renderProgressTooltip(guiGraphics, font, menu.getProgress(), menu.getMaxProgress(), mouseX, mouseY);
+            ScreenRenderer.renderProgressTooltip(guiGraphics, font, menu.getProgress(), menu.getMaxProgress(), mouseX, mouseY);
         }
 
         // Time left →
         int arrowX = 2 * space + 2 * CARD_WIDTH + (3 * space + 2 * CARD_WIDTH - 10 - (2 * space + 2 * CARD_WIDTH)) / 2 - 6;
         if (isHovering(arrowX, 37, 12, 9, mouseX, mouseY)) {
-            DNAScreenRenderer.renderProgressTooltip(guiGraphics, font, menu.getProgress(), menu.getMaxProgress(), mouseX, mouseY);
+            ScreenRenderer.renderProgressTooltip(guiGraphics, font, menu.getProgress(), menu.getMaxProgress(), mouseX, mouseY);
         }
     }
 

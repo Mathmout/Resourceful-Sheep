@@ -2,7 +2,7 @@ package com.mathmout.resourcefulsheep.screen.sequencer;
 
 import com.mathmout.resourcefulsheep.Config;
 import com.mathmout.resourcefulsheep.ResourcefulSheepMod;
-import com.mathmout.resourcefulsheep.screen.DNAScreenRenderer;
+import com.mathmout.resourcefulsheep.screen.ScreenRenderer;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -49,7 +49,7 @@ public class DNASequencerScreen extends AbstractContainerScreen<DNASequencerMenu
         this.isHoveringPanel = mouseX >= panelX && mouseX < panelX + 80 &&
                 mouseY >= y && mouseY < y + 176;
 
-        DNAScreenRenderer.renderDnaList(guiGraphics, x - 75, y + 8, font, scrollOffset, this.menu.getStoredDna());
+        ScreenRenderer.renderDnaList(guiGraphics, x - 75, y + 8, font, scrollOffset, this.menu.getStoredDna());
 
         // Slot
         guiGraphics.blit(WIDGETS, x + (imageWidth - this.font.width(this.title)) / 2, y + 34, 0, 0, 18, 18);        // In
@@ -94,13 +94,13 @@ public class DNASequencerScreen extends AbstractContainerScreen<DNASequencerMenu
 
         if (Config.DNA_SEQUENCER_CONSUMPTION.get() != 0) {
             if (isHovering(153, 13, 11, 60, mouseX, mouseY)) {
-                DNAScreenRenderer.renderEnergyValue(guiGraphics, font, menu.getMaxEnergy(), menu.getEnergy(), mouseX, mouseY);
+                ScreenRenderer.renderEnergyValue(guiGraphics, font, menu.getMaxEnergy(), menu.getEnergy(), mouseX, mouseY);
             }
         }
         // Time left →
         int arrowX = imageWidth / 2 - 11;
         if (isHovering(arrowX, 36, 22, 15, mouseX, mouseY)) {
-            DNAScreenRenderer.renderProgressTooltip(guiGraphics, font, menu.getProgress(), menu.getMaxProgress(), mouseX, mouseY);
+            ScreenRenderer.renderProgressTooltip(guiGraphics, font, menu.getProgress(), menu.getMaxProgress(), mouseX, mouseY);
         }
 
     }

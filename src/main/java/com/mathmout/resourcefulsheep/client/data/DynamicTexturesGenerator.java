@@ -18,16 +18,19 @@ import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.level.material.Fluids;
+import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
+import net.neoforged.neoforge.fluids.FluidStack;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
@@ -63,15 +66,6 @@ public class DynamicTexturesGenerator {
             new Rectangle(6, 0, 12, 6)
     );
 
-    public static void clear() {
-        synchronized(LOCK) {
-            DYNAMIC_SHEEP_TEXTURES.clear();
-            DYNAMIC_WOOL_TEXTURES.clear();
-            isGenerated = false;
-            generatingThread = null;
-        }
-    }
-
     public static void triggerGeneration() {
         // Si tout est déjà prêt, on passe directement.
         if (isGenerated) return;
@@ -80,7 +74,7 @@ public class DynamicTexturesGenerator {
         // sans rien bloquer pour qu'il puisse récupérer ses images de base (évite la boucle infinie).
         if (Thread.currentThread() == generatingThread) return;
 
-        // 3. Les autres threads qui chargent les textures du jeu vont s'entasser ici et patienter.
+        // Les autres threads qui chargent les textures du jeu vont s'entasser ici et patienter.
         synchronized(LOCK) {
             // On vérifie si le premier thread a fini le travail.
             if (isGenerated) return;
@@ -157,19 +151,32 @@ public class DynamicTexturesGenerator {
         Map<Integer, Integer> combinedPalette = new HashMap<>();
 
         for (ResourceLocation itemKey : itemKeys) {
-            // On récupère TOUTES les images associées à cet item (top, side, bottom, etc.)
+            // On récupère toutes les images associées à cet item
             List<BufferedImage> sourceTextures = loadBufferedImages(resourceManager, itemKey);
 
             for (BufferedImage sourceTexture : sourceTextures) {
                 int itemTint = -1;
                 try {
-                    Item item = BuiltInRegistries.ITEM.get(itemKey);
-                    if (item != Items.AIR) {
-                        itemTint = Minecraft.getInstance().getItemColors().getColor(new ItemStack(item), 0);
+                    if (BuiltInRegistries.FLUID.containsKey(itemKey)) {
+                        Fluid fluid = BuiltInRegistries.FLUID.get(itemKey);
+
+                        // On crée un FluidStack virtuel de 1000mB pour forcer les mods comme Mekanism à donner leur vraie couleur
+                        itemTint = IClientFluidTypeExtensions.of(fluid).getTintColor(new FluidStack(fluid, 1000));
+
+                        // Sécurité : L'eau Vanilla cherche parfois un biome pour sa couleur et renvoie -1. On force son bleu par défaut.
+                        if (itemTint == -1 && fluid == Fluids.WATER) {
+                            itemTint = 0x3F76E4;
+                        }
+                    } else if (BuiltInRegistries.ITEM.containsKey(itemKey)) {
+                        Item item = BuiltInRegistries.ITEM.get(itemKey);
+                        if (item != Items.AIR) {
+                            itemTint = Minecraft.getInstance().getItemColors().getColor(new ItemStack(item), 0);
+                        }
                     }
                 } catch (Exception ignored) {
 
                 }
+
                 Map<Integer, Integer> texturePalette = analyzeTexture(sourceTexture, itemTint);
                 texturePalette.forEach((color, count) -> combinedPalette.merge(color, count, Integer::sum));
             }
@@ -281,68 +288,76 @@ public class DynamicTexturesGenerator {
         List<BufferedImage> images = new ArrayList<>();
         Set<ResourceLocation> texturePathsToLoad = new HashSet<>();
 
-        // On commence par chercher le modèle de l'item
-        ResourceLocation currentModelLoc = ResourceLocation.fromNamespaceAndPath(itemKey.getNamespace(), "models/item/" + itemKey.getPath() + ".json");
+        // Fallback classique PNG direct
+        texturePathsToLoad.add(ResourceLocation.fromNamespaceAndPath(itemKey.getNamespace(), "textures/item/" + itemKey.getPath() + ".png"));
+        texturePathsToLoad.add(ResourceLocation.fromNamespaceAndPath(itemKey.getNamespace(), "textures/block/" + itemKey.getPath() + ".png"));
 
-        int depth = 0;
-        // Boucle pour remonter les "parents" (limite de 10 pour éviter les boucles infinies)
-        while (depth < 10) {
-            depth++;
-            Optional<Resource> modelRes = resourceManager.getResource(currentModelLoc);
-
-            // Fallback, si l'item n'a pas de modèle, on tente direct en tant que bloc
-            if (modelRes.isEmpty() && depth == 1) {
-                currentModelLoc = ResourceLocation.fromNamespaceAndPath(itemKey.getNamespace(), "models/block/" + itemKey.getPath() + ".json");
-                modelRes = resourceManager.getResource(currentModelLoc);
+        if (BuiltInRegistries.FLUID.containsKey(itemKey)) {
+            try {
+                Fluid fluid = BuiltInRegistries.FLUID.get(itemKey);
+                ResourceLocation stillTexture = IClientFluidTypeExtensions.of(fluid).getStillTexture();
+                texturePathsToLoad.add(ResourceLocation.fromNamespaceAndPath(stillTexture.getNamespace(), "textures/" + stillTexture.getPath() + ".png"));
+            } catch (Exception e) {
+                LOGGER.warn("[ResourcefulSheep] Failed to load fluid texture for {}", itemKey);
             }
+        } else {
+            ResourceLocation currentModelLoc = ResourceLocation.fromNamespaceAndPath(itemKey.getNamespace(), "models/item/" + itemKey.getPath() + ".json");
+            int depth = 0;
 
-            if (modelRes.isPresent()) {
-                try (InputStream is = modelRes.get().open()) {
-                    JsonObject modelJson = JsonParser.parseReader(new InputStreamReader(is)).getAsJsonObject();
+            while (depth < 10) {
+                depth++;
+                Optional<Resource> modelRes = resourceManager.getResource(currentModelLoc);
 
-                    if (modelJson.has("textures")) {
-                        JsonObject textures = modelJson.getAsJsonObject("textures");
-                        for (String key : textures.keySet()) {
-                            String texPath = textures.get(key).getAsString();
+                if (modelRes.isEmpty() && depth == 1) {
+                    currentModelLoc = ResourceLocation.fromNamespaceAndPath(itemKey.getNamespace(), "models/block/" + itemKey.getPath() + ".json");
+                    modelRes = resourceManager.getResource(currentModelLoc);
+                }
 
-                            // On ignore les variables qui pointent vers d'autres variables (ex: "#all")
-                            if (texPath.startsWith("#")) continue;
+                if (modelRes.isPresent()) {
+                    try (InputStream is = modelRes.get().open()) {
+                        JsonObject modelJson = JsonParser.parseReader(new InputStreamReader(is)).getAsJsonObject();
 
-                            try {
-                                ResourceLocation texLoc = ResourceLocation.parse(texPath);
-                                texturePathsToLoad.add(ResourceLocation.fromNamespaceAndPath(texLoc.getNamespace(), "textures/" + texLoc.getPath() + ".png"));
-                            } catch (Exception e) {
-                                LOGGER.warn("[ResourcefulSheep] Path ignored : {}", texPath);
+                        // CAS 1 : Modèle standard Minecraft avec "textures"
+                        if (modelJson.has("textures")) {
+                            JsonObject textures = modelJson.getAsJsonObject("textures");
+                            for (String key : textures.keySet()) {
+                                String texPath = textures.get(key).getAsString();
+                                if (texPath.startsWith("#")) continue;
+
+                                try {
+                                    ResourceLocation texLoc = ResourceLocation.parse(texPath);
+                                    texturePathsToLoad.add(ResourceLocation.fromNamespaceAndPath(texLoc.getNamespace(), "textures/" + texLoc.getPath() + ".png"));
+                                } catch (Exception ignored) {}
                             }
+                            break;
                         }
-                        // On a trouvé les textures, on arrête de chercher !
+                        // CAS 2 : Modèle Java personnalisé (CodeChickenLib / Draconic Evolution / etc.)
+                        else if (modelJson.has("class")) {
+                            String className = modelJson.get("class").getAsString();
+                            try {
+                                Class<?> clazz = Class.forName(className);
+                                extractTexturesFromClass(clazz, texturePathsToLoad);
+                            } catch (Exception e) {
+                                LOGGER.warn("[ResourcefulSheep] Could not reflectively inspect class: {}", className);
+                            }
+                            break;
+                        }
+                        // CAS 3 : Parent standard
+                        else if (modelJson.has("parent")) {
+                            String parentPath = modelJson.get("parent").getAsString();
+                            ResourceLocation parentLoc = ResourceLocation.parse(parentPath);
+                            currentModelLoc = ResourceLocation.fromNamespaceAndPath(parentLoc.getNamespace(), "models/" + parentLoc.getPath() + ".json");
+                        } else {
+                            break;
+                        }
+                    } catch (Exception e) {
+                        LOGGER.warn("[ResourcefulSheep] JSON reading error for {}", currentModelLoc);
                         break;
                     }
-                    // S'il n'y a pas de textures, on regarde le parent et on recommence.
-                    else if (modelJson.has("parent")) {
-                        String parentPath = modelJson.get("parent").getAsString();
-                        ResourceLocation parentLoc = ResourceLocation.parse(parentPath);
-                        // On modifie le fichier actuel pour aller lire le parent au prochain tour de boucle
-                        currentModelLoc = ResourceLocation.fromNamespaceAndPath(parentLoc.getNamespace(), "models/" + parentLoc.getPath() + ".json");
-                    }
-                    else {
-                        // pas de textures, ni de parent on arrete.
-                        break;
-                    }
-                } catch (Exception e) {
-                    LOGGER.warn("[ResourcefulSheep] JSON reading error for {}", currentModelLoc);
+                } else {
                     break;
                 }
-            } else {
-                break; // Fichier introuvable
             }
-        }
-
-        // Fallback si le JSON ne nous a vraiment rien donné
-        if (texturePathsToLoad.isEmpty()) {
-            String name = itemKey.getPath();
-            texturePathsToLoad.add(ResourceLocation.fromNamespaceAndPath(itemKey.getNamespace(), "textures/item/" + name + ".png"));
-            texturePathsToLoad.add(ResourceLocation.fromNamespaceAndPath(itemKey.getNamespace(), "textures/block/" + name + ".png"));
         }
 
         // On charge toutes les images PNG trouvées !
@@ -358,6 +373,62 @@ public class DynamicTexturesGenerator {
             }
         }
         return images;
+    }
+
+    // --- LOGIQUE DE RÉFLEXION POUR LES CLASSES JAVA DE RENDU ---
+
+    private void extractTexturesFromClass(Class<?> clazz, Set<ResourceLocation> texturePathsToLoad) {
+        Class<?> current = clazz;
+        Set<Object> visited = new HashSet<>();
+
+        while (current != null && current != Object.class) {
+            for (Field field : current.getDeclaredFields()) {
+                if (Modifier.isStatic(field.getModifiers())) {
+                    try {
+                        field.setAccessible(true);
+                        Object value = field.get(null);
+                        scanObjectForResourceLocations(value, texturePathsToLoad, visited, 0);
+                    } catch (Exception ignored) {}
+                }
+            }
+            current = current.getSuperclass();
+        }
+    }
+
+    private void scanObjectForResourceLocations(Object obj, Set<ResourceLocation> result, Set<Object> visited, int depth) {
+        if (obj == null || depth > 4 || visited.contains(obj)) return;
+        visited.add(obj);
+
+        if (obj instanceof ResourceLocation resourceLocation) {
+            String path = resourceLocation.getPath();
+            if (!path.startsWith("textures/")) {
+                path = "textures/" + path;
+            }
+            if (!path.endsWith(".png")) {
+                path = path + ".png";
+            }
+            result.add(ResourceLocation.fromNamespaceAndPath(resourceLocation.getNamespace(), path));
+            return;
+        }
+
+        if (obj instanceof Optional<?> opt) {
+            opt.ifPresent(inner -> scanObjectForResourceLocations(inner, result, visited, depth + 1));
+            return;
+        }
+
+        Class<?> clazz = obj.getClass();
+        if (clazz.getName().startsWith("java.") || clazz.getName().startsWith("sun.")) return;
+
+        while (clazz != null && clazz != Object.class && !clazz.getName().startsWith("java.")) {
+            for (Field field : clazz.getDeclaredFields()) {
+                try {
+                    field.setAccessible(true);
+                    Object val = field.get(obj);
+                    scanObjectForResourceLocations(val, result, visited, depth + 1);
+                } catch (Exception ignored) {}
+            }
+            clazz = clazz.getSuperclass();
+        }
     }
 
     private byte[] bufferedImageToPngBytes(BufferedImage image) throws IOException {

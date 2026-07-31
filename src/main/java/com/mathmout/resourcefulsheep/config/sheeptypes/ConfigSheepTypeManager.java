@@ -191,8 +191,11 @@ public class ConfigSheepTypeManager {
                     if (tier.DroppedItems() != null) {
                         for (SheepTypeData.TierData.DroppedItem dropData : tier.DroppedItems()) {
                             String itemId = dropData.ItemId();
-                            if (!BuiltInRegistries.ITEM.containsKey(ResourceLocation.parse(itemId))) {
-                                LOGGER.warn("[ResourcefulSheep] Config Warning SheepType : DroppedItem '{}' in Tier {} for {} sheep not found in Item Registry.", itemId, tier.Tier(), sheepName);
+                            if (!BuiltInRegistries.ITEM.containsKey(ResourceLocation.parse(itemId)) && !BuiltInRegistries.FLUID.containsKey(ResourceLocation.parse(itemId))) {
+                                LOGGER.warn("[ResourcefulSheep] Config Warning SheepType : DroppedItem '{}' in Tier {} for {} sheep not found in neither Item Registry nor Fluid Registry.", itemId, tier.Tier(), sheepName);
+                            }
+                            if (dropData.MaxDrops() < dropData.MinDrops()) {
+                                LOGGER.warn("[ResourcefulSheep] Config Warning SheepType : MaxDrops must be bigger than MinDrops in {} tier {}.", tier.Tier(), sheepName);
                             }
                         }
                     }

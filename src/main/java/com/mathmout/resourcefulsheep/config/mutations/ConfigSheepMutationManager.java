@@ -14,7 +14,9 @@ import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Stream;
 
 public class ConfigSheepMutationManager {
@@ -83,6 +85,10 @@ public class ConfigSheepMutationManager {
 
     public static void validateConfig() {
         LOGGER.info("[ResourcefulSheep] Validating Sheep Mutations...");
+
+        // Map pour regrouper les mutations par paire de parents (ordre ignoré)
+        Map<String, List<SheepMutation>> mutationsByParents = new HashMap<>();
+
         for (SheepMutation mutation : SHEEP_MUTATIONS) {
             // Maman
             if (!BuiltInRegistries.ENTITY_TYPE.containsKey(ResourceLocation.parse("resourceful_sheep:" + mutation.MomId()))) {
@@ -95,6 +101,32 @@ public class ConfigSheepMutationManager {
             // Enfant
             if (!BuiltInRegistries.ENTITY_TYPE.containsKey(ResourceLocation.parse("resourceful_sheep:" + mutation.ChildId()))) {
                 LOGGER.warn("[ResourcefulSheep] Config Warning SheepMutation: ChildId '{}' not found in Entity Registry.", mutation.ChildId());
+            }
+
+            // Création d'une clé unique pour la paire de parents (triée par ordre alphabétique)
+            String mom = mutation.MomId();
+            String dad = mutation.DadId();
+            String parentKey = (mom.compareTo(dad) <= 0) ? (mom + " and " + dad) : (dad + " and " + mom);
+
+            // Ajout de la mutation dans le groupe correspondant
+            mutationsByParents.computeIfAbsent(parentKey, k -> new ArrayList<>()).add(mutation);
+        }
+
+        // Vérification des chances totales pour chaque groupe de parents
+        for (Map.Entry<String, List<SheepMutation>> entry : mutationsByParents.entrySet()) {
+            int totalChance = 0;
+            List<String> childFiles = new ArrayList<>();
+
+            for (SheepMutation sheepMutation : entry.getValue()) {
+                totalChance += sheepMutation.Chance();
+                childFiles.add(sheepMutation.ChildId());
+            }
+
+            if (totalChance > 100) {
+                LOGGER.warn("[ResourcefulSheep] Config Warning: The total mutation chance for parents '{}' is {}, which exceeds 100. Affected children: {}",
+                        entry.getKey(),
+                        totalChance,
+                        String.join(", ", childFiles));
             }
         }
         LOGGER.info("[ResourcefulSheep] Sheep Mutations Config Validation Complete.");

@@ -97,14 +97,18 @@ public class ConfigSheepSpawningManager {
         for (SheepSpawningData data : SHEEP_SPAWNING) {
 
             if (!BuiltInRegistries.ENTITY_TYPE.containsKey(ResourceLocation.parse("resourceful_sheep:" + data.sheepId()))) {
-                LOGGER.warn("[ResourcefulSheep] Config Warning [SheepSpawning]: Sheep ID '{}' not found in Entity Registry.", data.sheepId());
+                LOGGER.warn("[ResourcefulSheep] Config Warning SheepSpawning: Sheep ID '{}' not found in Entity Registry.", data.sheepId());
+            }
+
+            if (data.maxCount() < data.minCount()) {
+                LOGGER.warn("[ResourcefulSheep] Config Warning SheepSpawning : maxCount must be bigger than minCount for {}.", data.sheepId());
             }
 
             if (data.Biomes() != null) {
                 for (String biomeId : data.Biomes()) {
                     biomeId = biomeId.startsWith("#") ? biomeId.substring(1) : biomeId;
                     if (ResourceLocation.tryParse(biomeId) == null) {
-                        LOGGER.warn("[ResourcefulSheep] Config Warning [SheepSpawning]: Invalid Biome ID or Tag format '{}' for '{}'.", biomeId, data.sheepId());
+                        LOGGER.warn("[ResourcefulSheep] Config Warning SheepSpawning: Invalid Biome ID or Tag format '{}' for '{}'.", biomeId, data.sheepId());
                     }
                 }
             }

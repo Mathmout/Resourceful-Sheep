@@ -21,9 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class DynamicResourceProvider implements PackResources {
 
@@ -177,7 +175,7 @@ public class DynamicResourceProvider implements PackResources {
         for (CentrifugeTier tier : CentrifugeTier.values()) {
             String prefix = tier.name().toLowerCase() + "_centrifuge_";
 
-            java.util.List<String> blockNames = new java.util.ArrayList<>(java.util.List.of(
+           List<String> blockNames = new ArrayList<>(List.of(
                     prefix + "casing",
                     prefix + "controller",
                     prefix + "item_in_port",

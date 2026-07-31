@@ -1,24 +1,20 @@
 package com.mathmout.resourcefulsheep.event;
 
 import com.mathmout.resourcefulsheep.ResourcefulSheepMod;
-import com.mathmout.resourcefulsheep.client.data.DynamicTexturesGenerator;
 import com.mathmout.resourcefulsheep.config.sheeptypes.ConfigSheepTypeManager;
 import com.mathmout.resourcefulsheep.entity.custom.SheepVariantData;
 import com.mathmout.resourcefulsheep.utils.TexteUtils;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
-import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.SpawnEggItem;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.event.TagsUpdatedEvent;
 import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
 
 import java.util.List;
@@ -26,14 +22,6 @@ import java.util.List;
 // Pendant le jeu
 @EventBusSubscriber(modid = ResourcefulSheepMod.MOD_ID, value = Dist.CLIENT)
 public class ClientGameEvents {
-
-    @SubscribeEvent
-    public static void onTagsUpdated(TagsUpdatedEvent event) {
-        if (event.getUpdateCause() == TagsUpdatedEvent.UpdateCause.CLIENT_PACKET_RECEIVED) {
-            ResourceManager resourceManager = Minecraft.getInstance().getResourceManager();
-            new DynamicTexturesGenerator().generateAllTextures(resourceManager);
-        }
-    }
 
     // Add tooltip information to spawn eggs.
     @SubscribeEvent

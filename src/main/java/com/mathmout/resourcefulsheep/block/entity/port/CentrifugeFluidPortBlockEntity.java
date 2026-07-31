@@ -20,10 +20,21 @@ public class CentrifugeFluidPortBlockEntity extends AbstractCentrifugePortBlockE
 
     public Optional<IFluidHandler> getFluidHandler() {
         if (getControllerPos() != null && this.level != null) {
-            BlockEntity be = this.level.getBlockEntity(getControllerPos());
-            if (be instanceof CentrifugeControllerBlockEntity controller && controller.isAssembled()) {
+            BlockEntity blockEntity = this.level.getBlockEntity(getControllerPos());
+            if (blockEntity instanceof CentrifugeControllerBlockEntity controller && controller.isAssembled()) {
                 // On passe le tableau complet des réservoirs au wrapper
-                return Optional.of(new MultiFluidTankWrapper(controller.fluidTanks));
+                return Optional.of(new MultiFluidTankWrapper(controller.fluidTanks){
+
+                    @Override
+                    public int fill(FluidStack resource, @NotNull FluidAction action) {
+                        return 0;
+                    }
+
+                    @Override
+                    public boolean isFluidValid(int tank, @NotNull FluidStack stack) {
+                        return false;
+                    }
+                });
             }
         }
         return Optional.empty();

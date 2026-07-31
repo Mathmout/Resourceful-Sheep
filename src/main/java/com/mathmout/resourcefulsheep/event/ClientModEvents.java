@@ -2,7 +2,6 @@ package com.mathmout.resourcefulsheep.event;
 
 import com.mathmout.resourcefulsheep.ResourcefulSheepMod;
 import com.mathmout.resourcefulsheep.client.data.DynamicResourceProvider;
-import com.mathmout.resourcefulsheep.client.data.DynamicTexturesGenerator;
 import com.mathmout.resourcefulsheep.client.renderer.ResourcefulSheepRenderer;
 import com.mathmout.resourcefulsheep.config.sheeptypes.ConfigSheepTypeManager;
 import com.mathmout.resourcefulsheep.entity.ModEntities;
@@ -10,6 +9,7 @@ import com.mathmout.resourcefulsheep.item.ModDataComponents;
 import com.mathmout.resourcefulsheep.item.ModItems;
 import com.mathmout.resourcefulsheep.item.custom.ResourcefulWoolItem;
 import com.mathmout.resourcefulsheep.item.custom.SuspiciousSpawnEgg;
+import com.mathmout.resourcefulsheep.screen.centrifuge.CentrifugeScreen;
 import com.mathmout.resourcefulsheep.screen.scanner.SheepScannerScreen;
 import com.mathmout.resourcefulsheep.screen.sequencer.DNASequencerScreen;
 import com.mathmout.resourcefulsheep.screen.ModMenuTypes;
@@ -28,9 +28,6 @@ import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.repository.Pack;
 import net.minecraft.server.packs.repository.PackCompatibility;
 import net.minecraft.server.packs.repository.PackSource;
-import net.minecraft.server.packs.resources.ResourceManager;
-import net.minecraft.server.packs.resources.SimplePreparableReloadListener;
-import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.flag.FeatureFlagSet;
 import net.minecraft.world.item.DyeColor;
@@ -41,7 +38,6 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.ModelEvent;
-import net.neoforged.neoforge.client.event.RegisterClientReloadListenersEvent;
 import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 import net.neoforged.neoforge.event.AddPackFindersEvent;
@@ -54,6 +50,7 @@ import java.util.Optional;
 // Lancement du jeu
 @EventBusSubscriber(modid = ResourcefulSheepMod.MOD_ID, value = Dist.CLIENT)
 public class ClientModEvents {
+
     // ---------------------------------------------------------
     // 1. COULEURS ET RENDUS
     // ---------------------------------------------------------
@@ -113,6 +110,7 @@ public class ClientModEvents {
         event.register(ModMenuTypes.DNA_SEQUENCER_MENU.get(), DNASequencerScreen::new);
         event.register(ModMenuTypes.DNA_SPLICER_MENU.get(), DNASplicerScreen::new);
         event.register(ModMenuTypes.SHEEP_SCANNER_MENU.get(), SheepScannerScreen::new);
+        event.register(ModMenuTypes.CENTRIFUGE_MENU.get(), CentrifugeScreen::new);
     }
 
     // ---------------------------------------------------------
@@ -144,21 +142,6 @@ public class ClientModEvents {
                 }
             }
         }
-    }
-
-    @SubscribeEvent
-    public static void onClientReloadListeners(RegisterClientReloadListenersEvent event) {
-        event.registerReloadListener(new SimplePreparableReloadListener<Void>() {
-            @Override
-            protected @NotNull Void prepare(@NotNull ResourceManager resourceManager, @NotNull ProfilerFiller profiler) {
-                DynamicTexturesGenerator.clear();
-                return null;
-            }
-            @Override
-            protected void apply(@NotNull Void aVoid, @NotNull ResourceManager resourceManager, @NotNull ProfilerFiller profiler) {
-
-            }
-        });
     }
 
     // Permet aux items de laine de lire leur propriété "color" pour afficher la bonne texture dans l'inventaire

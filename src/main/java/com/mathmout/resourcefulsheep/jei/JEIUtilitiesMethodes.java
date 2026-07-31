@@ -4,7 +4,7 @@ import com.mathmout.resourcefulsheep.ResourcefulSheepMod;
 import com.mathmout.resourcefulsheep.config.sheeptypes.ConfigSheepTypeManager;
 import com.mathmout.resourcefulsheep.entity.custom.ResourcefulSheepEntity;
 import com.mathmout.resourcefulsheep.entity.custom.SheepVariantData;
-import com.mathmout.resourcefulsheep.screen.DNAScreenRenderer;
+import com.mathmout.resourcefulsheep.screen.ScreenRenderer;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.ChatFormatting;
@@ -29,7 +29,7 @@ public class JEIUtilitiesMethodes {
 
     public static void drawEntity(GuiGraphics g, String rawEntityId, int x, int y, float baseScale) {
         String entityId = getNamespacedId(rawEntityId);
-        LivingEntity entity = DNAScreenRenderer.getEntity(entityId);
+        LivingEntity entity = ScreenRenderer.getEntity(entityId);
         if (entity == null) return;
 
         PoseStack ps = g.pose();
@@ -81,10 +81,10 @@ public class JEIUtilitiesMethodes {
 
     public static void addTooltip(List<Component> tips, String rawEntityId) {
         String entityId = getNamespacedId(rawEntityId);
-        LivingEntity entity = DNAScreenRenderer.getEntity(entityId);
+        LivingEntity entity = ScreenRenderer.getEntity(entityId);
         if (entity == null) return;
 
-        tips.add(Component.literal(DNAScreenRenderer.getDisplayName(entityId, entity).replaceAll("(?i)\\s*Tier\\s*\\d+", "")).withStyle(ChatFormatting.BLUE));
+        tips.add(Component.literal(ScreenRenderer.getDisplayName(entityId, entity).replaceAll("(?i)\\s*Tier\\s*\\d+", "")).withStyle(ChatFormatting.BLUE));
 
         if (entity instanceof ResourcefulSheepEntity) {
             String path = entityId.split(":")[1];

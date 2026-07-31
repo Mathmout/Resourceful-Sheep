@@ -22,7 +22,7 @@ import org.joml.Vector3f;
 
 import java.util.*;
 
-public class DNAScreenRenderer {
+public class ScreenRenderer {
 
     private static final int VISIBLE_HEIGHT = 150;
     public static final int CARD_HEIGHT = 40;
@@ -269,6 +269,12 @@ public static void renderDnaList(GuiGraphics guiGraphics, int panelX, int panelY
         int totalSeconds = ticks / 20;
         int minutes = totalSeconds / 60;
         int seconds = totalSeconds % 60;
-        return minutes > 0 ? minutes + "m " + seconds + "s" : seconds + "s";
+        if  (minutes > 0) {
+            return minutes + "m " + seconds + "s";
+        } else if (seconds > 0) {
+            return seconds + "s";
+        } else {
+            return ticks + "t";
+        }
     }
 }

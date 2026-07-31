@@ -45,13 +45,11 @@ public class DynamicServerDataPackProvider implements PackResources {
 
             List<String> blockNames = new ArrayList<>(List.of(
                     prefix + "casing",
-                    prefix + "controller",
                     prefix + "item_in_port",
                     prefix + "item_out_port",
                     prefix + "energy_port"
             ));
 
-            // On utilise bien "fluid_port" sans le "out" comme tu l'as corrigé !
             if (tier != CentrifugeTier.BASIC) {
                 blockNames.add(prefix + "fluid_port");
             }
@@ -83,7 +81,7 @@ public class DynamicServerDataPackProvider implements PackResources {
                 lootTable.add("pools", pools);
 
                 // Le chemin d'une Loot Table de bloc est toujours data/mod_id/loot_tables/blocks/nom_du_bloc.json
-                String path = "data/" + ResourcefulSheepMod.MOD_ID + "/loot_tables/blocks/" + blockName + ".json";
+                String path = "data/" + ResourcefulSheepMod.MOD_ID + "/loot_table/blocks/" + blockName + ".json";
                 resourceCache.put(path, GSON.toJson(lootTable).getBytes(StandardCharsets.UTF_8));
             }
         }

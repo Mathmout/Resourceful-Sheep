@@ -1,13 +1,13 @@
 package com.mathmout.resourcefulsheep.block.entity;
 
 import com.mathmout.resourcefulsheep.block.custom.centrifuge.AbstractCentrifugePartBlock;
-import com.mathmout.resourcefulsheep.block.custom.centrifuge.CentrifugeCasingBlock;
 import com.mathmout.resourcefulsheep.block.custom.centrifuge.CentrifugeControllerBlock;
 import com.mathmout.resourcefulsheep.block.custom.centrifuge.CentrifugeTier;
 import com.mathmout.resourcefulsheep.block.entity.port.AbstractCentrifugePortBlockEntity;
 import com.mathmout.resourcefulsheep.entity.custom.SheepVariantData;
 import com.mathmout.resourcefulsheep.item.ModDataComponents;
 import com.mathmout.resourcefulsheep.item.custom.ResourcefulWoolItem;
+import com.mathmout.resourcefulsheep.screen.centrifuge.CentrifugeMenu;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
@@ -42,6 +42,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -57,6 +58,9 @@ public class CentrifugeControllerBlockEntity extends BlockEntity implements Menu
     public final ItemStackHandler itemHandler;
     public final ModEnergyStorage energyStorage;
     public final FluidTank[] fluidTanks;
+
+    private boolean isDistributing = false;
+    private boolean needsBalancing = false;
 
     protected final ContainerData data = new ContainerData() {
 
@@ -103,10 +107,13 @@ public class CentrifugeControllerBlockEntity extends BlockEntity implements Menu
         this.maxProgress = this.tier.getSpeedProcesses();
         this.processTimers = new int[this.tier.getParallelProcesses()];
 
-        this.itemHandler = new ItemStackHandler(this.tier.getParallelProcesses() * 3) {
+        this.itemHandler = new ItemStackHandler(this.tier.getParallelProcesses() + getOutputInventorySize()) {
             @Override
             protected void onContentsChanged(int slot) {
                 setChanged();
+                if (slot < tier.getParallelProcesses() && !isDistributing) {
+                    needsBalancing = true;
+                }
             }
 
             @Override
@@ -114,7 +121,7 @@ public class CentrifugeControllerBlockEntity extends BlockEntity implements Menu
                 if (slot < tier.getParallelProcesses()) {
                     return stack.getItem() instanceof ResourcefulWoolItem;
                 }
-                return false;
+                return true;
             }
         };
 
@@ -131,12 +138,54 @@ public class CentrifugeControllerBlockEntity extends BlockEntity implements Menu
                 @Override
                 protected void onContentsChanged() {
                     setChanged();
+                    if (level != null && !level.isClientSide()) {
+                        level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), 3);
+                    }
                 }
             };
         }
     }
 
+    public int getOutputInventorySize() {
+        return switch (this.tier) {
+            case BASIC -> 3;
+            case ADVANCED -> 6;
+            case ELITE -> 10;
+            case ULTIMATE -> 14;
+        };
+    }
+
     // --- LOGIQUE MULTIBLOCK ---
+
+    public void disassemble() {
+        if (!this.isAssembled) return;
+        this.isAssembled = false;
+
+        if (this.level != null && !this.level.isClientSide()) {
+            for (BlockPos partPos : this.multiblockParts) {
+                BlockEntity be = this.level.getBlockEntity(partPos);
+                if (be instanceof AbstractCentrifugePortBlockEntity port) {
+                    port.setControllerPos(null); // Coupe instantanément la connexion aux câbles
+                }
+            }
+        }
+        this.multiblockParts.clear();
+    }
+
+    public void assemble(List<BlockPos> tmpParts) {
+        this.multiblockParts.clear();
+        this.multiblockParts.addAll(tmpParts);
+        this.isAssembled = true;
+
+        if (this.level != null && !this.level.isClientSide()) {
+            for (BlockPos partPos : this.multiblockParts) {
+                BlockEntity be = this.level.getBlockEntity(partPos);
+                if (be instanceof AbstractCentrifugePortBlockEntity port) {
+                    port.setControllerPos(this.getBlockPos()); // Lance la connexion aux câbles
+                }
+            }
+        }
+    }
 
     public boolean checkMultiblockStructure(Level level, BlockPos controllerPos, Direction facing) {
         Direction back = facing.getOpposite();
@@ -153,31 +202,29 @@ public class CentrifugeControllerBlockEntity extends BlockEntity implements Menu
                     Block block = state.getBlock();
 
                     if (!(block instanceof AbstractCentrifugePartBlock)) {
-                        this.isAssembled = false;
+                        disassemble(); // La structure est brisée (ex: casing cassé)
                         return false;
                     }
-
-                    if (h > 0 && !(block instanceof CentrifugeCasingBlock)) {
-                        this.isAssembled = false;
-                        return false;
-                    }
-
                     tmpParts.add(checkPos);
                 }
             }
         }
 
-        this.multiblockParts.clear();
-        this.multiblockParts.addAll(tmpParts);
-        this.isAssembled = true;
-
-        for (BlockPos partPos : this.multiblockParts) {
-            BlockEntity blockEntity = level.getBlockEntity(partPos);
-            if (blockEntity instanceof AbstractCentrifugePortBlockEntity portEntity) {
-                portEntity.setControllerPos(this.getBlockPos());
-            }
+        // Si on arrive ici, la machine est physiquement valide
+        if (!this.isAssembled || this.multiblockParts.isEmpty()) {
+            assemble(tmpParts); // On l'assemble uniquement si elle ne l'était pas déjà !
         }
         return true;
+    }
+
+    @Override
+    public void setRemoved() {
+        disassemble();
+        super.setRemoved();
+    }
+
+    public boolean hasPart(BlockPos pos) {
+        return this.multiblockParts.contains(pos);
     }
 
     public void tick(Level level, BlockPos blockPos, BlockState blockState) {
@@ -195,29 +242,48 @@ public class CentrifugeControllerBlockEntity extends BlockEntity implements Menu
         }
 
         if (this.isAssembled) {
-            int inputSize = this.tier.getParallelProcesses();
-            int activeProcesses = 0;
-            boolean[] canProcessSlot = new boolean[inputSize];
+            int p = this.tier.getParallelProcesses();
+            int outSize = getOutputInventorySize();
 
-            // Déterminer les slots valides (assez de place en sortie)
-            for (int i = 0; i < inputSize; i++) {
-                if (canProcess(i)) {
+            // 1. Initialiser les simulations
+            ItemStackHandler simItemHandler = new ItemStackHandler(outSize);
+            for (int i = 0; i < outSize; i++) {
+                simItemHandler.setStackInSlot(i, this.itemHandler.getStackInSlot(p + i).copy());
+            }
+
+            int[] simFluids = new int[this.fluidTanks.length];
+            for (int i = 0; i < this.fluidTanks.length; i++) {
+                simFluids[i] = this.fluidTanks[i].getFluidAmount();
+            }
+
+            int activeProcesses = 0;
+            boolean[] canProcessSlot = new boolean[p];
+
+            // 2. Évaluation slot par slot
+            for (int i = 0; i < p; i++) {
+                ItemStack inputStack = this.itemHandler.getStackInSlot(i);
+
+                if (inputStack.isEmpty() || !(inputStack.getItem() instanceof ResourcefulWoolItem)) {
+                    if (this.processTimers[i] > 0) {
+                        this.processTimers[i] = 0;
+                        setChanged();
+                    }
+                    continue;
+                }
+
+                if (canProcess(i, simItemHandler, simFluids)) {
                     canProcessSlot[i] = true;
                     activeProcesses++;
-                } else if (this.processTimers[i] > 0) {
-                    this.processTimers[i] = 0;
-                    setChanged();
                 }
             }
 
-            // Si on a des processus actifs, on calcule l'énergie requise par processus
+            // 3. Exécution
             if (activeProcesses > 0) {
                 int energyPerProcess = this.tier.getEnergyConsumption() / activeProcesses;
 
-                // Est-ce qu'on a assez d'énergie pour tous les processus actifs ?
                 if (this.energyStorage.getEnergyStored() >= (energyPerProcess * activeProcesses)) {
                     boolean isWorking = false;
-                    for (int i = 0; i < inputSize; i++) {
+                    for (int i = 0; i < p; i++) {
                         if (canProcessSlot[i]) {
                             this.energyStorage.consumeEnergy(energyPerProcess);
                             this.processTimers[i]++;
@@ -242,36 +308,135 @@ public class CentrifugeControllerBlockEntity extends BlockEntity implements Menu
             }
             if (changed) setChanged();
         }
+        if (this.needsBalancing) {
+            balanceInputs();
+            this.needsBalancing = false;
+        }
     }
 
-    // --- LOGIQUE DE CRAFT ET DE VERIFICATION ---
+    private void balanceInputs() {
+        int p = this.tier.getParallelProcesses();
+        if (p <= 1) return; // Inutile si on a un seul slot
 
-    private boolean canProcess(int slot) {
-        ItemStack inputStack = this.itemHandler.getStackInSlot(slot);
-        if (!(inputStack.getItem() instanceof ResourcefulWoolItem woolItem)) return false;
+        this.isDistributing = true;
 
-        SheepVariantData variantData = woolItem.getVariantData();
-        if (variantData == null) return false;
+        List<ItemGroup> groups = new ArrayList<>();
+        List<Integer> emptySlots = new ArrayList<>();
 
-        List<ItemStack> maxItemDrops = new ArrayList<>();
-        maxItemDrops.add(getVanillaWool(inputStack));
-
-        List<FluidStack> maxFluidDrops = new ArrayList<>();
-
-        if (variantData.DroppedItems() != null) {
-            for (SheepVariantData.DroppedItems drop : variantData.DroppedItems()) {
-                ResourceLocation resourceLocation = ResourceLocation.tryParse(drop.ItemId());
-                if (resourceLocation == null) continue;
-
-                if (BuiltInRegistries.FLUID.containsKey(resourceLocation)) {
-                    maxFluidDrops.add(new FluidStack(BuiltInRegistries.FLUID.get(resourceLocation), drop.MaxDrops()));
-                } else if (BuiltInRegistries.ITEM.containsKey(resourceLocation)) {
-                    maxItemDrops.add(new ItemStack(BuiltInRegistries.ITEM.get(resourceLocation), drop.MaxDrops()));
+        // On scanne l'inventaire pour rassembler les laines identiques
+        for (int i = 0; i < p; i++) {
+            ItemStack stack = this.itemHandler.getStackInSlot(i);
+            if (stack.isEmpty()) {
+                emptySlots.add(i);
+            } else {
+                boolean found = false;
+                for (ItemGroup group : groups) {
+                    if (ItemStack.isSameItemSameComponents(group.sample, stack)) {
+                        group.slots.add(i);
+                        group.totalCount += stack.getCount();
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found) {
+                    ItemGroup newGroup = new ItemGroup();
+                    newGroup.sample = stack.copy();
+                    newGroup.slots.add(i);
+                    newGroup.totalCount = stack.getCount();
+                    groups.add(newGroup);
                 }
             }
         }
 
-        return canInsertItems(maxItemDrops) && canInsertFluids(maxFluidDrops);
+        // 2. On distribue les slots vides au groupe d'items le plus nombreux
+        while (!emptySlots.isEmpty() && !groups.isEmpty()) {
+            ItemGroup bestGroup = null;
+            double bestRatio = 1.0;
+
+            for (ItemGroup group : groups) {
+                double ratio = (double) group.totalCount / group.slots.size();
+                if (ratio > bestRatio) {
+                    bestRatio = ratio;
+                    bestGroup = group;
+                }
+            }
+
+            if (bestGroup != null) {
+                bestGroup.slots.add(emptySlots.removeFirst());
+            } else {
+                break; // Impossible de diviser plus (chaque slot est à 1)
+            }
+        }
+
+        // 3. On applique la distribution parfaite
+        for (ItemGroup group : groups) {
+            int slotsCount = group.slots.size();
+            int baseCount = group.totalCount / slotsCount;
+            int remainder = group.totalCount % slotsCount;
+
+            for (int i = 0; i < slotsCount; i++) {
+                int slotIndex = group.slots.get(i);
+                int countForThisSlot = baseCount + (i < remainder ? 1 : 0);
+
+                if (countForThisSlot > 0) {
+                    ItemStack newStack = group.sample.copyWithCount(countForThisSlot);
+                    this.itemHandler.setStackInSlot(slotIndex, newStack);
+                } else {
+                    this.itemHandler.setStackInSlot(slotIndex, ItemStack.EMPTY);
+                }
+            }
+        }
+        this.isDistributing = false;
+    }
+
+    private static class ItemGroup {
+        ItemStack sample;
+        List<Integer> slots = new ArrayList<>();
+        int totalCount = 0;
+    }
+
+    // --- LOGIQUE DE CRAFT ET DE VERIFICATION ---
+
+    private boolean canProcess(int slot, ItemStackHandler simItemHandler, int[] simFluids) {
+        ItemStack inputStack = this.itemHandler.getStackInSlot(slot);
+        SheepVariantData variantData = ((ResourcefulWoolItem) inputStack.getItem()).getVariantData();
+        if (variantData == null) return false;
+
+        List<ItemStack> maxItemDrops = new ArrayList<>();
+        maxItemDrops.add(getVanillaWool(inputStack));
+        List<FluidStack> maxFluidDrops = new ArrayList<>();
+
+        if (variantData.DroppedItems() != null) {
+            for (SheepVariantData.DroppedItems drop : variantData.DroppedItems()) {
+                ResourceLocation res = ResourceLocation.tryParse(drop.ItemId());
+                if (res != null) {
+                    if (BuiltInRegistries.FLUID.containsKey(res)) {
+                        maxFluidDrops.add(new FluidStack(BuiltInRegistries.FLUID.get(res), drop.MaxDrops()));
+                    } else if (BuiltInRegistries.ITEM.containsKey(res)) {
+                        maxItemDrops.add(new ItemStack(BuiltInRegistries.ITEM.get(res), drop.MaxDrops()));
+                    }
+                }
+            }
+        }
+
+        // On fait une copie locale de la simulation
+        ItemStackHandler tempSimItems = new ItemStackHandler(simItemHandler.getSlots());
+        for (int j = 0; j < simItemHandler.getSlots(); j++) {
+            tempSimItems.setStackInSlot(j, simItemHandler.getStackInSlot(j).copy());
+        }
+        int[] tempSimFluids = Arrays.copyOf(simFluids, simFluids.length);
+
+        // Appel des petites méthodes
+        if (!canInsertItems(tempSimItems, maxItemDrops)) return false;
+        if (!canInsertFluids(tempSimFluids, maxFluidDrops)) return false;
+
+        // Si on arrive ici, tout est validé. On met à jour la vraie simulation.
+        for (int j = 0; j < simItemHandler.getSlots(); j++) {
+            simItemHandler.setStackInSlot(j, tempSimItems.getStackInSlot(j));
+        }
+        System.arraycopy(tempSimFluids, 0, simFluids, 0, simFluids.length);
+
+        return true;
     }
 
     private void craftItem(int slot) {
@@ -298,42 +463,27 @@ public class CentrifugeControllerBlockEntity extends BlockEntity implements Menu
                 }
             }
         }
-
-        // Consommer la ressource d'entrée
-        inputStack.shrink(1);
+        this.itemHandler.extractItem(slot, 1, false);
     }
 
-    private boolean canInsertItems(List<ItemStack> itemsToInsert) {
-        int inputSize = this.tier.getParallelProcesses();
-        int outputSize = inputSize * 2;
-
-        // On copie virtuellement l'inventaire de sortie pour faire une simulation
-        ItemStackHandler simulationHandler = new ItemStackHandler(outputSize);
-        for (int i = 0; i < outputSize; i++) {
-            simulationHandler.setStackInSlot(i, this.itemHandler.getStackInSlot(inputSize + i).copy());
-        }
-
+    private boolean canInsertItems(ItemStackHandler tempSimItems, List<ItemStack> itemsToInsert) {
         for (ItemStack stack : itemsToInsert) {
-            ItemStack remainder = ItemHandlerHelper.insertItemStacked(simulationHandler, stack, false);
-            // Si la simulation ne peut pas tout insérer, on bloque le craft
+            ItemStack remainder = ItemHandlerHelper.insertItemStacked(tempSimItems, stack, false);
             if (!remainder.isEmpty()) return false;
         }
         return true;
     }
 
-    private boolean canInsertFluids(List<FluidStack> fluidsToInsert) {
-        int[] simulatedAmounts = new int[this.fluidTanks.length];
-        for (int i = 0; i < fluidTanks.length; i++) simulatedAmounts[i] = fluidTanks[i].getFluidAmount();
-
+    private boolean canInsertFluids(int[] tempSimFluids, List<FluidStack> fluidsToInsert) {
         for (FluidStack stack : fluidsToInsert) {
             int amountLeft = stack.getAmount();
-            for (int i = 0; i < fluidTanks.length; i++) {
-                FluidStack tankFluid = fluidTanks[i].getFluid();
+            for (int t = 0; t < this.fluidTanks.length; t++) {
+                FluidStack tankFluid = this.fluidTanks[t].getFluid();
                 if (tankFluid.isEmpty() || tankFluid.is(stack.getFluid())) {
-                    int space = fluidTanks[i].getCapacity() - simulatedAmounts[i];
+                    int space = this.fluidTanks[t].getCapacity() - tempSimFluids[t];
                     int filled = Math.min(space, amountLeft);
                     amountLeft -= filled;
-                    simulatedAmounts[i] += filled;
+                    tempSimFluids[t] += filled;
                     if (amountLeft <= 0) break;
                 }
             }
@@ -344,8 +494,7 @@ public class CentrifugeControllerBlockEntity extends BlockEntity implements Menu
 
     private void insertIntoOutput(ItemStack stack) {
         int inputSize = this.tier.getParallelProcesses();
-        int outputSize = inputSize * 2;
-        for (int i = inputSize; i < inputSize + outputSize; i++) {
+        for (int i = inputSize; i < inputSize + getOutputInventorySize(); i++) {
             stack = this.itemHandler.insertItem(i, stack, false);
             if (stack.isEmpty()) break;
         }
@@ -486,14 +635,12 @@ public class CentrifugeControllerBlockEntity extends BlockEntity implements Menu
 
     @Override
     public @NotNull Component getDisplayName() {
-        // Optionnel : adapter le nom selon le tier
         return Component.literal(this.tier.name().substring(0, 1).toUpperCase() + this.tier.name().substring(1).toLowerCase() + " Centrifuge");
     }
 
     @Override
     public @Nullable AbstractContainerMenu createMenu(int id, @NotNull Inventory inventory, @NotNull Player player) {
-        // TODO: return new CentrifugeMenu(id, inventory, this, this.data);
-        return null;
+        return new CentrifugeMenu(id, inventory, this, this.data);
     }
 
     public CentrifugeTier getTier() {

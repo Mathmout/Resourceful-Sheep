@@ -5,7 +5,7 @@ import com.mathmout.resourcefulsheep.ResourcefulSheepMod;
 import com.mathmout.resourcefulsheep.config.sheeptypes.ConfigSheepTypeManager;
 import com.mathmout.resourcefulsheep.entity.custom.SheepVariantData;
 import com.mathmout.resourcefulsheep.jei.JEIUtilitiesMethodes;
-import com.mathmout.resourcefulsheep.screen.DNAScreenRenderer;
+import com.mathmout.resourcefulsheep.screen.ScreenRenderer;
 import com.mathmout.resourcefulsheep.utils.TexteUtils;
 import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -111,7 +111,7 @@ public class SheepScannerScreen extends AbstractContainerScreen<SheepScannerMenu
         // Energy tooltip
         if (Config.SHEEP_SCANNER_CONSUMPTION.get() != 0) {
             if (isHovering(152, 40, 16, 144, mouseX, mouseY)) {
-                DNAScreenRenderer.renderEnergyValue(guiGraphics, font, menu.getMaxEnergy(), menu.getEnergy(), mouseX, mouseY);
+                ScreenRenderer.renderEnergyValue(guiGraphics, font, menu.getMaxEnergy(), menu.getEnergy(), mouseX, mouseY);
             }
         }
 
@@ -169,7 +169,6 @@ public class SheepScannerScreen extends AbstractContainerScreen<SheepScannerMenu
                 // On prépare une variable pour l'infobulle
                 ItemStack hoveredStack = null;
 
-                // 1. ON ACTIVE LA COUPURE STRICTE (Scissor)
                 guiGraphics.enableScissor(x + 41, y + SCROLL_Y_START, x + 136, y + SCROLL_Y_END);
 
                 for (SheepVariantData.DroppedItems drop : drops) {
@@ -198,7 +197,6 @@ public class SheepScannerScreen extends AbstractContainerScreen<SheepScannerMenu
                     }
                 }
 
-                // 2. ON DÉSACTIVE LA COUPURE
                 guiGraphics.disableScissor();
 
                 // 3. On dessine l'infobulle (Tooltip) librement, par-dessus tout le reste !
