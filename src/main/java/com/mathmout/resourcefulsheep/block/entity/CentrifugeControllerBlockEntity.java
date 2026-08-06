@@ -348,7 +348,7 @@ public class CentrifugeControllerBlockEntity extends BlockEntity implements Menu
             }
         }
 
-        // 2. On distribue les slots vides au groupe d'items le plus nombreux
+        // On distribue les slots vides au groupe d'items le plus nombreux
         while (!emptySlots.isEmpty() && !groups.isEmpty()) {
             ItemGroup bestGroup = null;
             double bestRatio = 1.0;

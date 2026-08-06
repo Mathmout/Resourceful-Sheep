@@ -21,7 +21,6 @@ import mezz.jei.api.registration.IRecipeCatalystRegistration;
 import mezz.jei.api.registration.IRecipeCategoryRegistration;
 import mezz.jei.api.registration.IRecipeRegistration;
 import mezz.jei.api.registration.ISubtypeRegistration;
-import mezz.jei.api.runtime.IJeiRuntime;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.Holder;
@@ -42,18 +41,21 @@ import java.util.*;
 
 @JeiPlugin
 public class JEIResourcefulSheepModPlugin implements IModPlugin {
+
     public static final RecipeType<SheepMutation> MUTATION_TYPE =
             new RecipeType<>(SheepMutationCategory.UID, SheepMutation.class);
     public static final RecipeType<SheepSpawningRecipeWrapper> SPAWNING_TYPE =
             new RecipeType<>(SheepSpawningCategory.UID, SheepSpawningRecipeWrapper.class);
-    public static final RecipeType<SheepVariantData> DROPPING_TYPE =
-            new RecipeType<>(SheepDroppingCategory.UID, SheepVariantData.class);
+    public static final RecipeType<SheepVariantData> SHEARING_TYPE =
+            new RecipeType<>(SheepShearingCategory.UID, SheepVariantData.class);
     public static final RecipeType<SheepVariantData> FEEDING_TYPE =
             new RecipeType<>(SheepFeedingCategory.UID, SheepVariantData.class);
     public static final RecipeType<SheepEatingRecipeWrapper> EATING_TYPE =
             new RecipeType<>(SheepEatingCategory.UID, SheepEatingRecipeWrapper.class);
     public static final RecipeType<SheepCrossbreeding> CROSS_BREADING_TYPE =
             new RecipeType<>(SheepCrossBreedingCategory.UID, SheepCrossbreeding.class);
+    public static final RecipeType<SheepVariantData> CENTRIFUGE_TYPE =
+            new RecipeType<>(CentrifugeCategory.UID, SheepVariantData.class);
 
     @Override
     public @NotNull ResourceLocation getPluginUid() {
@@ -70,14 +72,16 @@ public class JEIResourcefulSheepModPlugin implements IModPlugin {
     public void registerCategories(IRecipeCategoryRegistration registration) {
         registration.addRecipeCategories(new SheepMutationCategory(registration.getJeiHelpers().getGuiHelper()));
         registration.addRecipeCategories(new SheepSpawningCategory(registration.getJeiHelpers().getGuiHelper()));
-        registration.addRecipeCategories(new SheepDroppingCategory(registration.getJeiHelpers().getGuiHelper()));
+        registration.addRecipeCategories(new SheepShearingCategory(registration.getJeiHelpers().getGuiHelper()));
         registration.addRecipeCategories(new SheepFeedingCategory(registration.getJeiHelpers().getGuiHelper()));
         registration.addRecipeCategories(new SheepEatingCategory(registration.getJeiHelpers().getGuiHelper()));
         registration.addRecipeCategories(new SheepCrossBreedingCategory(registration.getJeiHelpers().getGuiHelper()));
+        registration.addRecipeCategories(new CentrifugeCategory(registration.getJeiHelpers().getGuiHelper()));
     }
 
     @Override
     public void registerRecipes(IRecipeRegistration registration) {
+
         // Mutation Recipes
         List<SheepMutation> mutations = ConfigSheepMutationManager.getSheepMutations();
         registration.addRecipes(MUTATION_TYPE, mutations);
@@ -134,7 +138,7 @@ public class JEIResourcefulSheepModPlugin implements IModPlugin {
 
         // Dropping Recipes
         List<SheepVariantData> variants = new ArrayList<>(ConfigSheepTypeManager.getSheepVariant().values());
-        registration.addRecipes(DROPPING_TYPE, variants);
+        registration.addRecipes(SHEARING_TYPE, variants);
 
         // Feeding Recipes
         registration.addRecipes(FEEDING_TYPE, variants);
@@ -147,6 +151,8 @@ public class JEIResourcefulSheepModPlugin implements IModPlugin {
 
         // Smithing Info
         registration.addIngredientInfo(ModItems.DIAMOND_UPGRADE_SMITHING_TEMPLATE.get(), Component.translatable("jei." + ResourcefulSheepMod.MOD_ID + ".diamond_template.desc"));
+
+        registration.addRecipes(CENTRIFUGE_TYPE, variants);
     }
 
     private List<SheepEatingRecipeWrapper> getWrappedEatingRecipes(List<SheepVariantData> variants) {
@@ -175,11 +181,6 @@ public class JEIResourcefulSheepModPlugin implements IModPlugin {
             );
         }
         return new ArrayList<>(map.entrySet());
-    }
-
-    @Override
-    public void onRuntimeAvailable(@NotNull IJeiRuntime jeiRuntime) {
-        IModPlugin.super.onRuntimeAvailable(jeiRuntime);
     }
 
     @Override

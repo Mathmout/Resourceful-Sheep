@@ -3,9 +3,11 @@ package com.mathmout.resourcefulsheep.config.sheeptypes;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
+import com.mathmout.resourcefulsheep.Config;
 import com.mathmout.resourcefulsheep.entity.custom.SheepVariantData;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Item;
 import net.neoforged.fml.loading.FMLPaths;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -189,14 +191,46 @@ public class ConfigSheepTypeManager {
             if (data.SheepTier() != null) {
                 for (SheepTypeData.TierData tier : data.SheepTier()) {
                     if (tier.DroppedItems() != null) {
+                        int nbItem = 0;
+                        int nbFluid = 0;
+
                         for (SheepTypeData.TierData.DroppedItem dropData : tier.DroppedItems()) {
                             String itemId = dropData.ItemId();
-                            if (!BuiltInRegistries.ITEM.containsKey(ResourceLocation.parse(itemId)) && !BuiltInRegistries.FLUID.containsKey(ResourceLocation.parse(itemId))) {
+                            ResourceLocation itemLoc = ResourceLocation.parse(itemId);
+
+                            if (!BuiltInRegistries.ITEM.containsKey(itemLoc) && !BuiltInRegistries.FLUID.containsKey(itemLoc)) {
                                 LOGGER.warn("[ResourcefulSheep] Config Warning SheepType : DroppedItem '{}' in Tier {} for {} sheep not found in neither Item Registry nor Fluid Registry.", itemId, tier.Tier(), sheepName);
                             }
+
                             if (dropData.MaxDrops() < dropData.MinDrops()) {
-                                LOGGER.warn("[ResourcefulSheep] Config Warning SheepType : MaxDrops must be bigger than MinDrops in {} tier {}.", tier.Tier(), sheepName);
+                                LOGGER.warn("[ResourcefulSheep] Config Warning SheepType : MaxDrops must be bigger than MinDrops in {} sheep tier {}.", sheepName, tier.Tier());
                             }
+
+                            // --- CALCUL DES SLOTS D'ITEMS ---
+                            if (BuiltInRegistries.ITEM.containsKey(itemLoc)) {
+                                Item item = BuiltInRegistries.ITEM.get(itemLoc);
+                                int maxStackSize = item.getDefaultMaxStackSize();
+
+                                // On divise le maxDrops par la taille max du stack et on arrondit au supérieur
+                                int slotsNeeded = (int) Math.ceil((double) dropData.MaxDrops() / maxStackSize);
+                                nbItem += slotsNeeded;
+                            }
+                            // --- CALCUL DES TANKS DE FLUIDES ---
+                            else if (BuiltInRegistries.FLUID.containsKey(itemLoc)) {
+                                int tankCapacity = Config.CENTRIFUGE_ULTIMATE_FLUID_CAPACITY.get();
+
+                                // Pareil pour les fluides : on divise par la capacité max d'un réservoir
+                                int tanksNeeded = (int) Math.ceil((double) dropData.MaxDrops() / tankCapacity);
+                                nbFluid += tanksNeeded;
+                            }
+                        }
+
+                        if (nbItem > 13) {
+                            LOGGER.warn("[ResourcefulSheep] Config Warning SheepType : The drops for '{}' sheep in tier {} require more than 13 item slots (currently {}). They will not fit in the Centrifuge.", sheepName, tier.Tier(), nbItem);
+                        }
+
+                        if (nbFluid > 3) {
+                            LOGGER.warn("[ResourcefulSheep] Config Warning SheepType : The drops for '{}' sheep in tier {} require more than 3 fluid tanks (currently {}). They will not fit in the Centrifuge.", sheepName, tier.Tier(), nbFluid);
                         }
                     }
                 }

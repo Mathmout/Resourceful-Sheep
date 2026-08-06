@@ -57,10 +57,11 @@ public class DynamicResourceProvider implements PackResources {
         // JEI
         langJson.addProperty("recipe." + ResourcefulSheepMod.MOD_ID + ".sheep_mutations", "Sheep Mutations");
         langJson.addProperty("recipe." + ResourcefulSheepMod.MOD_ID + ".sheep_spawning", "Sheep Spawning");
-        langJson.addProperty("recipe." + ResourcefulSheepMod.MOD_ID + ".sheep_dropping", "Sheep Dropping");
+        langJson.addProperty("recipe." + ResourcefulSheepMod.MOD_ID + ".sheep_shearing", "Sheep Shearing");
         langJson.addProperty("recipe." + ResourcefulSheepMod.MOD_ID + ".sheep_feeding", "Sheep Feeding");
         langJson.addProperty("recipe." + ResourcefulSheepMod.MOD_ID + ".sheep_eating", "Sheep Eating");
         langJson.addProperty("recipe." + ResourcefulSheepMod.MOD_ID + ".sheep_cross_breeding", "Sheep Cross Breeding");
+        langJson.addProperty("recipe." + ResourcefulSheepMod.MOD_ID + ".centrifuge", "Centrifuge");
         langJson.addProperty("jei." + ResourcefulSheepMod.MOD_ID + ".diamond_template.desc", "This template can be purchased from a Journeyman Shepherd villager, or found randomly in chests inside Shepherd houses in villages.");
 
         // Smithing Template

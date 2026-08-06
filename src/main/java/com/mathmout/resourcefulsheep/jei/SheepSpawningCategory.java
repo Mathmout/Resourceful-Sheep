@@ -62,6 +62,8 @@ public class SheepSpawningCategory implements IRecipeCategory<SheepSpawningRecip
     public void setRecipe(@NotNull IRecipeLayoutBuilder builder, @NotNull SheepSpawningRecipeWrapper recipe, @NotNull IFocusGroup focuses) {
         Item egg = BuiltInRegistries.ITEM.get(ResourceLocation.fromNamespaceAndPath(ResourcefulSheepMod.MOD_ID, recipe.originalData().sheepId() + "_spawn_egg"));
         builder.addInvisibleIngredients(RecipeIngredientRole.OUTPUT).addItemStack(new ItemStack(egg));
+
+        JEIUtil.addPhantomEntitySlot(builder, recipe.originalData().sheepId(), getWidth() / 6, getWidth() / 6 + 22/2, 32, 32);
     }
 
     @Override
@@ -70,11 +72,11 @@ public class SheepSpawningCategory implements IRecipeCategory<SheepSpawningRecip
         int scale = 22;
         int sheepX = getWidth() / 6;
 
-        JEIUtilitiesMethodes.drawEntity(g, spawnData.sheepId(), sheepX, sheepX + scale/2, scale);
+        JEIUtil.drawEntity(g, spawnData.sheepId(), sheepX, sheepX + scale/2, scale);
 
         List<Component> tips = new ArrayList<>();
-        if (JEIUtilitiesMethodes.isMouseOver(mouseX, mouseY, sheepX - scale, sheepX - scale, sheepX + scale, sheepX + scale/2)) {
-            JEIUtilitiesMethodes.addTooltip(tips, spawnData.sheepId());
+        if (JEIUtil.isMouseOver(mouseX, mouseY, sheepX - scale, sheepX - scale, sheepX + scale, sheepX + scale/2)) {
+            JEIUtil.addTooltip(tips, spawnData.sheepId());
         }
 
         if (!tips.isEmpty()) g.renderComponentTooltip(Minecraft.getInstance().font, tips, (int) mouseX, (int) mouseY);

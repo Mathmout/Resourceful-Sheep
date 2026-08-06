@@ -82,7 +82,8 @@ public class ModItems {
 
                     // Icônes fantômes slot droite
                     List.of(ResourceLocation.fromNamespaceAndPath(ResourcefulSheepMod.MOD_ID,"item/empty_slot_block"))
-            ));
+            )
+    );
 
 
     // La méthode pour les œufs
@@ -96,7 +97,8 @@ public class ModItems {
                                     properties,
                                     "§l" + TexteUtils.stringToText(variant.Name()) + " Resourceful Sheep Egg",
                                     Integer.parseInt(variant.EggColorSpotsNTitle().substring(1), 16)
-                            ));
+                            )
+            );
             SHEEP_SPAWN_EGGS.add(spawnEgg);
         }
         sortVariantItems(SHEEP_SPAWN_EGGS);

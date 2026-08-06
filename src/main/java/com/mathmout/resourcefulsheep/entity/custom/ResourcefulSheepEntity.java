@@ -1,18 +1,19 @@
 package com.mathmout.resourcefulsheep.entity.custom;
 
 import com.mathmout.resourcefulsheep.ResourcefulSheepMod;
+import com.mathmout.resourcefulsheep.block.custom.ResourcefulWoolBlock;
 import com.mathmout.resourcefulsheep.config.mutations.ConfigSheepMutationManager;
 import com.mathmout.resourcefulsheep.config.mutations.SheepMutation;
 import com.mathmout.resourcefulsheep.config.sheeptypes.ConfigSheepTypeManager;
 import com.mathmout.resourcefulsheep.entity.ModEntities;
 import com.mathmout.resourcefulsheep.entity.ResourcefulSheepEatBlockGoal;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Holder;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.AgeableMob;
@@ -26,13 +27,13 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.component.BlockItemStateProperties;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.*;
-import java.util.concurrent.ThreadLocalRandom;
 
 
 public class ResourcefulSheepEntity extends Sheep {
@@ -127,24 +128,40 @@ public class ResourcefulSheepEntity extends Sheep {
 
     @Override
     public @NotNull List<ItemStack> onSheared(@Nullable Player player, @NotNull ItemStack item, @NotNull Level world, @NotNull BlockPos pos) {
+        // On récupère les drops générés par la méthode vanilla de Minecraft
         List<ItemStack> vanillaDrops = super.onSheared(player, item, world, pos);
-        List<ItemStack> drops = new ArrayList<>(vanillaDrops);
+        List<ItemStack> drops = new ArrayList<>();
 
         if (!world.isClientSide) {
             SheepVariantData variantData = getSheepVariantData();
+            int woolCount = 0;
 
-            if (variantData != null && variantData.DroppedItems() != null && !variantData.DroppedItems().isEmpty()) {
+            // Filtrer les drops pour retirer la laine vanilla et récupérer sa quantité
+            for (ItemStack drop : vanillaDrops) {
+                if (drop.is(ItemTags.WOOL)) {
+                    woolCount += drop.getCount();
+                } else {
+                    drops.add(drop);
+                }
+            }
 
-                for (SheepVariantData.DroppedItems dropData : variantData.DroppedItems()) {
-                    String rawId = dropData.ItemId();
+            if (variantData != null) {
+                // La laine.
+                if (woolCount > 0) {
+                    // On récupère l'item depuis le registre (ajuste l'ID ici si ton item s'appelle autrement)
+                    ResourceLocation woolId = ResourceLocation.fromNamespaceAndPath(ResourcefulSheepMod.MOD_ID, variantData.Id() + "_wool");
+                    Item resourcefulWoolItem = BuiltInRegistries.ITEM.get(woolId);
 
-                    int count = ThreadLocalRandom.current().nextInt(dropData.MinDrops(), dropData.MaxDrops() + 1);
+                    if (resourcefulWoolItem != Items.AIR) {
+                        ItemStack resourcefulWoolStack = new ItemStack(resourcefulWoolItem, woolCount);
 
-                    if (count <= 0) continue;
+                        // On applique la couleur exacte du mouton via les DataComponents de la version
+                        resourcefulWoolStack.set(
+                                DataComponents.BLOCK_STATE,
+                                BlockItemStateProperties.EMPTY.with(ResourcefulWoolBlock.COLOR, this.getColor())
+                        );
 
-                    Item droppedItem = BuiltInRegistries.ITEM.get(ResourceLocation.tryParse(rawId));
-                    if (droppedItem != Items.AIR) {
-                        drops.add(new ItemStack(droppedItem, count));
+                        drops.add(resourcefulWoolStack);
                     }
                 }
             }

@@ -55,12 +55,12 @@ public class SheepFeedingCategory implements IRecipeCategory<SheepVariantData> {
 
     @Override
     public int getHeight() {
-        return 64;
+        return 76;
     }
 
     @Override
     public int getWidth() {
-        return 180;
+        return 188;
     }
 
     @Override
@@ -75,14 +75,15 @@ public class SheepFeedingCategory implements IRecipeCategory<SheepVariantData> {
         int columns = 7;
         List<String> foodItems = recipe.FoodItems();
 
-        // 1. Aucune nourriture définie dans le JSON donc Comportement par défaut.
+        JEIUtil.addPhantomEntitySlot(builder, recipe.Id(), 30, getHeight() / 2, 32, 32);
+
+        // Aucune nourriture définie dans le JSON donc Comportement par défaut.
         if (foodItems == null || foodItems.isEmpty()) {
             builder.addSlot(RecipeIngredientRole.INPUT, startX, startY)
                     .addItemStack(new ItemStack(Items.WHEAT));
             return;
         }
 
-        // 2.
         int i = 0;
         for (String foodId : foodItems) {
             List<ItemStack> stacksToAdd = new ArrayList<>();
@@ -126,11 +127,11 @@ public class SheepFeedingCategory implements IRecipeCategory<SheepVariantData> {
         int baseY = getHeight() / 2;
         int sheepX = 30;
 
-        JEIUtilitiesMethodes.drawEntity(guiGraphics, recipe.Id(), sheepX, baseY + 3 * scale / 4, scale);
+        JEIUtil.drawEntity(guiGraphics, recipe.Id(), sheepX, baseY + 3 * scale / 4, scale);
 
         List<Component> tips = new ArrayList<>();
-        if (JEIUtilitiesMethodes.isMouseOver(mouseX, mouseY, sheepX - scale, baseY - scale, sheepX + scale, baseY + scale)) {
-            JEIUtilitiesMethodes.addTooltip(tips, recipe.Id());
+        if (JEIUtil.isMouseOver(mouseX, mouseY, sheepX - scale, baseY - scale, sheepX + scale, baseY + scale)) {
+            JEIUtil.addTooltip(tips, recipe.Id());
         }
 
         if (!tips.isEmpty()) {

@@ -10,6 +10,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.SpawnEggItem;
 import net.neoforged.api.distmarker.Dist;
@@ -72,6 +73,8 @@ public class ClientGameEvents {
                                     } else {
                                         amount = dropData.MinDrops() + " to " + dropData.MaxDrops();
                                     }
+
+                                    if (BuiltInRegistries.FLUID.containsKey(ResourceLocation.parse(dropData.ItemId()))) amount += " mB";
 
                                     MutableComponent line = Component.literal(" - ").withStyle(ChatFormatting.GRAY)
                                             .append(Component.literal(itemName).withStyle(ChatFormatting.YELLOW))

@@ -309,6 +309,14 @@ public class DNASplicerScreen extends AbstractContainerScreen<DNASplicerMenu> {
             if ((mutation.MomId().equals(p1Clean) && mutation.DadId().equals(p2Clean)) || (mutation.MomId().equals(p2Clean) && mutation.DadId().equals(p1Clean))) {
                 addIdSafe(ResourcefulSheepMod.MOD_ID + ":" + mutation.ChildId());
                 addIdSafe(p1);
+                if (!possibleResults.contains(p2)) {
+                    addIdSafe(p2);
+                }
+            }
+        }
+        if (p1.contains(ResourcefulSheepMod.MOD_ID + ":") && p2.contains(ResourcefulSheepMod.MOD_ID + ":")) {
+            addIdSafe(p1);
+            if (!possibleResults.contains(p2)) {
                 addIdSafe(p2);
             }
         }

@@ -54,12 +54,12 @@ public class SheepCrossBreedingCategory implements IRecipeCategory<SheepCrossbre
 
     @Override
     public int getHeight() {
-        return 64;
+        return 76;
     }
 
     @Override
     public int getWidth() {
-        return  180;
+        return  188;
     }
 
     @Override
@@ -71,6 +71,10 @@ public class SheepCrossBreedingCategory implements IRecipeCategory<SheepCrossbre
         if (momEgg != Items.AIR) builder.addInvisibleIngredients(RecipeIngredientRole.INPUT).addItemStack(new ItemStack(momEgg));
         if (dadEgg != Items.AIR) builder.addInvisibleIngredients(RecipeIngredientRole.INPUT).addItemStack(new ItemStack(dadEgg));
         if (childEgg != Items.AIR) builder.addInvisibleIngredients(RecipeIngredientRole.OUTPUT).addItemStack(new ItemStack(childEgg));
+
+        JEIUtil.addPhantomEntitySlot(builder, recipe.MomId(), getWidth() / 6, getHeight() / 2, 32, 32);
+        JEIUtil.addPhantomEntitySlot(builder, recipe.DadId(), getWidth() / 2, getHeight() / 2, 32, 32);
+        JEIUtil.addPhantomEntitySlot(builder, recipe.ChildId(), 5 * getWidth() / 6, getHeight() / 2, 32, 32);
     }
 
     private Item getEggItem(String entityId) {
@@ -92,23 +96,23 @@ public class SheepCrossBreedingCategory implements IRecipeCategory<SheepCrossbre
         guiGraphics.drawString(Minecraft.getInstance().font, "=", eqX, baseY, 0xFF404040, false);
 
         // Utilisation de la NOUVELLE méthode drawEntity !
-        JEIUtilitiesMethodes.drawEntity(guiGraphics, recipe.MomId(), momX, baseY + 3 * scale / 4, scale);
-        JEIUtilitiesMethodes.drawEntity(guiGraphics, recipe.DadId(), dadX, baseY + 3 * scale / 4, scale);
-        JEIUtilitiesMethodes.drawEntity(guiGraphics, recipe.ChildId(), childX, baseY + 3 * scale / 4, scale);
+        JEIUtil.drawEntity(guiGraphics, recipe.MomId(), momX, baseY + 3 * scale / 4, scale);
+        JEIUtil.drawEntity(guiGraphics, recipe.DadId(), dadX, baseY + 3 * scale / 4, scale);
+        JEIUtil.drawEntity(guiGraphics, recipe.ChildId(), childX, baseY + 3 * scale / 4, scale);
 
         guiGraphics.drawString(Minecraft.getInstance().font, "Chance of success : " + recipe.Chance() + " %",
                 ((childX + momX) - Minecraft.getInstance().font.width("Chance of success : " + recipe.Chance() + " %")) / 2,
                 4, 0xFF404040, false);
 
         List<Component> tips = new ArrayList<>();
-        if (JEIUtilitiesMethodes.isMouseOver(mouseX, mouseY, momX - scale, baseY - scale, momX + scale, baseY + scale))
-            JEIUtilitiesMethodes.addTooltip(tips, recipe.MomId());
+        if (JEIUtil.isMouseOver(mouseX, mouseY, momX - scale, baseY - scale, momX + scale, baseY + scale))
+            JEIUtil.addTooltip(tips, recipe.MomId());
 
-        if (JEIUtilitiesMethodes.isMouseOver(mouseX, mouseY, dadX - scale, baseY - scale, dadX + scale, baseY + scale))
-            JEIUtilitiesMethodes.addTooltip(tips, recipe.DadId());
+        if (JEIUtil.isMouseOver(mouseX, mouseY, dadX - scale, baseY - scale, dadX + scale, baseY + scale))
+            JEIUtil.addTooltip(tips, recipe.DadId());
 
-        if (JEIUtilitiesMethodes.isMouseOver(mouseX, mouseY, childX - scale, baseY - scale, childX + scale, baseY + scale))
-            JEIUtilitiesMethodes.addTooltip(tips, recipe.ChildId());
+        if (JEIUtil.isMouseOver(mouseX, mouseY, childX - scale, baseY - scale, childX + scale, baseY + scale))
+            JEIUtil.addTooltip(tips, recipe.ChildId());
 
         if (!tips.isEmpty()) guiGraphics.renderComponentTooltip(Minecraft.getInstance().font, tips, (int) mouseX, (int) mouseY);
     }

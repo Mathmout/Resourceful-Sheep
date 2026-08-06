@@ -57,12 +57,12 @@ public class SheepEatingCategory implements IRecipeCategory<SheepEatingRecipeWra
 
     @Override
     public int getHeight() {
-        return 64;
+        return 76;
     }
 
     @Override
     public int getWidth() {
-        return 180;
+        return 188;
     }
 
     @Override
@@ -139,12 +139,12 @@ public class SheepEatingCategory implements IRecipeCategory<SheepEatingRecipeWra
         int sheepX = getWidth() / 6;
 
         // Dessiner le mouton
-        JEIUtilitiesMethodes.drawEntity(guiGraphics, recipe.variant().Id(), sheepX, baseY + 3 * scale / 4, scale);
+        JEIUtil.drawEntity(guiGraphics, recipe.variant().Id(), sheepX, baseY + 3 * scale / 4, scale);
 
         // Tooltip mouton
         List<Component> tips = new ArrayList<>();
-        if (JEIUtilitiesMethodes.isMouseOver(mouseX, mouseY, sheepX - scale, baseY - scale, sheepX + scale, baseY + scale)) {
-            JEIUtilitiesMethodes.addTooltip(tips, recipe.variant().Id());
+        if (JEIUtil.isMouseOver(mouseX, mouseY, sheepX - scale, baseY - scale, sheepX + scale, baseY + scale)) {
+            JEIUtil.addTooltip(tips, recipe.variant().Id());
         }
         if (!tips.isEmpty()) {
             guiGraphics.renderComponentTooltip(Minecraft.getInstance().font, tips, (int) mouseX, (int) mouseY);

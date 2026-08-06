@@ -17,6 +17,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -68,7 +69,7 @@ public class SheepScanner extends Item {
 
                     // Message de succès
                     player.displayClientMessage(Component.literal("Scanner synchronized with Sequencer !").withStyle(ChatFormatting.GREEN), true);
-                    player.playSound(net.minecraft.sounds.SoundEvents.UI_BUTTON_CLICK.value(), 1.0f, 1.0f);
+                    player.playSound(SoundEvents.UI_BUTTON_CLICK.value(), 1.0f, 1.0f);
                 }
                 return InteractionResult.sidedSuccess(level.isClientSide());
             }
@@ -144,7 +145,7 @@ public class SheepScanner extends Item {
                         // On vérifie si l'ADN est connu
                         if (!knownDna.contains(StringTag.valueOf(entityId))) {
                             pPlayer.displayClientMessage(
-                                    Component.literal("Unknown sheep, please sequence its DNA first.").withStyle(ChatFormatting.RED),
+                                    Component.literal("Unknown sheep, sequence its DNA first.").withStyle(ChatFormatting.RED),
                                     true
                             );
                         } else {
@@ -174,9 +175,8 @@ public class SheepScanner extends Item {
                     }
                 }
 
-                // 7. On applique le cooldown et le son pour confirmer que l'appareil a travaillé
                 pPlayer.getCooldowns().addCooldown(this, 20);
-                pPlayer.level().playSound(pPlayer, pPlayer.blockPosition(), SoundEvents.UI_BUTTON_CLICK.value(), net.minecraft.sounds.SoundSource.PLAYERS, 1.0f, 1.0f);
+                pPlayer.level().playSound(pPlayer, pPlayer.blockPosition(), SoundEvents.UI_BUTTON_CLICK.value(), SoundSource.PLAYERS, 1.0f, 1.0f);
 
             } else {
                 if (!pPlayer.level().isClientSide()) {

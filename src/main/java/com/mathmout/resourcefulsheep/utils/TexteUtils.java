@@ -67,7 +67,7 @@ public class TexteUtils {
                 // FLUID
                 if (BuiltInRegistries.FLUID.containsKey(loc)) {
                     Fluid fluid = BuiltInRegistries.FLUID.get(loc);
-                    return fluid.getFluidType().getDescriptionId();
+                    return fluid.getFluidType().getDescription().getString();
                 }
             }
         }

@@ -146,6 +146,7 @@ public class DynamicTexturesGenerator {
     private void generateTexturesForVariant(SheepVariantData variant, ResourceManager resourceManager, BufferedImage sheepBaseImage, BufferedImage furBaseImage, Map<String, BufferedImage> woolBaseImages, List<ResourceLocation> itemKeys) throws IOException {
         if (itemKeys == null || itemKeys.isEmpty()) {
             LOGGER.warn("[ResourcefulSheep] No suitable item/block textures found for sheep name: {}", variant.Name());
+            return;
         }
 
         Map<Integer, Integer> combinedPalette = new HashMap<>();

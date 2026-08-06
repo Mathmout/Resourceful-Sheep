@@ -130,7 +130,9 @@ public class SuspiciousSpawnEgg extends Item {
                     return crossbreeding.ChildId();
                 } else {
                     List<String> fails = crossbreeding.ResultsIfFail();
-                    if (!fails.isEmpty()) return fails.get(random.nextInt(fails.size()));
+                    if (!fails.isEmpty()) {
+                        return fails.get(random.nextInt(fails.size()));
+                    }
                     return p1;
                 }
             }

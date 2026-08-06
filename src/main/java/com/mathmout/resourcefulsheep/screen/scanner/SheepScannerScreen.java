@@ -4,7 +4,7 @@ import com.mathmout.resourcefulsheep.Config;
 import com.mathmout.resourcefulsheep.ResourcefulSheepMod;
 import com.mathmout.resourcefulsheep.config.sheeptypes.ConfigSheepTypeManager;
 import com.mathmout.resourcefulsheep.entity.custom.SheepVariantData;
-import com.mathmout.resourcefulsheep.jei.JEIUtilitiesMethodes;
+import com.mathmout.resourcefulsheep.jei.JEIUtil;
 import com.mathmout.resourcefulsheep.screen.ScreenRenderer;
 import com.mathmout.resourcefulsheep.utils.TexteUtils;
 import com.mojang.blaze3d.platform.Lighting;
@@ -126,21 +126,21 @@ public class SheepScannerScreen extends AbstractContainerScreen<SheepScannerMenu
         if (variant != null) {
 
             // --- RECTANGLE 2 : Rendu 3D ---
-            JEIUtilitiesMethodes.drawEntity(guiGraphics, sheepId, x + imageWidth / 2, y + 130, 40);
+            JEIUtil.drawEntity(guiGraphics, sheepId, x + imageWidth / 2, y + 130, 40);
 
             // --- RECTANGLE 3 : Informations ---
             String sheepName = TexteUtils.stringToText(variant.Name() + " Sheep");
             Component nameComponent = Component.literal(sheepName).withStyle(ChatFormatting.BLUE);
 
-            int textWidth = font.width(nameComponent);
+            int sheepNameTextWidth = font.width(nameComponent);
             int maxWidth = 90;
             float scale = 1.0f;
 
             guiGraphics.pose().pushPose();
 
             // Si le texte est plus grand que le cadre, on calcule le ratio de réduction
-            if (textWidth > maxWidth) {
-                scale = (float) maxWidth / textWidth;
+            if (sheepNameTextWidth > maxWidth) {
+                scale = (float) maxWidth / sheepNameTextWidth;
             }
 
             // On translate le point de départ au centre voulu
@@ -155,43 +155,83 @@ public class SheepScannerScreen extends AbstractContainerScreen<SheepScannerMenu
             guiGraphics.drawCenteredString(font, Component.literal("Tier: ").withStyle(ChatFormatting.RED)
                     .append(Component.literal(String.valueOf(variant.Tier())).withStyle(ChatFormatting.LIGHT_PURPLE)), x + imageWidth / 2, y + 160, 0xFFFFFF);
 
-            // --- RECTANGLE 4 : Liste des Drops ---
+// --- RECTANGLE 4 : Liste des Drops ---
             guiGraphics.drawCenteredString(font, Component.literal("Drops").withStyle(ChatFormatting.GOLD), x + imageWidth / 2, y + 180, 0xFFFFFF);
 
             List<SheepVariantData.DroppedItems> drops = variant.DroppedItems();
             if (drops != null && !drops.isEmpty()) {
-                int itemX = x + 50;
-                // On applique le décalage du scroll sur le Y de départ (+2 pour un léger padding)
                 int itemY = y + SCROLL_Y_START + 2 - (int) this.scrollOffset;
 
                 Lighting.setupFor3DItems();
-
-                // On prépare une variable pour l'infobulle
                 ItemStack hoveredStack = null;
 
-                guiGraphics.enableScissor(x + 41, y + SCROLL_Y_START, x + 136, y + SCROLL_Y_END);
+                // Zone de rendu définie par ton Scissor
+                int minX = x + 41;
+                int maxX = x + 136;
+                int availableWidth = (maxX - minX) - 4; // 95 - 4 pixels de marge de sécurité = 91px max
+                int midX = minX + (maxX - minX) / 2;
+
+                guiGraphics.enableScissor(minX, y + SCROLL_Y_START, maxX, y + SCROLL_Y_END);
 
                 for (SheepVariantData.DroppedItems drop : drops) {
                     ResourceLocation itemLoc = ResourceLocation.tryParse(drop.ItemId());
                     if (itemLoc != null) {
-                        Item item = BuiltInRegistries.ITEM.get(itemLoc);
+                        Item item = Items.AIR;
+                        boolean isFluid = false;
+
+                        if (BuiltInRegistries.FLUID.containsKey(itemLoc)) {
+                            item = BuiltInRegistries.FLUID.get(itemLoc).getBucket();
+                            isFluid = true;
+                        } else if (BuiltInRegistries.ITEM.containsKey(itemLoc)) {
+                            item = BuiltInRegistries.ITEM.get(itemLoc);
+                        }
+
                         if (item != Items.AIR) {
                             ItemStack stack = new ItemStack(item);
                             String amountText = drop.MinDrops() == drop.MaxDrops() ?
                                     String.valueOf(drop.MinDrops()) : drop.MinDrops() + " - " + drop.MaxDrops();
 
-                            // Le jeu ne dessinera QUE les pixels compris dans la zone de Scissor
-                            guiGraphics.renderItem(stack, itemX, itemY);
-                            guiGraphics.drawCenteredString(font, Component.literal(amountText).withStyle(ChatFormatting.DARK_AQUA), x + imageWidth / 2, itemY + 4, 0xFFFFFF);
+                            if (isFluid) {
+                                amountText += " mB";
+                            }
 
-                            // Détection du survol : on s'assure que la souris est bien dans la zone VISIBLE
-                            if (isHovering(itemX - x, itemY - y, 16, 16, mouseX, mouseY)) {
+                            // 1. Calcul des dimensions de base
+                            int textWidth = font.width(amountText);
+                            int iconSpacing = 4;
+                            int totalExpectedWidth = 16 + iconSpacing + textWidth;
+                            float textScale = 1.0f;
+
+                            // 2. Réduction de l'échelle si ça dépasse la place disponible
+                            if (totalExpectedWidth > availableWidth) {
+                                int maxTextWidth = availableWidth - 16 - iconSpacing;
+                                textScale = (float) maxTextWidth / textWidth;
+                            }
+
+                            // 3. Calcul de la largeur réelle et du point de centrage
+                            float actualTotalWidth = 16 + iconSpacing + (textWidth * textScale);
+                            float startX = midX - (actualTotalWidth / 2.0f);
+
+                            // Dessin de l'icône
+                            guiGraphics.renderItem(stack, (int) startX, itemY);
+
+                            // Dessin du texte redimensionné
+                            float textX = startX + 16 + iconSpacing;
+                            // Centrage vertical dynamique (une police fait 9px de haut par défaut)
+                            float textY = itemY + (16 - 9 * textScale) / 2.0f;
+
+                            guiGraphics.pose().pushPose();
+                            guiGraphics.pose().translate(textX, textY, 0);
+                            guiGraphics.pose().scale(textScale, textScale, 1.0f);
+                            guiGraphics.drawString(font, Component.literal(amountText).withStyle(ChatFormatting.DARK_AQUA), 0, 0, 0xFFFFFF, true);
+                            guiGraphics.pose().popPose();
+
+                            // Détection du survol avec le nouveau point de départ
+                            if (isHovering((int) startX - x, itemY - y, 16, 16, mouseX, mouseY)) {
                                 if (mouseY >= y + SCROLL_Y_START && mouseY <= y + SCROLL_Y_END) {
                                     hoveredStack = stack;
                                 }
                             }
 
-                            // On espace pour la ligne suivante
                             itemY += 18;
                         }
                     }
@@ -199,7 +239,7 @@ public class SheepScannerScreen extends AbstractContainerScreen<SheepScannerMenu
 
                 guiGraphics.disableScissor();
 
-                // 3. On dessine l'infobulle (Tooltip) librement, par-dessus tout le reste !
+                // On dessine l'infobulle librement par-dessus tout
                 if (hoveredStack != null) {
                     guiGraphics.renderTooltip(font, hoveredStack, mouseX, mouseY);
                 }

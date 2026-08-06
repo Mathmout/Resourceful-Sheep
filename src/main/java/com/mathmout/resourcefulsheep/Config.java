@@ -103,7 +103,7 @@ public class Config {
 
         SHEEP_SCANNER_CAPACITY = BUILDER
                 .comment("Max energy capacity of the Sheep Scanner Item (FE)")
-                .defineInRange("capacity", 20_000, 0, Integer.MAX_VALUE);
+                .defineInRange("capacity", 50_000, 0, Integer.MAX_VALUE);
 
         SHEEP_SCANNER_CONSUMPTION = BUILDER
                 .comment("Energy consumed per scan (FE)")

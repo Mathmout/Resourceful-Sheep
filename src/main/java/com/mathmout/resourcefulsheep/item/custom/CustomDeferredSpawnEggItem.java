@@ -26,6 +26,7 @@ public class CustomDeferredSpawnEggItem extends DeferredSpawnEggItem {
         this.displayName = displayName;
         this.nameColor = nameColor;
     }
+
     @Override
     public @NotNull Component getName(@NotNull ItemStack stack) {
         return Component.literal(displayName).withStyle(Style.EMPTY.withColor(nameColor));
